@@ -10,5 +10,5 @@ src/ExpressionEngine.Console/obj
 *.pidb
 *.test-cache
 src/ExpressionEngine/test-results/*
-src/ExpressionEngine/test-results/*
+src/ExpressionEngine.Tests/test-results/*
 *.DS_Store

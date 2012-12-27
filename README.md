@@ -1,7 +1,12 @@
-Expression Engine Library 1.0.0.0 Alfa.
+Expression Engine Library 1.0.0.1 Alfa.
 ===
 This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and now uses shunting-yard algorithm.
 It was written primarily for fun and currently doesn't support variables and functions; but it will in near future, along with other features.
+
+News:
+---
+  - Solution now opens in MonoDevelop without problems.
+  - All line endings converted to unix form.
 
 To build:
 ---
