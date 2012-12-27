@@ -8,7 +8,7 @@
     <ProjectGuid>{A22FF391-0125-40F0-A67D-428C27034901}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>ExpressionEngine.Console</RootNamespace>
-    <AssemblyName>ExpressionEngine.Console</AssemblyName>
+    <AssemblyName>xeval</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
