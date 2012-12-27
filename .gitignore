@@ -1,0 +1,14 @@
+src/ExpressionEngine/bin/*
+src/ExpressionEngine/obj
+src/ExpressionEngine.Tests/bin/*
+src/ExpressionEngine.Tests/obj
+src/ExpressionEngine.Console/bin/*
+src/ExpressionEngine.Console/obj
+*.suo
+*.userprefs
+*~
+*.pidb
+*.test-cache
+src/ExpressionEngine/test-results/*
+src/ExpressionEngine/test-results/*
+*.DS_Store
