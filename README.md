@@ -1,6 +1,6 @@
 Expression Engine Library 1.0.0.11 Alfa.
 ===
-This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and uses AST-evaluation algorithm.
+This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and uses an AST-evaluation algorithm.
 It was written primarily for fun and currently doesn't support variables and functions; but it will in near future, along with other features.
 
 News:
