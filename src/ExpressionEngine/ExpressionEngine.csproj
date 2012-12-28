@@ -40,13 +40,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EvaluatorException.cs" />
-    <Compile Include="ExpressionEvaluator.cs" />
     <Compile Include="IExpressionEvaluator.cs" />
-    <Compile Include="Scanner.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\ThisAssembly.cs" />
     <Compile Include="Properties\ThisLibrary.cs" />
+    <Compile Include="BinaryExpression.cs" />
+    <Compile Include="Expression.cs" />
+    <Compile Include="ExpressionEvaluator.cs" />
+    <Compile Include="LiteralExpression.cs" />
+    <Compile Include="Scanner.cs" />
+    <Compile Include="UnaryExpression.cs" />
+    <Compile Include="Parser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

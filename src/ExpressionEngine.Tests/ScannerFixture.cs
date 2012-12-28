@@ -83,9 +83,11 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Scanner(new StringReader("+123"));
 
-            scanner.PeekToken().ShouldLiteralEqual("+123");
+			scanner.PeekToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
+			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
 
-            scanner.NextToken().ShouldLiteralEqual("+123");
+            scanner.PeekToken().ShouldLiteralEqual("123");
+            scanner.NextToken().ShouldLiteralEqual("123");
 
             scanner.PeekToken().Should().Be.Null();
             scanner.NextToken().Should().Be.Null();
@@ -96,20 +98,29 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Scanner(new StringReader("+.123"));
 
-            scanner.PeekToken().ShouldLiteralEqual("+0.123");
+			scanner.PeekToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
+			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
 
-            scanner.NextToken().ShouldLiteralEqual("+0.123");
+            scanner.PeekToken().ShouldLiteralEqual("0.123");
+            scanner.NextToken().ShouldLiteralEqual("0.123");
 
             scanner.PeekToken().Should().Be.Null();
             scanner.NextToken().Should().Be.Null();
         }
 
         [Test]
+        //public void SingleNegativeNumberExpr()
+        //{
+        //    var scanner = new Scanner(new StringReader("-123"));
+
+        //    scanner.NextToken().ShouldLiteralEqual("-123");
+        //}
         public void SingleNegativeNumberExpr()
         {
             var scanner = new Scanner(new StringReader("-123"));
 
-            scanner.NextToken().ShouldLiteralEqual("-123");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
+            scanner.NextToken().ShouldLiteralEqual("123");
         }
 
         [Test]
@@ -117,7 +128,8 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Scanner(new StringReader("-.123"));
 
-            scanner.NextToken().ShouldLiteralEqual("-0.123");
+			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
+            scanner.NextToken().ShouldLiteralEqual("0.123");
         }
 
         [Test]
@@ -154,12 +166,15 @@ namespace ExpressionEngine.Tests
 
             scanner.NextToken().ShouldLiteralEqual("0.2");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Slash, "/");
-            scanner.NextToken().ShouldLiteralEqual("+9.99");
+			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
+            scanner.NextToken().ShouldLiteralEqual("9.99");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Star, "*");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.OpenBracket, "(");
-            scanner.NextToken().ShouldLiteralEqual("-0.123");
+			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
+            scanner.NextToken().ShouldLiteralEqual("0.123");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
-            scanner.NextToken().ShouldLiteralEqual("-2");
+			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
+            scanner.NextToken().ShouldLiteralEqual("2");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.CloseBracket, ")");
 
             scanner.NextToken().Should().Be.Null();
@@ -170,18 +185,23 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Scanner(new StringReader("-.23 + +.99 * ((-.123 + -2.1)--333)"));
 
-            scanner.NextToken().ShouldLiteralEqual("-0.23");
+			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
+            scanner.NextToken().ShouldLiteralEqual("0.23");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
-            scanner.NextToken().ShouldLiteralEqual("+0.99");
+			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
+            scanner.NextToken().ShouldLiteralEqual("0.99");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Star, "*");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.OpenBracket, "(");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.OpenBracket, "(");
-            scanner.NextToken().ShouldLiteralEqual("-0.123");
+			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
+            scanner.NextToken().ShouldLiteralEqual("0.123");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
-            scanner.NextToken().ShouldLiteralEqual("-2.1");
+			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
+            scanner.NextToken().ShouldLiteralEqual("2.1");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.CloseBracket, ")");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
-            scanner.NextToken().ShouldLiteralEqual("-333");
+			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
+            scanner.NextToken().ShouldLiteralEqual("333");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.CloseBracket, ")");
 
             scanner.NextToken().Should().Be.Null();

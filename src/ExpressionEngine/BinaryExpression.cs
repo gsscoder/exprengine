@@ -1,11 +1,11 @@
 ﻿#region License
 //
-// Expression Engine Library: ThisLibrary.cs
+// Expression Engine Library: BinaryExpression.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
 //
-// Copyright (C) 2012 Giacomo Stelluti Scala
+// Copyright (C) 2007 - 2012 Giacomo Stelluti Scala
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,11 +29,38 @@
 
 namespace ExpressionEngine
 {
-    public static class ThisLibrary
+    enum OperatorType
     {
-        internal const string Name = "ExpressionEngine";
-        internal const string ProductName = "Expression Engine Library";
-        internal const string Version = "1.0.0.11";
-        internal const string ReleaseType = "alfa";
+        UnaryPlus,
+        UnaryMinus,
+        Multiply,
+        Divide,
+        Add,
+        Subtract
+    }
+
+    sealed class BinaryExpression : Expression
+    {
+        public OperatorType Operator;
+
+        public Expression Left;
+
+        public Expression Right;
+
+        public override double Evaluate()
+        {
+            switch (Operator)
+            {
+                case OperatorType.Add:
+                    return Left.Evaluate() + Right.Evaluate();
+                case OperatorType.Subtract:
+                    return Left.Evaluate() - Right.Evaluate();
+                case OperatorType.Multiply:
+                    return Left.Evaluate() * Right.Evaluate();
+                case OperatorType.Divide:
+                    return Left.Evaluate() / Right.Evaluate();
+            }
+            throw new EvaluatorException("Invalid operator type.");
+        }
     }
 }

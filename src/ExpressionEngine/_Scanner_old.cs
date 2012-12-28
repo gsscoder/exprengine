@@ -66,15 +66,21 @@ namespace ExpressionEngine
 
             Advance();
 
-            if (IsPunctuatorChar(_c))
+            //if (IsPunctuatorChar(_c))
+            //{
+            //    // '(', ')', '+', '-', '*', '/', '^'
+            //    token = ScanPunctuator();
+            //}
+            //else if (IsLiteralChar(_c))
+            //{
+            //    // [+|-]0-9, 0-9.0-9, .0-9
+            //    token = ScanNumericLiteral();
+            //}
+            if (IsLiteralOrPunctuator(_c))
             {
-                // '(', ')', '+', '-', '*', '/', '^'
-                token = ScanPunctuator();
-            }
-            else if (IsLiteralChar(_c))
-            {
-                // 0-9, 0-9.0-9, .0-9
-                token = ScanLiteral();
+				// [+|-]0-9, 0-9.0-9, .0-9
+				// '(', ')', '+', '-', '*', '/', '^'
+                token = ScanLiteralOrPunctuator();
             }
             else if (IsLineTerminator(_c))
             {
@@ -146,6 +152,27 @@ namespace ExpressionEngine
             return Token.Punctuator(_c);
         }
 
+        //private Token ScanNumericLiteral()
+        //{
+        //    var numericText = new StringBuilder(new string((char) _c, 1));
+        //    while (true)
+        //    {
+        //        int c = Peek();
+        //        if (!IsLiteralChar(c) || c == -1)
+        //        {
+        //            break;
+        //        }
+        //        numericText.Append((char) c);
+        //        Advance();
+        //    }
+        //    var number = numericText.ToString();
+        //    if (number.StartsWith("."))
+        //    {
+        //        number = "0" + number;
+        //    }
+        //    return Token.Literal(number);
+        //}
+
         private Token ScanLiteral()
         {
             var numericText = new StringBuilder(new string((char)_c, 1));
@@ -162,9 +189,45 @@ namespace ExpressionEngine
             var number = numericText.ToString();
             if (number[0] == '.')
             {
-                number = string.Concat("0", number);
+                number = "0" + number;
+            }
+            else if (number[0] == '+' && number[1] == '.')
+            {
+                number = "+0" + number.Substring(1);
+            }
+            else if (number[0] == '-' && number[1] == '.')
+            {
+                number = "-0" + number.Substring(1);
             }
             return Token.Literal(number);
+        }
+
+        private Token ScanLiteralOrPunctuator()
+        {
+            int n = Peek();
+            if (ColumnNumber == 1)
+            {
+                if (IsLiteralChar(_c) || (IsSign(_c) && IsLiteralChar(n)))
+                {
+                    return ScanLiteral();
+                }
+                else if (_c == '(')
+                {
+                    return ScanPunctuator();
+                }
+            }
+            else
+            {
+                if (IsLiteralChar(_c) || (IsSign(_c) && IsLiteralChar(n)))
+                {
+                    return ScanLiteral();
+                }
+                else if (IsPunctuatorChar(_c))
+                {
+                    return ScanPunctuator();
+                }
+            }
+            throw new EvaluatorException(ColumnNumber, string.Format(CultureInfo.InvariantCulture, "Unexpected character '{0}'.", (char)_c));
         }
 
         private void SkipWhiteSpace()
@@ -202,6 +265,18 @@ namespace ExpressionEngine
         private static bool IsLiteralChar(int c)
         {
             return c == '.' || (c >= '0' && c <= '9');
+        }
+
+        private static bool IsLiteralOrPunctuator(int c)
+        {
+            return c == '(' || c == ')' || c == '+' || c == '-' ||
+                   c == '*' || c == '/' || c == '^' || c == '%' ||
+                   c == '.' || (c >= '0' && c <= '9');
+        }
+
+        private static bool IsSign(int c)
+        {
+            return c == '+' || c == '-';
         }
         #endregion
 

@@ -1,11 +1,11 @@
 ﻿#region License
 //
-// Expression Engine Library: ThisLibrary.cs
+// Expression Engine Library: Expression.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
 //
-// Copyright (C) 2012 Giacomo Stelluti Scala
+// Copyright (C) 2007 - 2012 Giacomo Stelluti Scala
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,11 +29,8 @@
 
 namespace ExpressionEngine
 {
-    public static class ThisLibrary
+    abstract class Expression
     {
-        internal const string Name = "ExpressionEngine";
-        internal const string ProductName = "Expression Engine Library";
-        internal const string Version = "1.0.0.11";
-        internal const string ReleaseType = "alfa";
+        public abstract double Evaluate();
     }
 }

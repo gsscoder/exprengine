@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionEngine.Tests", "src\ExpressionEngine.Tests\ExpressionEngine.Tests.csproj", "{36D20B53-4601-424E-917E-4465B5865B53}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionEngine", "src\ExpressionEngine\ExpressionEngine.csproj", "{241A5DBC-BB66-4E65-BEDA-98B1DB83D2EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionEngine.Console", "src\ExpressionEngine.Console\ExpressionEngine.Console.csproj", "{A22FF391-0125-40F0-A67D-428C27034901}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionEngine.Tests", "src\ExpressionEngine.Tests\ExpressionEngine.Tests.csproj", "{36D20B53-4601-424E-917E-4465B5865B53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,11 +32,13 @@ Global
 		{36D20B53-4601-424E-917E-4465B5865B53}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{36D20B53-4601-424E-917E-4465B5865B53}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{36D20B53-4601-424E-917E-4465B5865B53}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{36D20B53-4601-424E-917E-4465B5865B53}.Debug|x86.Build.0 = Debug|Any CPU
 		{36D20B53-4601-424E-917E-4465B5865B53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36D20B53-4601-424E-917E-4465B5865B53}.Release|Any CPU.Build.0 = Release|Any CPU
 		{36D20B53-4601-424E-917E-4465B5865B53}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{36D20B53-4601-424E-917E-4465B5865B53}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{36D20B53-4601-424E-917E-4465B5865B53}.Release|x86.ActiveCfg = Release|Any CPU
+		{36D20B53-4601-424E-917E-4465B5865B53}.Release|x86.Build.0 = Release|Any CPU
 		{A22FF391-0125-40F0-A67D-428C27034901}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A22FF391-0125-40F0-A67D-428C27034901}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A22FF391-0125-40F0-A67D-428C27034901}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

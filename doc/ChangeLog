@@ -1,5 +1,12 @@
 2012-12-28	Giacomo Stelluti Scala	<gsscoder@gmail.com>
 
+  * Shunting-Yard algorithm replaced by AST evaluation.
+  * Better support for unary operators (logic moved from scanner to parser).
+  * Added Should.Fluent license to doc folder.
+  * Version incremented to 1.0.0.11 alfa.
+
+2012-12-28	Giacomo Stelluti Scala	<gsscoder@gmail.com>
+
   * Corrected IDisposable implementation in Scanner class.
   * Version incremented to 1.0.0.3 alfa.
 
