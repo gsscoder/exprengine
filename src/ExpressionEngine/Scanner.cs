@@ -47,11 +47,6 @@ namespace ExpressionEngine
             Scan();
         }
 
-        public void Dispose()
-        {
-            _reader.Dispose();
-        }
-
         public Token NextToken()
         {
             _current = _next;
@@ -78,11 +73,13 @@ namespace ExpressionEngine
             //}
             //else if (IsLiteralChar(_c))
             //{
-            //    // [+|-]0-9, 0-9.0-9, .0-9,
+            //    // [+|-]0-9, 0-9.0-9, .0-9
             //    token = ScanNumericLiteral();
             //}
             if (IsLiteralOrPunctuator(_c))
             {
+				// [+|-]0-9, 0-9.0-9, .0-9
+				// '(', ')', '+', '-', '*', '/', '^'
                 token = ScanLiteralOrPunctuator();
             }
             else if (IsLineTerminator(_c))
@@ -121,6 +118,22 @@ namespace ExpressionEngine
         {
             return _next == null;
         }
+
+		public void Dispose()
+        {
+			Dispose(true);
+
+			GC.SuppressFinalize(this);
+        }
+
+		private void Dispose(bool disposing)
+		{
+			if (!_disposed)
+			{
+				_reader.Dispose();
+				_disposed = true;
+			}	
+		}
 
         private void Advance()
         {
@@ -191,7 +204,7 @@ namespace ExpressionEngine
 
         private Token ScanLiteralOrPunctuator()
         {
-            int n = _reader.Peek();
+            int n = Peek();
             if (ColumnNumber == 1)
             {
                 if (IsLiteralChar(_c) || (IsSign(_c) && IsLiteralChar(n)))
@@ -267,6 +280,12 @@ namespace ExpressionEngine
         }
         #endregion
 
+		~Scanner()
+		{
+			Dispose(false);
+		}
+
+		private bool _disposed;
         private readonly TextReader _reader;
         private int _c;
         private Token _current;

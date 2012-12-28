@@ -51,56 +51,57 @@ namespace ExpressionEngine
             _operations.Clear();
             _rpn.Clear();
 
-            var scanner = new Scanner(new StringReader(expression)); //SanitizeInput(expression)));
-
-            while (!scanner.IsEof())
-            {
-                var token = scanner.NextToken();
-                //if (token.IsSeparator())
-                //{
-                //    while (_operations.Any() && !_operations.First().IsOpenBracket())
-                //    {
-                //        _rpn.Push(_operations.Pop());
-                //    }
-                //}
-                if (token.IsOpenBracket())
-                {
-                    _operations.Push(token);
-                }
-                else if (token.IsCloseBracket())
-                {
-                    while (_operations.Any() && !_operations.First().IsOpenBracket())
-                    {
-                        _rpn.Push(_operations.Pop());
-                    }
-                    _operations.Pop();
-                    //if (_operations.Any() && _operations.First().IsFunction())
-                    //{
-                    //    _rpn.Push(_operations.Pop());
-                    //}
-                }
-                else if (token.IsLiteral())
-                {
-                    _rpn.Push(token);
-                }
-                else if (token.IsOperator())
-                {
-                    while (_operations.Any() && _operations.First().IsOperator()
-                           && token.Precedence <= _operations.First().Precedence)
-                    {
-                        _rpn.Push(_operations.Pop());
-                    }
-                    _operations.Push(token);
-                }
-                //else if (token.IsFunction())
-                //{
-                //    _operations.Push(token);
-                //}
-                else
-                {
-                    throw new EvaluatorException(scanner.ColumnNumber, "Invalid token.");
-                }
-            }
+            using(var scanner = new Scanner(new StringReader(expression)))
+			{
+	            while (!scanner.IsEof())
+	            {
+	                var token = scanner.NextToken();
+	                //if (token.IsSeparator())
+	                //{
+	                //    while (_operations.Any() && !_operations.First().IsOpenBracket())
+	                //    {
+	                //        _rpn.Push(_operations.Pop());
+	                //    }
+	                //}
+	                if (token.IsOpenBracket())
+	                {
+	                    _operations.Push(token);
+	                }
+	                else if (token.IsCloseBracket())
+	                {
+	                    while (_operations.Any() && !_operations.First().IsOpenBracket())
+	                    {
+	                        _rpn.Push(_operations.Pop());
+	                    }
+	                    _operations.Pop();
+	                    //if (_operations.Any() && _operations.First().IsFunction())
+	                    //{
+	                    //    _rpn.Push(_operations.Pop());
+	                    //}
+	                }
+	                else if (token.IsLiteral())
+	                {
+	                    _rpn.Push(token);
+	                }
+	                else if (token.IsOperator())
+	                {
+	                    while (_operations.Any() && _operations.First().IsOperator()
+	                           && token.Precedence <= _operations.First().Precedence)
+	                    {
+	                        _rpn.Push(_operations.Pop());
+	                    }
+	                    _operations.Push(token);
+	                }
+	                //else if (token.IsFunction())
+	                //{
+	                //    _operations.Push(token);
+	                //}
+	                else
+	                {
+	                    throw new EvaluatorException(scanner.ColumnNumber, "Invalid token.");
+	                }
+	            }
+			}
             while (_operations.Any())
             {
                 _rpn.Push(_operations.Pop());
