@@ -29,6 +29,8 @@
 #region Using Directives
 using System;
 using System.Globalization;
+using System.Linq;
+using System.Text;
 #endregion
 
 namespace ExpressionEngine
@@ -40,7 +42,7 @@ namespace ExpressionEngine
         public Parser(Scanner scanner)
         {
             _scanner = scanner;
-            Advance();
+			//Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket);
         }
 
         public void Dispose()
@@ -51,33 +53,67 @@ namespace ExpressionEngine
         public Expression Parse()
         {
             Expression root = ParseExpression();
+            if (_brackets != 0)
+            {
+                throw new EvaluatorException(_scanner.ColumnNumber, "Syntax error, odd number of brackets.");
+            }
             return root;
         }
 
-        private void Advance()
+		private void Expect(params TokenType[] types)
+		{
+			var next = _scanner.PeekToken();
+            if (next == null)
+            {
+                throw new EvaluatorException(_scanner.ColumnNumber,
+                    string.Format("Unexpected end of input, but found token(s): {0}.", TokenTypeArrayToString(types)));
+            }
+			if (types.Contains(next.Type))
+			{
+				Consume();
+			}
+			else
+			{
+				throw new EvaluatorException(_scanner.ColumnNumber,
+					string.Format("Syntax error, expected token(s) {0}; but found '{1}'.", TokenTypeArrayToString(types), next.Type));
+			}
+		}
+
+        private void Consume()
         {
             //_previous = _current;
             _current = _scanner.NextToken();
+            if (_current != null)
+            {
+                if (_current.IsOpenBracket())
+                {
+                    _brackets++;
+                }
+                else if (_current.IsCloseBracket())
+                {
+                    _brackets--;
+                }
+            }
         }
 
         private Expression ParseExpression()
         {
+			Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket);
             Expression expr = ParseBinaryAddSub();
             return expr;
         }
 
         private Expression ParseBinaryAddSub()
         {
-            BinaryExpression binaryAddSub;
-            Expression expr;
-
-            expr = ParseBinaryMulDiv();
+            Expression expr = ParseBinaryMulDiv();
             while (!_scanner.IsEof() && (_current.IsPlus() || _current.IsMinus()))
             {
-                binaryAddSub = new BinaryExpression();
-                binaryAddSub.Operator = _current.IsPlus() ? OperatorType.Add : OperatorType.Subtract;
-                binaryAddSub.Left = expr;
-                Advance();
+                var binaryAddSub = new BinaryExpression
+                    {
+                        Operator = _current.IsPlus() ? OperatorType.Add : OperatorType.Subtract,
+                        Left = expr
+                    };
+				Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket);
                 binaryAddSub.Right = ParseBinaryMulDiv();
                 expr = binaryAddSub;
             }
@@ -86,16 +122,15 @@ namespace ExpressionEngine
 
         private Expression ParseBinaryMulDiv()
         {
-            BinaryExpression binaryMulDiv;
-            Expression expr;
-
-            expr = ParseUnary();
+            Expression expr = ParseUnary();
             while (!_scanner.IsEof() && (_current.IsStar() || _current.IsSlash()))
             {
-                binaryMulDiv = new BinaryExpression();
-                binaryMulDiv.Operator = _current.IsStar() ? OperatorType.Multiply : OperatorType.Divide;
-                binaryMulDiv.Left = expr;
-                Advance();
+                var binaryMulDiv = new BinaryExpression
+                    {
+                        Operator = _current.IsStar() ? OperatorType.Multiply : OperatorType.Divide,
+                        Left = expr
+                    };
+                Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket);
                 binaryMulDiv.Right = ParseUnary();
                 expr = binaryMulDiv;
             }
@@ -112,13 +147,13 @@ namespace ExpressionEngine
             var unary = new UnaryExpression();
             if (_current.IsMinus())
             {
-               unary.Operator = OperatorType.UnaryMinus;
-               Advance();
+               	unary.Operator = OperatorType.UnaryMinus;
+				Expect(TokenType.Literal, TokenType.OpenBracket); //Consume();
             }
             else if (_current.IsPlus())
             {
                 unary.Operator = OperatorType.UnaryPlus;
-                Advance();
+                Expect(TokenType.Literal, TokenType.OpenBracket); //Consume();
             }
 
             if (_current.IsLiteral())
@@ -131,35 +166,54 @@ namespace ExpressionEngine
             }
             else if (_current.IsOpenBracket())
             {
-                Advance();
+                //Consume();
                 unary.Value = ParseExpression();
             }
             else
             {
                 throw new EvaluatorException(_scanner.ColumnNumber, "Expected literal or open bracket.");
             }
-            Advance();
+            Consume();
             return unary;
         }
 
-        #region Token Helpers
-        private OperatorType GetOperator(Token token)
-        {
-            switch (token.Type)
-            {
-                case TokenType.Plus:
-                    return OperatorType.Add;
-                case TokenType.Minus:
-                    return OperatorType.Subtract;
-                case TokenType.Star:
-                    return OperatorType.Multiply;
-                case TokenType.Slash:
-                    return OperatorType.Divide;
-            }
-            throw new EvaluatorException(_scanner.ColumnNumber, "Expected binary operator.");
-        }
-        #endregion
+		private string TokenTypeArrayToString(TokenType[] types)
+		{
+			var b = new StringBuilder(6 * types.Length);
+			foreach (TokenType t in types)
+			{
+				b.Append("'");
+				switch (t)
+				{
+					case TokenType.OpenBracket:
+						b.Append("(");
+						break;
+					case TokenType.CloseBracket:
+						b.Append(")");
+						break;
+					case TokenType.Plus:
+						b.Append("+");
+						break;
+					case TokenType.Minus:
+						b.Append("-");
+						break;
+					case TokenType.Star:
+						b.Append("*");
+						break;
+					case TokenType.Slash:
+						b.Append("/");
+						break;
+					case TokenType.Literal:
+						b.Append("NUMBER");
+						break;
+				}
+				b.Append("'");
+				b.Append(", ");
+			}
+			return b.ToString(0, b.Length - 2);
+		}
 
+        private int _brackets;
         private Token _current;
         //private Token _previous;
         private readonly Scanner _scanner;

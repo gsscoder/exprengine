@@ -68,8 +68,8 @@ namespace ExpressionEngine
 
         public int ColumnNumber
         {
-            get { return (int) this.Data[DataColumnNumber];  }
-            set { this.Data[DataColumnNumber] = value; }
+            get { return (int) Data[DataColumnNumber];  }
+            set { Data[DataColumnNumber] = value; }
         }
 
         private const string DataColumnNumber = "ColumnNumber";

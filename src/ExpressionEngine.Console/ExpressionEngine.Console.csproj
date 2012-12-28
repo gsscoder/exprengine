@@ -45,17 +45,8 @@
     <Compile Include="..\ExpressionEngine\BinaryExpression.cs">
       <Link>ExpressionEngine\BinaryExpression.cs</Link>
     </Compile>
-    <Compile Include="..\ExpressionEngine\EvaluatorException.cs">
-      <Link>ExpressionEngine\EvaluatorException.cs</Link>
-    </Compile>
     <Compile Include="..\ExpressionEngine\Expression.cs">
       <Link>ExpressionEngine\Expression.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\ExpressionEvaluator.cs">
-      <Link>ExpressionEngine\ExpressionEvaluator.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\IExpressionEvaluator.cs">
-      <Link>ExpressionEngine\IExpressionEvaluator.cs</Link>
     </Compile>
     <Compile Include="..\ExpressionEngine\LiteralExpression.cs">
       <Link>ExpressionEngine\LiteralExpression.cs</Link>
@@ -74,6 +65,15 @@
     </Compile>
     <Compile Include="..\ExpressionEngine\Properties\ThisLibrary.cs">
       <Link>ExpressionEngine\ThisLibrary.cs</Link>
+    </Compile>
+    <Compile Include="..\ExpressionEngine\MathExpression.cs">
+      <Link>ExpressionEngine\MathExpression.cs</Link>
+    </Compile>
+    <Compile Include="..\ExpressionEngine\MathExpressionBase.cs">
+      <Link>ExpressionEngine\MathExpressionBase.cs</Link>
+    </Compile>
+    <Compile Include="..\ExpressionEngine\EvaluatorException.cs">
+      <Link>ExpressionEngine\EvaluatorException.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

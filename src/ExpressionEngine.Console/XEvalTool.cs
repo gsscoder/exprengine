@@ -133,7 +133,7 @@ namespace ExpressionEngine
             if (se.Length == 0) { return false; }
             try
             {
-                var result = _evaluator.Evaluate(se);
+                var result = new MathExpression(se).Evaluate();
                 Console.WriteLine(result);
                 return true;
             }
@@ -192,7 +192,7 @@ namespace ExpressionEngine
         private readonly Options _options = new Options();
         private readonly HeadingInfo _heading = new HeadingInfo(ThisAssembly.Name,
             ThisAssembly.InformationalVersion + " " + ThisAssembly.ReleaseType);
-        private readonly ExpressionEvaluator _evaluator = new ExpressionEvaluator();
+        //private readonly ExpressionEvaluator _evaluator = new ExpressionEvaluator();
         #region Exit Code Constants
         private const int Success = 0;
         private const int Failure = 1;

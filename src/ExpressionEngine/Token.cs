@@ -32,7 +32,7 @@ using System.Globalization;
 
 namespace ExpressionEngine
 {
-    public enum TokenType
+    enum TokenType
     {
         Plus,
         Minus,
@@ -157,9 +157,34 @@ namespace ExpressionEngine
             return Convert.ToDouble(Text, CultureInfo.InvariantCulture);
         }
 
+        private OperatorType GetOperator()
+        {
+            switch (Type)
+            {
+                case TokenType.Plus:
+                    return OperatorType.Add;
+                case TokenType.Minus:
+                    return OperatorType.Subtract;
+                case TokenType.Star:
+                    return OperatorType.Multiply;
+                case TokenType.Slash:
+                    return OperatorType.Divide;
+            }
+            throw new EvaluatorException("Expected binary operator.");
+        }
+
         public static Token Literal(string text)
         {
             return new Token(text, TokenType.Literal);
         }
+
+        //public static string ToText(Token token)
+        //{
+        //    if (token == null)
+        //    {
+        //        return "end of input";
+        //    }
+        //    return token.Text;
+        //}
     }
 }

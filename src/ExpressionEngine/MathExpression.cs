@@ -1,11 +1,11 @@
 ﻿#region License
 //
-// Expression Engine Library: IExpressionEvaluator.cs
+// Expression Engine Library: MathExpression.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
 //
-// Copyright (C) 2012 Giacomo Stelluti Scala
+// Copyright (C) 2007 - 2012 Giacomo Stelluti Scala
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +26,24 @@
 // THE SOFTWARE.
 //
 #endregion
+#region Using Directives
+using System.IO;
+#endregion
 
 namespace ExpressionEngine
 {
-    public interface IExpressionEvaluator
+    public sealed class MathExpression : MathExpressionBase
     {
-        double Evaluate(string expression);
+        public MathExpression(string text) : base(text) {}
+
+        public override double Evaluate()
+        {
+            using (var scanner = new Scanner(new StringReader(Text)))
+            {
+                var parser = new Parser(scanner);
+                var ast = parser.Parse();
+                return ast.Evaluate();
+            }
+        }
     }
 }
