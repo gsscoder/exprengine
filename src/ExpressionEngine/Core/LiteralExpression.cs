@@ -27,7 +27,7 @@
 //
 #endregion
 
-namespace ExpressionEngine
+namespace ExpressionEngine.Model
 {
     sealed class LiteralExpression : Expression
     {

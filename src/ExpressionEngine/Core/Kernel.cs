@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 //
-// Expression Engine Library: MathExpression.cs
+// Expression Engine Library: Kernel.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -30,20 +30,16 @@
 using System.IO;
 #endregion
 
-namespace ExpressionEngine
+namespace ExpressionEngine.Core
 {
-    public sealed class MathExpression : MathExpressionBase
-    {
-        public MathExpression(string text) : base(text) {}
-
-        public override double Evaluate()
-        {
-            using (var scanner = new Scanner(new StringReader(Text)))
-            {
-                var parser = new Parser(scanner);
-                var ast = parser.Parse();
-                return ast.Evaluate();
-            }
-        }
-    }
+	static class Kernel
+	{
+		public static Model.Expression ParseString(string value)
+		{
+			using (var scanner = new Scanner(new StringReader(value)))
+			{
+				return new Parser(scanner).Parse();
+			}
+		}
+	}
 }

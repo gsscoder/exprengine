@@ -39,19 +39,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Token.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\ThisAssembly.cs" />
     <Compile Include="Properties\ThisLibrary.cs" />
-    <Compile Include="BinaryExpression.cs" />
+    <Compile Include="Core\BinaryExpression.cs" />
+    <Compile Include="Core\LiteralExpression.cs" />
+    <Compile Include="Core\Expression.cs" />
+    <Compile Include="Core\Parser.cs" />
+    <Compile Include="Core\Scanner.cs" />
+    <Compile Include="Core\Token.cs" />
+    <Compile Include="Core\UnaryExpression.cs" />
     <Compile Include="Expression.cs" />
-    <Compile Include="LiteralExpression.cs" />
-    <Compile Include="Scanner.cs" />
-    <Compile Include="UnaryExpression.cs" />
-    <Compile Include="Parser.cs" />
-    <Compile Include="MathExpression.cs" />
-    <Compile Include="MathExpressionBase.cs" />
-    <Compile Include="EvaluatorException.cs" />
+    <Compile Include="Core\Kernel.cs" />
+    <Compile Include="ExpressionException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -61,4 +61,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="Core\" />
+  </ItemGroup>
 </Project>

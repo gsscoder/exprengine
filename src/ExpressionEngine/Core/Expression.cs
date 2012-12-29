@@ -1,11 +1,11 @@
 ﻿#region License
 //
-// Expression Engine Library: MathExpressionBase.cs
+// Expression Engine Library: Expression.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
 //
-// Copyright (C) 2012 Giacomo Stelluti Scala
+// Copyright (C) 2007 - 2012 Giacomo Stelluti Scala
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,22 +27,10 @@
 //
 #endregion
 
-namespace ExpressionEngine
+namespace ExpressionEngine.Model
 {
-    public abstract class MathExpressionBase
+    abstract class Expression
     {
-        protected MathExpressionBase(string text)
-        {
-            _text = text;
-        }
-
-        public virtual string Text
-        {
-            get { return _text;  }
-        }
-
         public abstract double Evaluate();
-
-        private readonly string _text;
     }
 }

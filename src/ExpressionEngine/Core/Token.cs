@@ -147,7 +147,7 @@ namespace ExpressionEngine
                     token.Type = TokenType.CloseBracket;
                     break;
                 default:
-                    throw new EvaluatorException("Invalid token.");
+                    throw new ExpressionException("Invalid token.");
             }
             return token;
         }
@@ -157,20 +157,20 @@ namespace ExpressionEngine
             return Convert.ToDouble(Text, CultureInfo.InvariantCulture);
         }
 
-        private OperatorType GetOperator()
+        private Model.OperatorType GetOperator()
         {
             switch (Type)
             {
                 case TokenType.Plus:
-                    return OperatorType.Add;
+                    return Model.OperatorType.Add;
                 case TokenType.Minus:
-                    return OperatorType.Subtract;
+                    return Model.OperatorType.Subtract;
                 case TokenType.Star:
-                    return OperatorType.Multiply;
+                    return Model.OperatorType.Multiply;
                 case TokenType.Slash:
-                    return OperatorType.Divide;
+                    return Model.OperatorType.Divide;
             }
-            throw new EvaluatorException("Expected binary operator.");
+            throw new ExpressionException("Expected binary operator.");
         }
 
         public static Token Literal(string text)

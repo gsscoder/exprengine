@@ -1,5 +1,10 @@
 2012-12-28	Giacomo Stelluti Scala	<gsscoder@gmail.com>
 
+  * Public API / internal types refactored (this time should be very close to first beta).
+  * Version incremented to 1.0.1.1 alfa.
+
+2012-12-28	Giacomo Stelluti Scala	<gsscoder@gmail.com>
+
   * Public API changed.
   * Infix grammar strengthened at parser level.
   * Minor internal refactoring.

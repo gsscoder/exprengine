@@ -1,11 +1,11 @@
-Expression Engine Library 1.0.0.19 Alfa.
+Expression Engine Library 1.0.1.1 Alfa.
 ===
 This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and uses an AST-evaluation algorithm.
 It was written primarily for fun and currently doesn't support variables and functions; but it will in near future, along with other features.
 
 News:
 ---
-  - Public API changed.
+  - Public API / internal types refactored (this time should be very close to first beta).
   - Infix grammar strengthened at parser level.
   - Shunting-Yard algorithm replaced by AST evaluation.
   - Better support for unary operators.
@@ -19,7 +19,7 @@ MonoDevelop or Visual Studio.
 At glance:
 ---
 ```csharp
-var result = new MathExpression("-3 * 0.31 / ((19 + 10) - .7)").Evaluate();
+var result = Expression.Create("-3 * 0.31 / ((19 + 10) - .7)").Value;
 ```
 
 Resources:

@@ -27,7 +27,7 @@
 //
 #endregion
 
-namespace ExpressionEngine
+namespace ExpressionEngine.Model
 {
     enum OperatorType
     {
@@ -60,7 +60,7 @@ namespace ExpressionEngine
                 case OperatorType.Divide:
                     return Left.Evaluate() / Right.Evaluate();
             }
-            throw new EvaluatorException("Invalid operator type.");
+            throw new ExpressionException("Invalid operator type.");
         }
     }
 }

@@ -79,7 +79,7 @@ namespace ExpressionEngine
             else if (IsLineTerminator(_c))
             {
                 // {CR} + {LF}, {CR}, {LF}
-                throw new EvaluatorException(ColumnNumber, "Line terminator is not allowed.");
+                throw new ExpressionException(ColumnNumber, "Line terminator is not allowed.");
             }
             else if (_c == -1)
             {
@@ -88,7 +88,7 @@ namespace ExpressionEngine
             }
             else
             {
-                throw new EvaluatorException(ColumnNumber, string.Format(CultureInfo.InvariantCulture, "Unexpected character '{0}'.", (char) _c));                
+                throw new ExpressionException(ColumnNumber, string.Format(CultureInfo.InvariantCulture, "Unexpected character '{0}'.", (char) _c));                
             }
             _position++;
             _next = token;

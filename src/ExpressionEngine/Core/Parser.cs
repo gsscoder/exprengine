@@ -42,7 +42,6 @@ namespace ExpressionEngine
         public Parser(Scanner scanner)
         {
             _scanner = scanner;
-			//Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket);
         }
 
         public void Dispose()
@@ -50,12 +49,12 @@ namespace ExpressionEngine
             _scanner.Dispose();
         }
 
-        public Expression Parse()
+        public Model.Expression Parse()
         {
-            Expression root = ParseExpression();
+            Model.Expression root = ParseExpression();
             if (_brackets != 0)
             {
-                throw new EvaluatorException(_scanner.ColumnNumber, "Syntax error, odd number of brackets.");
+                throw new ExpressionException(_scanner.ColumnNumber, "Syntax error, odd number of brackets.");
             }
             return root;
         }
@@ -65,7 +64,7 @@ namespace ExpressionEngine
 			var next = _scanner.PeekToken();
             if (next == null)
             {
-                throw new EvaluatorException(_scanner.ColumnNumber,
+                throw new ExpressionException(_scanner.ColumnNumber,
                     string.Format("Unexpected end of input, but found token(s): {0}.", TokenTypeArrayToString(types)));
             }
 			if (types.Contains(next.Type))
@@ -74,7 +73,7 @@ namespace ExpressionEngine
 			}
 			else
 			{
-				throw new EvaluatorException(_scanner.ColumnNumber,
+				throw new ExpressionException(_scanner.ColumnNumber,
 					string.Format("Syntax error, expected token(s) {0}; but found '{1}'.", TokenTypeArrayToString(types), next.Type));
 			}
 		}
@@ -96,21 +95,21 @@ namespace ExpressionEngine
             }
         }
 
-        private Expression ParseExpression()
+        private Model.Expression ParseExpression()
         {
 			Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket);
-            Expression expr = ParseBinaryAddSub();
+            Model.Expression expr = ParseBinaryAddSub();
             return expr;
         }
 
-        private Expression ParseBinaryAddSub()
+        private Model.Expression ParseBinaryAddSub()
         {
-            Expression expr = ParseBinaryMulDiv();
+            Model.Expression expr = ParseBinaryMulDiv();
             while (!_scanner.IsEof() && (_current.IsPlus() || _current.IsMinus()))
             {
-                var binaryAddSub = new BinaryExpression
+                var binaryAddSub = new Model.BinaryExpression
                     {
-                        Operator = _current.IsPlus() ? OperatorType.Add : OperatorType.Subtract,
+                        Operator = _current.IsPlus() ? Model.OperatorType.Add : Model.OperatorType.Subtract,
                         Left = expr
                     };
 				Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket);
@@ -120,14 +119,14 @@ namespace ExpressionEngine
             return expr;
         }
 
-        private Expression ParseBinaryMulDiv()
+        private Model.Expression ParseBinaryMulDiv()
         {
-            Expression expr = ParseUnary();
+            Model.Expression expr = ParseUnary();
             while (!_scanner.IsEof() && (_current.IsStar() || _current.IsSlash()))
             {
-                var binaryMulDiv = new BinaryExpression
+                var binaryMulDiv = new Model.BinaryExpression
                     {
-                        Operator = _current.IsStar() ? OperatorType.Multiply : OperatorType.Divide,
+                        Operator = _current.IsStar() ? Model.OperatorType.Multiply : Model.OperatorType.Divide,
                         Left = expr
                     };
                 Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket);
@@ -137,41 +136,40 @@ namespace ExpressionEngine
             return expr;
         }
 
-        private Expression ParseUnary()
+        private Model.Expression ParseUnary()
         {
             if (_current == null)
             {
-                throw new EvaluatorException("Expected unary operator, literal or open bracket.");    
+                throw new ExpressionException("Expected unary operator, literal or open bracket.");    
             }
 
-            var unary = new UnaryExpression();
+            var unary = new Model.UnaryExpression();
             if (_current.IsMinus())
             {
-               	unary.Operator = OperatorType.UnaryMinus;
-				Expect(TokenType.Literal, TokenType.OpenBracket); //Consume();
+               	unary.Operator = Model.OperatorType.UnaryMinus;
+				Expect(TokenType.Literal, TokenType.OpenBracket);
             }
             else if (_current.IsPlus())
             {
-                unary.Operator = OperatorType.UnaryPlus;
-                Expect(TokenType.Literal, TokenType.OpenBracket); //Consume();
+                unary.Operator = Model.OperatorType.UnaryPlus;
+                Expect(TokenType.Literal, TokenType.OpenBracket);
             }
 
             if (_current.IsLiteral())
             {
-                unary.Value = new LiteralExpression(Convert.ToDouble(_current.Text, CultureInfo.InvariantCulture));
+                unary.Value = new Model.LiteralExpression(Convert.ToDouble(_current.Text, CultureInfo.InvariantCulture));
                 if (_scanner.PeekToken() != null && _scanner.PeekToken().IsLiteral())
                 {
-                    throw new EvaluatorException(_scanner.ColumnNumber, "Expected expression.");
+                    throw new ExpressionException(_scanner.ColumnNumber, "Expected expression.");
                 }
             }
             else if (_current.IsOpenBracket())
             {
-                //Consume();
                 unary.Value = ParseExpression();
             }
             else
             {
-                throw new EvaluatorException(_scanner.ColumnNumber, "Expected literal or open bracket.");
+                throw new ExpressionException(_scanner.ColumnNumber, "Expected literal or open bracket.");
             }
             Consume();
             return unary;

@@ -34,33 +34,33 @@ using System.Runtime.Serialization;
 namespace ExpressionEngine
 {
     [Serializable]
-    public class EvaluatorException : Exception
+    public class ExpressionException : Exception
     {
-        public EvaluatorException(string message)
+        public ExpressionException(string message)
             : base(message)
         {
             ColumnNumber = -1;
         }
 
-        public EvaluatorException(string message, Exception innerException)
+        public ExpressionException(string message, Exception innerException)
             : base(message, innerException)
         {
             ColumnNumber = -1;
         }
 
-        public EvaluatorException(int columnNumber, string message)
+        public ExpressionException(int columnNumber, string message)
             : base(message)
         {
             ColumnNumber = columnNumber;
         }
 
-        public EvaluatorException(int columnNumber, string message, Exception innerException)
+        public ExpressionException(int columnNumber, string message, Exception innerException)
             : base(message, innerException)
         {
             ColumnNumber = columnNumber;
         }
 
-        protected EvaluatorException(SerializationInfo info, StreamingContext context)
+        protected ExpressionException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
             ColumnNumber = -1;

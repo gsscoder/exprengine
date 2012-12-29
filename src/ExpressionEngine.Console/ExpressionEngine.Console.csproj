@@ -42,41 +42,42 @@
     <Compile Include="StringUtil.cs" />
     <Compile Include="XEvalTool.cs" />
     <Compile Include="XEvalTool.Options.cs" />
-    <Compile Include="..\ExpressionEngine\BinaryExpression.cs">
-      <Link>ExpressionEngine\BinaryExpression.cs</Link>
+    <Compile Include="..\ExpressionEngine\Core\BinaryExpression.cs">
+      <Link>ExpressionEngine\Core\BinaryExpression.cs</Link>
+    </Compile>
+    <Compile Include="..\ExpressionEngine\Core\Expression.cs">
+      <Link>ExpressionEngine\Core\Expression.cs</Link>
+    </Compile>
+    <Compile Include="..\ExpressionEngine\Core\Kernel.cs">
+      <Link>ExpressionEngine\Core\Kernel.cs</Link>
+    </Compile>
+    <Compile Include="..\ExpressionEngine\Core\LiteralExpression.cs">
+      <Link>ExpressionEngine\Core\LiteralExpression.cs</Link>
+    </Compile>
+    <Compile Include="..\ExpressionEngine\Core\Parser.cs">
+      <Link>ExpressionEngine\Core\Parser.cs</Link>
+    </Compile>
+    <Compile Include="..\ExpressionEngine\Core\Scanner.cs">
+      <Link>ExpressionEngine\Core\Scanner.cs</Link>
+    </Compile>
+    <Compile Include="..\ExpressionEngine\Core\Token.cs">
+      <Link>ExpressionEngine\Core\Token.cs</Link>
+    </Compile>
+    <Compile Include="..\ExpressionEngine\Core\UnaryExpression.cs">
+      <Link>ExpressionEngine\Core\UnaryExpression.cs</Link>
     </Compile>
     <Compile Include="..\ExpressionEngine\Expression.cs">
       <Link>ExpressionEngine\Expression.cs</Link>
     </Compile>
-    <Compile Include="..\ExpressionEngine\LiteralExpression.cs">
-      <Link>ExpressionEngine\LiteralExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Parser.cs">
-      <Link>ExpressionEngine\Parser.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Scanner.cs">
-      <Link>ExpressionEngine\Scanner.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Token.cs">
-      <Link>ExpressionEngine\Token.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\UnaryExpression.cs">
-      <Link>ExpressionEngine\UnaryExpression.cs</Link>
+    <Compile Include="..\ExpressionEngine\ExpressionException.cs">
+      <Link>ExpressionEngine\ExpressionException.cs</Link>
     </Compile>
     <Compile Include="..\ExpressionEngine\Properties\ThisLibrary.cs">
       <Link>ExpressionEngine\ThisLibrary.cs</Link>
     </Compile>
-    <Compile Include="..\ExpressionEngine\MathExpression.cs">
-      <Link>ExpressionEngine\MathExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\MathExpressionBase.cs">
-      <Link>ExpressionEngine\MathExpressionBase.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\EvaluatorException.cs">
-      <Link>ExpressionEngine\EvaluatorException.cs</Link>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ExpressionEngine\" />
+    <Folder Include="ExpressionEngine\Core\" />
   </ItemGroup>
 </Project>

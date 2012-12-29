@@ -1,4 +1,4 @@
-﻿namespace ExpressionEngine
+﻿namespace ExpressionEngine.Model
 {
     class UnaryExpression : Expression
     {
@@ -15,7 +15,7 @@
                 case OperatorType.UnaryMinus:
                     return Value.Evaluate() * -1;
             }
-            throw new EvaluatorException("Invalid operator type.");
+            throw new ExpressionException("Invalid operator type.");
         }
     }
 }

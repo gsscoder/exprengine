@@ -133,11 +133,11 @@ namespace ExpressionEngine
             if (se.Length == 0) { return false; }
             try
             {
-                var result = new MathExpression(se).Evaluate();
+				var result = Expression.Create(se).Value;
                 Console.WriteLine(result);
                 return true;
             }
-            catch (EvaluatorException e)
+            catch (ExpressionException e)
             {
                 Console.WriteLine(FormatException(se, e));
             }
@@ -169,7 +169,7 @@ namespace ExpressionEngine
             Console.WriteLine("Embeds {0}, Version {1} {2}.", ThisLibrary.ProductName, ThisLibrary.Version, ThisLibrary.ReleaseType);
         }
 
-        private string FormatException(string expression, EvaluatorException e)
+        private string FormatException(string expression, ExpressionException e)
         {
             var builder = new StringBuilder((expression.Length + e.Message.Length + 16) * 2);
             if (e.ColumnNumber >= 0)
