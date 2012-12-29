@@ -44,7 +44,6 @@
     <Compile Include="Properties\ThisLibrary.cs" />
     <Compile Include="Core\BinaryExpression.cs" />
     <Compile Include="Core\LiteralExpression.cs" />
-    <Compile Include="Core\Expression.cs" />
     <Compile Include="Core\Parser.cs" />
     <Compile Include="Core\Scanner.cs" />
     <Compile Include="Core\Token.cs" />
@@ -52,6 +51,7 @@
     <Compile Include="Expression.cs" />
     <Compile Include="Core\Kernel.cs" />
     <Compile Include="ExpressionException.cs" />
+    <Compile Include="Core\IExpression.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

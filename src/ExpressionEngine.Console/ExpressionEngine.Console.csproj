@@ -45,9 +45,6 @@
     <Compile Include="..\ExpressionEngine\Core\BinaryExpression.cs">
       <Link>ExpressionEngine\Core\BinaryExpression.cs</Link>
     </Compile>
-    <Compile Include="..\ExpressionEngine\Core\Expression.cs">
-      <Link>ExpressionEngine\Core\Expression.cs</Link>
-    </Compile>
     <Compile Include="..\ExpressionEngine\Core\Kernel.cs">
       <Link>ExpressionEngine\Core\Kernel.cs</Link>
     </Compile>
@@ -74,6 +71,9 @@
     </Compile>
     <Compile Include="..\ExpressionEngine\Properties\ThisLibrary.cs">
       <Link>ExpressionEngine\ThisLibrary.cs</Link>
+    </Compile>
+    <Compile Include="..\ExpressionEngine\Core\IExpression.cs">
+      <Link>ExpressionEngine\Core\IExpression.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

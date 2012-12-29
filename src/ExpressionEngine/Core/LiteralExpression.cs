@@ -29,7 +29,7 @@
 
 namespace ExpressionEngine.Model
 {
-    sealed class LiteralExpression : Expression
+    sealed class LiteralExpression : IExpression
     {
         private LiteralExpression() {}
 
@@ -40,7 +40,7 @@ namespace ExpressionEngine.Model
 
         public double Value;
 
-        public override double Evaluate()
+        public double Evaluate()
         {
             return Value;
         }

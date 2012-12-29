@@ -49,9 +49,9 @@ namespace ExpressionEngine
             _scanner.Dispose();
         }
 
-        public Model.Expression Parse()
+        public Model.IExpression Parse()
         {
-            Model.Expression root = ParseExpression();
+            Model.IExpression root = ParseExpression();
             if (_brackets != 0)
             {
                 throw new ExpressionException(_scanner.ColumnNumber, "Syntax error, odd number of brackets.");
@@ -95,16 +95,16 @@ namespace ExpressionEngine
             }
         }
 
-        private Model.Expression ParseExpression()
+        private Model.IExpression ParseExpression()
         {
 			Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket);
-            Model.Expression expr = ParseBinaryAddSub();
+            Model.IExpression expr = ParseBinaryAddSub();
             return expr;
         }
 
-        private Model.Expression ParseBinaryAddSub()
+        private Model.IExpression ParseBinaryAddSub()
         {
-            Model.Expression expr = ParseBinaryMulDiv();
+            Model.IExpression expr = ParseBinaryMulDiv();
             while (!_scanner.IsEof() && (_current.IsPlus() || _current.IsMinus()))
             {
                 var binaryAddSub = new Model.BinaryExpression
@@ -119,9 +119,9 @@ namespace ExpressionEngine
             return expr;
         }
 
-        private Model.Expression ParseBinaryMulDiv()
+        private Model.IExpression ParseBinaryMulDiv()
         {
-            Model.Expression expr = ParseUnary();
+            Model.IExpression expr = ParseUnary();
             while (!_scanner.IsEof() && (_current.IsStar() || _current.IsSlash()))
             {
                 var binaryMulDiv = new Model.BinaryExpression
@@ -136,7 +136,7 @@ namespace ExpressionEngine
             return expr;
         }
 
-        private Model.Expression ParseUnary()
+        private Model.IExpression ParseUnary()
         {
             if (_current == null)
             {

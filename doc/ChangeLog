@@ -1,3 +1,8 @@
+2012-12-29      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * Model.Expression changed into IExpression interface.
+  * Version incremented to 1.0.1.5 alfa.
+
 2012-12-29	Giacomo Stelluti Scala	<gsscoder@gmail.com>
 
   * Internal refactoring of Expression class. The type is now really immutable (this will shape

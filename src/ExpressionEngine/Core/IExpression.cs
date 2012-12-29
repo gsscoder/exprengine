@@ -29,8 +29,8 @@
 
 namespace ExpressionEngine.Model
 {
-    abstract class Expression
+    interface IExpression
     {
-        public abstract double Evaluate();
+    	double Evaluate();
     }
 }

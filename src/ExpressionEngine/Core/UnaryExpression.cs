@@ -1,12 +1,12 @@
 ﻿namespace ExpressionEngine.Model
 {
-    class UnaryExpression : Expression
+    sealed class UnaryExpression : IExpression
     {
         public OperatorType Operator;
 
-        public Expression Value;
+        public Model.IExpression Value;
 
-        public override double Evaluate()
+        public double Evaluate()
         {
             switch (Operator)
             {

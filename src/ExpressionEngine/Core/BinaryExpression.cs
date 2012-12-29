@@ -39,15 +39,15 @@ namespace ExpressionEngine.Model
         Subtract
     }
 
-    sealed class BinaryExpression : Expression
+    sealed class BinaryExpression : IExpression
     {
         public OperatorType Operator;
 
-        public Expression Left;
+        public Model.IExpression Left;
 
-        public Expression Right;
+        public Model.IExpression Right;
 
-        public override double Evaluate()
+        public double Evaluate()
         {
             switch (Operator)
             {

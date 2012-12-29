@@ -34,7 +34,7 @@ namespace ExpressionEngine.Core
 {
 	static class Kernel
 	{
-		public static Model.Expression ParseString(string value)
+		public static Model.IExpression ParseString(string value)
 		{
 			using (var scanner = new Scanner(new StringReader(value)))
 			{
