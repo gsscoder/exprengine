@@ -72,6 +72,12 @@ namespace ExpressionEngine.Tests
             Expression.Create("sqrt(10000) / 2").Value.Should().Equal(50D);
         }
 
+		[Test]
+        public void SmallExprWithFunction_Unary()
+        {
+            Expression.Create("-pow(10, 2)").Value.Should().Equal(-100D);
+        }
+
         [Test]
         public void Expr()
         {

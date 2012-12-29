@@ -191,12 +191,12 @@ namespace ExpressionEngine
             if (_current.IsMinus())
             {
                	unary.Operator = Model.OperatorType.UnaryMinus;
-				Expect(TokenType.Literal, TokenType.OpenBracket);
+				Expect(TokenType.Literal, TokenType.OpenBracket, TokenType.Identifier);
             }
             else if (_current.IsPlus())
             {
                 unary.Operator = Model.OperatorType.UnaryPlus;
-                Expect(TokenType.Literal, TokenType.OpenBracket);
+                Expect(TokenType.Literal, TokenType.OpenBracket, TokenType.Identifier);
             }
 
             if (_current.IsLiteral())
@@ -210,6 +210,10 @@ namespace ExpressionEngine
             else if (_current.IsOpenBracket())
             {
                 unary.Value = ParseExpression();
+            }
+            else if (_current.IsIdentifier())
+            {
+                unary.Value = ParseFunction();
             }
             else
             {
