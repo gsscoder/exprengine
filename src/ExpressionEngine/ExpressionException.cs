@@ -33,40 +33,43 @@ using System.Runtime.Serialization;
 
 namespace ExpressionEngine
 {
+	/// <summary>
+	/// The exception that is thrown when a <see cref="ExpressionEngine.Expression"/> can't be evaluated.
+	/// </summary>
     [Serializable]
-    public class ExpressionException : Exception
+    public sealed class ExpressionException : Exception
     {
-        public ExpressionException(string message)
+        internal ExpressionException(string message)
             : base(message)
         {
             ColumnNumber = -1;
         }
 
-        public ExpressionException(string message, Exception innerException)
+        internal ExpressionException(string message, Exception innerException)
             : base(message, innerException)
         {
             ColumnNumber = -1;
         }
 
-        public ExpressionException(int columnNumber, string message)
+        internal ExpressionException(int columnNumber, string message)
             : base(message)
         {
             ColumnNumber = columnNumber;
         }
 
-        public ExpressionException(int columnNumber, string message, Exception innerException)
+        internal ExpressionException(int columnNumber, string message, Exception innerException)
             : base(message, innerException)
         {
             ColumnNumber = columnNumber;
         }
 
-        protected ExpressionException(SerializationInfo info, StreamingContext context)
+        private ExpressionException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
             ColumnNumber = -1;
         }
 
-        public int ColumnNumber
+        internal int ColumnNumber
         {
             get { return (int) Data[DataColumnNumber];  }
             set { Data[DataColumnNumber] = value; }

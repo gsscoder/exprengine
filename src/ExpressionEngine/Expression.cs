@@ -32,56 +32,44 @@ using ExpressionEngine.Core;
 namespace ExpressionEngine
 {
 	/// <summary>
-	/// Represents a mathematical expression that can be evaluated, accessing <see cref="Value"/> property.
+	/// Represents an immutable mathematical expression. Its result is stored in the <see cref="Value"/> property.
 	/// </summary>
     public sealed class Expression
     {
-		private Expression(string text)
+		private Expression(string text, double value)
 		{
-			Text = text;
+			_text = text;
+			_value = value;
 		}
 
 		/// <summary>
-		/// Creates an <see cref="ExpressionEngine.Expression" instance with specified string./>
+		/// Creates an <see cref="ExpressionEngine.Expression" instance with infix notation string./>
 		/// </summary>
 		/// <param name='text'>Infix notation string to be evaluated.</param>
 		public static Expression Create(string text)
 		{
-			return new Expression(text);
+			return new Expression(text, Kernel.ParseString(text).Evaluate());
 		}
 
 		/// <summary>
 		/// Gets the <see cref="System.String"/> with the mathematical expression of the current instance.
 		/// </summary>
 		/// <value>A <see cref="System.String"/> with the mathematical expression.</value>
-		public string Text { get; private set; }
+		public string Text { get { return _text; } }
 
-		public double Value
-		{
-			get
-			{
-				if (_value == null)
-				{
-					_value = Kernel.ParseString(Text).Evaluate();
-				}
-				return _value.Value;
-			}
-		}
+		public double Value { get { return _value; } }
 
 		/// <summary>
 		/// Serves as a hash function for a <see cref="ExpressionEngine.Expression"/> object.
 		/// </summary>
 		/// <returns>A hash code for this instance that is suitable for use in hashing algorithms and
 		/// data structures such as a hash table.</returns>
-		public sealed override int GetHashCode()
+		public override int GetHashCode()
 		{
-			if (_value != null)
-			{
-				return Text.GetHashCode() ^ _value.Value.GetHashCode();
-			}
-			return Text.GetHashCode();
+			return _text.GetHashCode() ^ _value.GetHashCode();
 		}
 
-		private double? _value;
+		private readonly string _text;
+		private readonly double _value;
     }
 }

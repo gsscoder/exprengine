@@ -1,5 +1,11 @@
 2012-12-29	Giacomo Stelluti Scala	<gsscoder@gmail.com>
 
+  * Internal refactoring of Expression class. The type is now really immutable (this will shape
+      subsequent API design).
+  * Version incremented to 1.0.1.3 alfa.
+
+2012-12-29	Giacomo Stelluti Scala	<gsscoder@gmail.com>
+
   * Public API / internal types refactored (this time should be very close to first beta).
   * Version incremented to 1.0.1.1 alfa.
 

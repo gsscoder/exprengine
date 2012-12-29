@@ -1,10 +1,11 @@
-Expression Engine Library 1.0.1.1 Alfa.
+Expression Engine Library 1.0.1.3 Alfa.
 ===
 This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and uses an AST-evaluation algorithm.
 It was written primarily for fun and currently doesn't support variables and functions; but it will in near future, along with other features.
 
 News:
 ---
+  - Expression class is now really immutable.
   - Public API / internal types refactored (this time should be very close to first beta).
   - Infix grammar strengthened at parser level.
   - Shunting-Yard algorithm replaced by AST evaluation.
