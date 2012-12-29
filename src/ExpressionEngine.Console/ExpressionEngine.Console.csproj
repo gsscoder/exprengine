@@ -75,6 +75,9 @@
     <Compile Include="..\ExpressionEngine\Core\IExpression.cs">
       <Link>ExpressionEngine\Core\IExpression.cs</Link>
     </Compile>
+    <Compile Include="..\ExpressionEngine\Core\FunctionExpression.cs">
+      <Link>ExpressionEngine\Core\FunctionExpression.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ExpressionEngine\" />

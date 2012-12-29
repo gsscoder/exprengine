@@ -68,8 +68,13 @@ namespace ExpressionEngine
 
             if (IsPunctuatorChar(_c))
             {
-                // '(', ')', '+', '-', '*', '/', '^'
+                // '(', ')', '+', '-', '*', '/', '^', ','
                 token = ScanPunctuator();
+            }
+            else if (char.IsLetter((char) _c))
+            {
+                // [a|A-z|Z]
+                token = ScanIdentifier();
             }
             else if (IsLiteralChar(_c))
             {
@@ -148,7 +153,7 @@ namespace ExpressionEngine
 
         private Token ScanLiteral()
         {
-            var numericText = new StringBuilder(new string((char)_c, 1));
+            var numericText = new StringBuilder(new string((char) _c, 1));
             while (true)
             {
                 int c = Peek();
@@ -156,7 +161,7 @@ namespace ExpressionEngine
                 {
                     break;
                 }
-                numericText.Append((char)c);
+                numericText.Append((char) c);
                 Advance();
             }
             var number = numericText.ToString();
@@ -165,6 +170,22 @@ namespace ExpressionEngine
                 number = string.Concat("0", number);
             }
             return Token.Literal(number);
+        }
+
+        private Token ScanIdentifier()
+        {
+            var identText = new StringBuilder(new string((char) _c, 1));
+            while (true)
+            {
+                int c = Peek();
+                if (!char.IsLetter((char) c) || c == -1)
+                {
+                    break;
+                }
+                identText.Append((char) c);
+                Advance();
+            }
+            return Token.Identifier(identText.ToString());
         }
 
         private void SkipWhiteSpace()
@@ -184,7 +205,8 @@ namespace ExpressionEngine
         private static bool IsPunctuatorChar(int c)
         {
             return c == '(' || c == ')' || c == '+' || c == '-' ||
-                   c == '*' || c == '/' || c == '^' || c == '%';
+                   c == '*' || c == '/' || c == '^' || c == '%' ||
+                   c == ',';
         }
 
         private static bool IsWhiteSpace(int c)

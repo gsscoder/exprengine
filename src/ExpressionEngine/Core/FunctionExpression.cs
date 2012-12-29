@@ -1,6 +1,6 @@
 ﻿#region License
 //
-// Expression Engine Library: TokenUtil.cs
+// Expression Engine Library: FunctionExpression.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -27,30 +27,42 @@
 //
 #endregion
 #region Using Directives
-using Should.Fluent;
+using System.Collections.Generic;
 using ExpressionEngine.Core;
 #endregion
 
-namespace ExpressionEngine.Tests
+namespace ExpressionEngine.Model
 {
-    static class TokenUtil
+    sealed class FunctionExpression : IExpression
     {
-        public static void ShouldPunctuatorEqual(this Token token, TokenType type, string text)
+        public FunctionExpression()
         {
-            token.Type.Should().Equal(type);
-            token.Text.Should().Equal(text);
+            Arguments = new List<IExpression>();    
         }
 
-        public static void ShouldLiteralEqual(this Token token, string text)
+        public string Name;
+
+        public List<IExpression> Arguments;
+
+        public double Evaluate()
         {
-            token.Type.Should().Equal(TokenType.Literal);
-            token.Text.Should().Equal(text);
+            var builtIn = Kernel.BuiltIn.FromString(Name);
+            if (builtIn == null)
+            {
+                throw new ExpressionException("Undefined function.");
+            }
+            var vals = GetValuesFromArguments();
+            return builtIn.Execute(vals);
         }
 
-        public static void ShouldIdentifierEqual(this Token token, string text)
+        private double[] GetValuesFromArguments()
         {
-            token.Type.Should().Equal(TokenType.Identifier);
-            token.Text.Should().Equal(text);
+            var values = new double[Arguments.Count];
+            for (int i = 0; i < Arguments.Count; i++)
+            {
+                values[i] = Arguments[i].Evaluate();
+            }
+            return values;
         }
     }
 }

@@ -5,7 +5,7 @@
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
 //
-// Copyright (C) 2007 - 2012 Giacomo Stelluti Scala
+// Copyright (C) 2012 Giacomo Stelluti Scala
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,8 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using ExpressionEngine.Model;
+
 #endregion
 
 namespace ExpressionEngine
@@ -95,9 +97,16 @@ namespace ExpressionEngine
             }
         }
 
-        private Model.IExpression ParseExpression()
+        private Model.IExpression ParseExpression(bool insideFunc = false)
         {
-			Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket);
+            if (!insideFunc)
+            {
+                Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier);
+            }
+            else // may allow ','
+            {
+                Expect(TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier);
+            }
             Model.IExpression expr = ParseBinaryAddSub();
             return expr;
         }
@@ -112,7 +121,7 @@ namespace ExpressionEngine
                         Operator = _current.IsPlus() ? Model.OperatorType.Add : Model.OperatorType.Subtract,
                         Left = expr
                     };
-				Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket);
+				Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier);
                 binaryAddSub.Right = ParseBinaryMulDiv();
                 expr = binaryAddSub;
             }
@@ -121,7 +130,7 @@ namespace ExpressionEngine
 
         private Model.IExpression ParseBinaryMulDiv()
         {
-            Model.IExpression expr = ParseUnary();
+            Model.IExpression expr = ParseFunction(); //ParseUnary();
             while (!_scanner.IsEof() && (_current.IsStar() || _current.IsSlash()))
             {
                 var binaryMulDiv = new Model.BinaryExpression
@@ -129,9 +138,44 @@ namespace ExpressionEngine
                         Operator = _current.IsStar() ? Model.OperatorType.Multiply : Model.OperatorType.Divide,
                         Left = expr
                     };
-                Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket);
-                binaryMulDiv.Right = ParseUnary();
+                Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier);
+                binaryMulDiv.Right = ParseFunction(); //ParseUnary();
                 expr = binaryMulDiv;
+            }
+            return expr;
+        }
+
+        private Model.IExpression ParseFunction()
+        {
+            if (_current == null)
+            {
+                throw new ExpressionException(_scanner.ColumnNumber, "Expected function or expression.");
+            }
+
+            if (!_current.IsIdentifier())
+            {
+                return ParseUnary();
+            }
+
+            var expr = new Model.FunctionExpression() {Name = _current.Text};
+            Expect(TokenType.OpenBracket);
+            while (!_scanner.IsEof())
+            {
+                expr.Arguments.Add(ParseExpression(true));
+                //Expect(TokenType.Comma, TokenType.CloseBracket);
+                if (_current.IsComma())
+                {
+                    continue; //Consume();
+                }
+                else if (_current.IsCloseBracket())
+                {
+                    Consume();
+                    break;
+                }
+                else
+                {
+                    throw new ExpressionException(_scanner.ColumnNumber, "Expected comma or close bracket.");
+                }
             }
             return expr;
         }
@@ -140,7 +184,7 @@ namespace ExpressionEngine
         {
             if (_current == null)
             {
-                throw new ExpressionException("Expected unary operator, literal or open bracket.");    
+                throw new ExpressionException(_scanner.ColumnNumber, "Expected unary operator, literal or open bracket.");    
             }
 
             var unary = new Model.UnaryExpression();
@@ -201,9 +245,15 @@ namespace ExpressionEngine
 					case TokenType.Slash:
 						b.Append("/");
 						break;
+                    case TokenType.Comma:
+				        b.Append(",");
+                        break;
 					case TokenType.Literal:
 						b.Append("NUMBER");
 						break;
+                    case TokenType.Identifier:
+				        b.Append("IDENT");
+                        break;
 				}
 				b.Append("'");
 				b.Append(", ");

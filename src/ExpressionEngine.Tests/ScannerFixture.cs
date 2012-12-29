@@ -237,5 +237,22 @@ namespace ExpressionEngine.Tests
 
             scanner.NextToken().Should().Be.Null();
         }
+
+        [Test]
+        public void SmallExprWithFunction()
+        {
+            var scanner = new Scanner(new StringReader("3 + pow(10, 2)"));
+
+            scanner.NextToken().ShouldLiteralEqual("3");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
+            scanner.NextToken().ShouldIdentifierEqual("pow");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.OpenBracket, "(");
+            scanner.NextToken().ShouldLiteralEqual("10");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.Comma, ",");
+            scanner.NextToken().ShouldLiteralEqual("2");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.CloseBracket, ")");
+
+            scanner.NextToken().Should().Be.Null();
+        }
     }
 }

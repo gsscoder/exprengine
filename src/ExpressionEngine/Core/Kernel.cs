@@ -5,7 +5,7 @@
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
 //
-// Copyright (C) 2007 - 2012 Giacomo Stelluti Scala
+// Copyright (C) 2012 Giacomo Stelluti Scala
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,9 @@
 //
 #endregion
 #region Using Directives
+
+using System;
+using System.Collections.Generic;
 using System.IO;
 #endregion
 
@@ -41,5 +44,41 @@ namespace ExpressionEngine.Core
 				return new Parser(scanner).Parse();
 			}
 		}
-	}
+
+        #region BuiltIns
+        internal abstract class BuiltIn
+        {
+            public class Pow : BuiltIn { public override double Execute(double[] args)
+                {
+                    if (args.Length != 2) { throw new ExpressionException("Syntax error, pow() requires two arguments."); }
+                    return Math.Pow(args[0], args[1]);
+                }
+            }
+            public class Sqrt : BuiltIn { public override double Execute(double[] args)
+                {
+                    if (args.Length != 1) { throw new ExpressionException("Syntax error, sqrt() requires one argument."); }
+                    return Math.Sqrt(args[0]);
+                }
+            }
+
+            public static BuiltIn FromString(string name)
+            {
+                BuiltIn builtIn;
+                if (Lookup.TryGetValue(name, out builtIn))
+                {
+                    return builtIn;
+                }
+                return null;
+            }
+
+            public abstract double Execute(double[] args);
+
+            private static readonly Dictionary<string, BuiltIn> Lookup = new Dictionary<string, BuiltIn>()
+	            {
+	                {"pow",  new Pow()},
+	                {"sqrt", new Sqrt()}
+	            };
+        }
+        #endregion
+    }
 }

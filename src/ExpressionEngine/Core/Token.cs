@@ -40,7 +40,9 @@ namespace ExpressionEngine
         Slash,
         OpenBracket,
         CloseBracket,
-        Literal
+        Comma,
+        Literal,
+        Identifier
     }
 
     sealed class Token
@@ -96,20 +98,20 @@ namespace ExpressionEngine
             return Type == TokenType.CloseBracket;
         }
 
+        public bool IsComma()
+        {
+            return Type == TokenType.Comma;
+        }
+
         public bool IsLiteral()
         {
             return Type == TokenType.Literal;
         }
 
-        //public bool IsSeparator()
-        //{
-        //    return false;
-        //}
-
-        //public bool IsFunction()
-        //{
-        //    return false;
-        //}
+        public bool IsIdentifier()
+        {
+            return Type == TokenType.Identifier;
+        }
 
         public byte Precedence
         {
@@ -146,6 +148,9 @@ namespace ExpressionEngine
                 case ")":
                     token.Type = TokenType.CloseBracket;
                     break;
+                case ",":
+                    token.Type = TokenType.Comma;
+                    break;
                 default:
                     throw new ExpressionException("Invalid token.");
             }
@@ -176,6 +181,11 @@ namespace ExpressionEngine
         public static Token Literal(string text)
         {
             return new Token(text, TokenType.Literal);
+        }
+
+        public static Token Identifier(string text)
+        {
+            return new Token(text, TokenType.Identifier);
         }
 
         //public static string ToText(Token token)

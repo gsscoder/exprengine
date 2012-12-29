@@ -43,39 +43,57 @@ namespace ExpressionEngine.Tests
         }
 
         [Test]
-        public void EvaluateSmallExpr()
+        public void SmallExpr()
         {
             Expression.Create("1 + 2 * 3 / 1").Value.Should().Equal(7D);
         }
 
         [Test]
-        public void EvaluateSmallExprWithDecimal()
+        public void SmallExprWithDecimal()
         {
             Expression.Create(".90 - 3 * 4 + 11.123").Value.Should().Equal(0.022999999999999687D);
         }
 
         [Test]
-        public void EvaluateSmallExprWithSignes()
+        public void SmallExprWithSignes()
         {
             Expression.Create("-3 + -1").Value.Should().Equal(-4D);
         }
 
         [Test]
-        public void EvaluateExpr()
+        public void SmallExprWithFunction()
+        {
+            Expression.Create("pow(10, 2) - 1").Value.Should().Equal(99D);
+        }
+
+        [Test]
+        public void SmallExprWithFunction_2()
+        {
+            Expression.Create("sqrt(10000) / 2").Value.Should().Equal(50D);
+        }
+
+        [Test]
+        public void Expr()
         {
             Expression.Create("3 * 0.31 / 19 + 10 - .7").Value.Should().Equal(9.3489473684210527D);
         }
 
         [Test]
-        public void EvaluateExprWithBrackets()
+        public void ExprWithBrackets()
         {
             Expression.Create("1 + (2 - 1)").Value.Should().Equal(2D);
         }
 
         [Test]
-        public void EvaluateExprWithBrackets_2()
+        public void ExprWithBrackets_2()
         {
             Expression.Create("3 * 0.31 / ((19 + 10) - .7)").Value.Should().Equal(0.032862190812720848D);
+        }
+
+        [Test]
+        public void ExprWithBrackets_Functions()
+        {
+            Expression.Create("3 * 0.31 / ((19 + sqrt(1000.5 / 10)) - pow(.7, 2)) + 3").Value.Should().Equal(3.0326172734832215D);
         }
 
         [Test]
@@ -98,7 +116,7 @@ namespace ExpressionEngine.Tests
 
 
         [Test]
-        [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Unexpected end of input, but found token(s): 'NUMBER', '+', '-', '('.")]
+        [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Unexpected end of input, but found token(s): 'NUMBER', '+', '-', '(', 'IDENT'.")]
         public void IncompleteExpr_ExpectedExpr()
         {
             var lost = Expression.Create("3 + 1 - (").Value;
