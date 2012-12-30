@@ -41,6 +41,7 @@ namespace ExpressionEngine
         OpenBracket,
         CloseBracket,
         Comma,
+        Caret,
         Literal,
         Identifier
     }
@@ -113,17 +114,22 @@ namespace ExpressionEngine
             return Type == TokenType.Identifier;
         }
 
-        public byte Precedence
+        public bool IsCaret()
         {
-            get
-            {
-                if (Type == TokenType.Plus || Type == TokenType.Minus)
-                {
-                    return 1;
-                }
-                return 2;
-            }
+            return Type == TokenType.Caret;
         }
+
+        //public byte Precedence
+        //{
+        //    get
+        //    {
+        //        if (Type == TokenType.Plus || Type == TokenType.Minus)
+        //        {
+        //            return 1;
+        //        }
+        //        return 2;
+        //    }
+        //}
 
         public static Token Punctuator(int @char)
         {
@@ -150,6 +156,9 @@ namespace ExpressionEngine
                     break;
                 case ",":
                     token.Type = TokenType.Comma;
+                    break;
+                case "^":
+                    token.Type = TokenType.Caret;
                     break;
                 default:
                     throw new ExpressionException("Invalid token.");

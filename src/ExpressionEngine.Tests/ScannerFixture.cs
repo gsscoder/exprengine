@@ -250,6 +250,18 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
+        [Test]
+        public void Caret()
+        {
+            var scanner = new Scanner(new StringReader("10^2"));
+
+            scanner.NextToken().ShouldLiteralEqual("10");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.Caret, "^");
+            scanner.NextToken().ShouldLiteralEqual("2");
+
+            scanner.NextToken().Should().Be.Null();
+        }
+
 		#region Expected Exceptions
 		[Test]
 		[ExpectedException(typeof(ExpressionException), ExpectedMessage="Line terminator is not allowed.")]

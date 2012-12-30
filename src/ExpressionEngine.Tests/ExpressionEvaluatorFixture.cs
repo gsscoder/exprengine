@@ -63,7 +63,7 @@ namespace ExpressionEngine.Tests
         [Test]
         public void SmallExprWithFunction()
         {
-            Expression.Create("pow(10, 2) - 1").Value.Should().Equal(99D);
+            Expression.Create("sqrt(10) - 1").Value.Should().Equal(2.1622776601683795D);
         }
 
         [Test]
@@ -75,7 +75,7 @@ namespace ExpressionEngine.Tests
 		[Test]
         public void SmallExprWithFunction_Unary()
         {
-            Expression.Create("-pow(10, 2)").Value.Should().Equal(-100D);
+            Expression.Create("-sqrt(100)").Value.Should().Equal(-10D);
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace ExpressionEngine.Tests
         [Test]
         public void ExprWithBrackets_Functions()
         {
-            Expression.Create("3 * 0.31 / ((19 + sqrt(1000.5 / 10)) - pow(.7, 2)) + 3").Value.Should().Equal(3.0326172734832215D);
+            Expression.Create("3 * 0.31 / ((19 + sqrt(1000.5 / 10)) -.7 ^ 2) + 3").Value.Should().Equal(3.0326172734832215D);
         }
 
         [Test]
@@ -111,31 +111,31 @@ namespace ExpressionEngine.Tests
         [Test]
         public void NestedFunctions()
         {
-            Expression.Create("sqrt(pow(10, 3))").Value.Should().Equal(31.622776601683793D);
+            Expression.Create("log(log(10, 3))").Value.Should().Equal(0.73998461763125689D);
         }
 
         [Test]
         public void NestedFunctions_2()
         {
-            Expression.Create("pow(.301, -sqrt(10))").Value.Should().Equal(44.55716209442361D);
+            Expression.Create("cos(-log(100))").Value.Should().Equal(-0.10701348355876977D);
         }
 
         [Test]
         public void NestedFunctions_3()
         {
-            Expression.Create("pow(10, 3) * pow(10, sqrt(pow(.301, -sqrt(10))))").Value.Should().Equal(4732767141.9821711D);
+            Expression.Create("sin(10.3) * cos(sqrt(sin(301 - sqrt(10))))").Value.Should().Equal(-0.55707344143373561D);
         }
 
         [Test]
         public void FunctionsWithNestedExpr()
         {
-            Expression.Create("pow((10 * 3), -(1 + 3))").Value.Should().Equal(0.0000012345679012345679D);
+            Expression.Create("sqrt(sqrt(10 * 3) - sqrt(1 + 3))").Value.Should().Equal(1.8647320384043551D);
         }
 
         [Test]
         public void FunctionsWithNestedExpr_2()
         {
-            Expression.Create("pow((10 * 3), -(1 + sqrt(10 * 10)))").Value.Should().Equal(0.00000000000000005645029269476762D);
+            Expression.Create("(10 * 3) ^ -(1 + log(10 * 10))").Value.Should().Equal(0.0000000052539263674376282D);
         }
 
         [Test]
@@ -150,9 +150,21 @@ namespace ExpressionEngine.Tests
             Expression.Create("-.23 + +.99 * ((-.123 + -2.1)--333)").Value.Should().Equal(327.23922999999996D);
         }
 
+        [Test]
+        public void Exponent()
+        {
+            Expression.Create("10^2").Value.Should().Equal(100D);
+        }
+
+        [Test]
+        public void ExponentWithNestedExpr()
+        {
+            Expression.Create("(10 * 3) ^ -(1 + 3)").Value.Should().Equal(0.0000012345679012345679D);
+        }
+
 		#region Expected Exceptions
         [Test]
-        [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Unexpected end of input, but found token(s): 'NUMBER', '+', '-', '(', 'IDENT'.")]
+        [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Unexpected end of input, but found token(s): 'NUMBER', '+', '-', '(', 'IDENT', '^'.")]
         public void IncompleteExpressioThrowsException()
         {
         	Expression.Create("3 + 1 - (");

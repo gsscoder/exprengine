@@ -27,12 +27,15 @@
 //
 #endregion
 
+using System;
+
 namespace ExpressionEngine.Model
 {
     enum OperatorType
     {
         UnaryPlus,
         UnaryMinus,
+        Exponent,
         Multiply,
         Divide,
         Add,
@@ -59,6 +62,8 @@ namespace ExpressionEngine.Model
                     return Left.Evaluate() * Right.Evaluate();
                 case OperatorType.Divide:
                     return Left.Evaluate() / Right.Evaluate();
+                case OperatorType.Exponent:
+                    return Math.Pow(Left.Evaluate(), Right.Evaluate());
             }
             throw new ExpressionException("Invalid operator type.");
         }

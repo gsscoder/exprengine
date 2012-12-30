@@ -48,10 +48,28 @@ namespace ExpressionEngine.Core
         #region BuiltIns
         internal abstract class BuiltIn
         {
-            public class Pow : BuiltIn { public override double Execute(double[] args)
+            //public class Pow : BuiltIn { public override double Execute(double[] args)
+            //    {
+            //        if (args.Length != 2) { throw new ExpressionException("Syntax error, pow() requires two arguments."); }
+            //        return Math.Pow(args[0], args[1]);
+            //    }
+            //}
+            public class Cos : BuiltIn { public override double Execute(double[] args)
                 {
-                    if (args.Length != 2) { throw new ExpressionException("Syntax error, pow() requires two arguments."); }
-                    return Math.Pow(args[0], args[1]);
+                    if (args.Length != 1) { throw new ExpressionException("Syntax error, cos() requires one arguments."); }
+                    return Math.Cos(args[0]);
+                }
+            }
+            public class Sin : BuiltIn { public override double Execute(double[] args)
+                {
+                    if (args.Length != 1) { throw new ExpressionException("Syntax error, sin() requires one arguments."); }
+                    return Math.Sin(args[0]);
+                }
+            }
+            public class Log : BuiltIn { public override double Execute(double[] args)
+                {
+                    if (args.Length < 1 && args.Length > 2) { throw new ExpressionException("Syntax error, log() requires one or two arguments."); }
+                    return args.Length == 1 ? Math.Log(args[0]) : Math.Log(args[0], args[1]);
                 }
             }
             public class Sqrt : BuiltIn { public override double Execute(double[] args)
@@ -75,7 +93,10 @@ namespace ExpressionEngine.Core
 
             private static readonly Dictionary<string, BuiltIn> Lookup = new Dictionary<string, BuiltIn>()
 	            {
-	                {"pow",  new Pow()},
+                    //{"pow",  new Pow()},
+                    {"log", new Log()},
+                    {"sin", new Sin()},
+                    {"cos", new Cos()},
 	                {"sqrt", new Sqrt()}
 	            };
         }

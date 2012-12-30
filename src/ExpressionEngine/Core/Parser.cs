@@ -115,12 +115,12 @@ namespace ExpressionEngine
         {
             if (!insideFunc)
             {
-                Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier);
+                Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret);
             }
             else // may allow ','
             {
                 //Expect(TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier);
-                Ensure(TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier);
+                Ensure(TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret);
             }
             Model.IExpression expr = ParseBinaryAddSub();
             return expr;
@@ -145,7 +145,7 @@ namespace ExpressionEngine
 
         private Model.IExpression ParseBinaryMulDiv()
         {
-            Model.IExpression expr = ParseFunction(); //ParseUnary();
+            Model.IExpression expr = ParseBinaryExp(); //ParseFunction();
             while (!_scanner.IsEof() && (_current.IsStar() || _current.IsSlash()))
             {
                 var binaryMulDiv = new Model.BinaryExpression
@@ -153,9 +153,27 @@ namespace ExpressionEngine
                         Operator = _current.IsStar() ? Model.OperatorType.Multiply : Model.OperatorType.Divide,
                         Left = expr
                     };
+                // TODO: can remove ClsoeBracket?
                 Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier);
-                binaryMulDiv.Right = ParseFunction(); //ParseUnary();
+                binaryMulDiv.Right = ParseBinaryExp(); //ParseFunction();
                 expr = binaryMulDiv;
+            }
+            return expr;
+        }
+
+        private Model.IExpression ParseBinaryExp()
+        {
+            Model.IExpression expr = ParseFunction();
+            while (!_scanner.IsEof() && _current.IsCaret())
+            {
+                var binaryExp = new Model.BinaryExpression
+                    {
+                        Operator = Model.OperatorType.Exponent,
+                        Left = expr
+                    };
+                Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier);
+                binaryExp.Right = ParseFunction();
+                expr = binaryExp;
             }
             return expr;
         }
@@ -277,6 +295,9 @@ namespace ExpressionEngine
 						break;
                     case TokenType.Identifier:
 				        b.Append("IDENT");
+                        break;
+                    case TokenType.Caret:
+				        b.Append("^");
                         break;
 				}
 				b.Append("'");
