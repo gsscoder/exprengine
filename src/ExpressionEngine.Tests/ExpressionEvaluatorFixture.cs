@@ -150,33 +150,34 @@ namespace ExpressionEngine.Tests
             Expression.Create("-.23 + +.99 * ((-.123 + -2.1)--333)").Value.Should().Equal(327.23922999999996D);
         }
 
-
+		#region Expected Exceptions
         [Test]
         [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Unexpected end of input, but found token(s): 'NUMBER', '+', '-', '(', 'IDENT'.")]
-        public void IncompleteExpr_ExpectedExpr()
+        public void IncompleteExpressioThrowsException()
         {
-            var lost = Expression.Create("3 + 1 - (").Value;
+        	Expression.Create("3 + 1 - (");
         }
 
         [Test]
         [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Expected expression.")]
-        public void IncompleteExpr_ExpectedExpr_2()
+        public void IncompleteExpressioThrowsException_2()
         {
-            var lost = Expression.Create("1 2").Value;
+            Expression.Create("1 2");
         }
 
         [Test]
         [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Syntax error, odd number of brackets.")]
-        public void IncompleteExpr_MissingParen()
+        public void MissingBrackethrowsException()
         {
             var lost = Expression.Create("3 + (1 -").Value;
         }
 
         [Test]
         [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Syntax error, odd number of brackets.")]
-        public void IncompleteExpr_MissingParen_2()
+        public void MissingBrackethrowsException_2()
         {
             var lost = Expression.Create("3 + 3 / (1").Value;
         }
+		#endregion
     }
 }

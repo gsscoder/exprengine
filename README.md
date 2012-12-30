@@ -1,4 +1,4 @@
-Expression Engine Library 1.0.1.13 Alfa.
+Expression Engine Library 1.0.1.15 Alfa.
 ===
 This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and uses an AST-evaluation algorithm.
 It was written primarily for fun and currently doesn't support variables; but it will in near future, along with other features.
@@ -11,8 +11,6 @@ News:
   - Infix grammar strengthened at parser level.
   - Shunting-Yard algorithm replaced by AST evaluation.
   - Better support for unary operators.
-  - Solution now opens in MonoDevelop without problems.
-  - All line endings converted to unix form.
 
 To build:
 ---

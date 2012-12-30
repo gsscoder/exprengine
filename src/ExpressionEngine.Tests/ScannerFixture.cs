@@ -27,6 +27,7 @@
 //
 #endregion
 #region Using Directives
+using System;
 using System.IO;
 using NUnit.Framework;
 using Should.Fluent;
@@ -140,12 +141,6 @@ namespace ExpressionEngine.Tests
         }
 
         [Test]
-        //public void SingleNegativeNumberExpr()
-        //{
-        //    var scanner = new Scanner(new StringReader("-123"));
-
-        //    scanner.NextToken().ShouldLiteralEqual("-123");
-        //}
         public void SingleNegativeNumberExpr()
         {
             var scanner = new Scanner(new StringReader("-123"));
@@ -254,5 +249,14 @@ namespace ExpressionEngine.Tests
 
             scanner.NextToken().Should().Be.Null();
         }
+
+		#region Expected Exceptions
+		[Test]
+		[ExpectedException(typeof(ExpressionException), ExpectedMessage="Line terminator is not allowed.")]
+		public void LineEndingThrowsException()
+		{
+			new Scanner(new StringReader(string.Concat(new string(' ', 10), Environment.NewLine)));
+		}
+		#endregion
     }
 }
