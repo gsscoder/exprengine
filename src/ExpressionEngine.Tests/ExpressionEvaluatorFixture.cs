@@ -181,14 +181,14 @@ namespace ExpressionEngine.Tests
         [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Syntax error, odd number of brackets.")]
         public void MissingBrackethrowsException()
         {
-            var lost = Expression.Create("3 + (1 -").Value;
+        	Expression.Create("3 + (1 -");
         }
 
         [Test]
         [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Syntax error, odd number of brackets.")]
         public void MissingBrackethrowsException_2()
         {
-            var lost = Expression.Create("3 + 3 / (1").Value;
+        	Expression.Create("3 + 3 / (1");
         }
 		#endregion
     }

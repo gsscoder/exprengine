@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 //
 // Expression Engine Library: Parser.cs
 //
@@ -51,9 +51,9 @@ namespace ExpressionEngine
             _scanner.Dispose();
         }
 
-        public Model.IExpression Parse()
+        public Model.Expression Parse()
         {
-            Model.IExpression root = ParseExpression();
+            Model.Expression root = ParseExpression();
             if (_brackets != 0)
             {
                 throw new ExpressionException(_scanner.ColumnNumber, "Syntax error, odd number of brackets.");
@@ -111,7 +111,7 @@ namespace ExpressionEngine
             }
         }
 
-        private Model.IExpression ParseExpression(bool insideFunc = false)
+        private Model.Expression ParseExpression(bool insideFunc = false)
         {
             if (!insideFunc)
             {
@@ -122,13 +122,13 @@ namespace ExpressionEngine
                 //Expect(TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier);
                 Ensure(TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret);
             }
-            Model.IExpression expr = ParseBinaryAddSub();
+            Model.Expression expr = ParseBinaryAddSub();
             return expr;
         }
 
-        private Model.IExpression ParseBinaryAddSub()
+        private Model.Expression ParseBinaryAddSub()
         {
-            Model.IExpression expr = ParseBinaryMulDiv();
+            Model.Expression expr = ParseBinaryMulDiv();
             while (!_scanner.IsEof() && (_current.IsPlus() || _current.IsMinus()))
             {
                 var binaryAddSub = new Model.BinaryExpression
@@ -143,9 +143,9 @@ namespace ExpressionEngine
             return expr;
         }
 
-        private Model.IExpression ParseBinaryMulDiv()
+        private Model.Expression ParseBinaryMulDiv()
         {
-            Model.IExpression expr = ParseBinaryExp(); //ParseFunction();
+            Model.Expression expr = ParseBinaryExp(); //ParseFunction();
             while (!_scanner.IsEof() && (_current.IsStar() || _current.IsSlash()))
             {
                 var binaryMulDiv = new Model.BinaryExpression
@@ -161,9 +161,9 @@ namespace ExpressionEngine
             return expr;
         }
 
-        private Model.IExpression ParseBinaryExp()
+        private Model.Expression ParseBinaryExp()
         {
-            Model.IExpression expr = ParseFunction();
+            Model.Expression expr = ParseFunction();
             while (!_scanner.IsEof() && _current.IsCaret())
             {
                 var binaryExp = new Model.BinaryExpression
@@ -178,7 +178,7 @@ namespace ExpressionEngine
             return expr;
         }
 
-        private Model.IExpression ParseFunction()
+        private Model.Expression ParseFunction()
         {
             if (_current == null)
             {
@@ -218,7 +218,7 @@ namespace ExpressionEngine
             return expr;
         }
 
-        private Model.IExpression ParseUnary()
+        private Model.Expression ParseUnary()
         {
             if (_current == null)
             {

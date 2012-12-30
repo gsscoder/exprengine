@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 //
 // Expression Engine Library: FunctionExpression.cs
 //
@@ -33,18 +33,24 @@ using ExpressionEngine.Core;
 
 namespace ExpressionEngine.Model
 {
-    sealed class FunctionExpression : IExpression
+    sealed class FunctionExpression : Expression
     {
         public FunctionExpression()
         {
-            Arguments = new List<IExpression>();    
+            Arguments = new List<Expression>();    
         }
 
         public string Name;
 
-        public List<IExpression> Arguments;
+        public List<Expression> Arguments;
 
-        public double Evaluate()
+		public override void Accept(ExpressionVisitor visitor)
+		{
+			visitor.Visit(this);
+		}
+
+		/*
+        public override double Evaluate()
         {
             var builtIn = Kernel.BuiltIn.FromString(Name);
             if (builtIn == null)
@@ -64,5 +70,6 @@ namespace ExpressionEngine.Model
             }
             return values;
         }
+		*/
     }
 }

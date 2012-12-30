@@ -27,7 +27,6 @@
 //
 #endregion
 #region Using Directives
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,7 +36,7 @@ namespace ExpressionEngine.Core
 {
 	static class Kernel
 	{
-		public static Model.IExpression ParseString(string value)
+		public static Model.Expression ParseString(string value)
 		{
 			using (var scanner = new Scanner(new StringReader(value)))
 			{

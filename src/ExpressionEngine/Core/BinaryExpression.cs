@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 //
 // Expression Engine Library: BinaryExpression.cs
 //
@@ -26,8 +26,10 @@
 // THE SOFTWARE.
 //
 #endregion
-
+#region Using Directives
 using System;
+using ExpressionEngine.Core;
+#endregion
 
 namespace ExpressionEngine.Model
 {
@@ -42,15 +44,21 @@ namespace ExpressionEngine.Model
         Subtract
     }
 
-    sealed class BinaryExpression : IExpression
+    sealed class BinaryExpression : Expression
     {
         public OperatorType Operator;
 
-        public Model.IExpression Left;
+        public Model.Expression Left;
 
-        public Model.IExpression Right;
+        public Model.Expression Right;
 
-        public double Evaluate()
+		public override void Accept(ExpressionVisitor visitor)
+		{
+			visitor.Visit(this);
+		}
+
+		/*
+        public override double Evaluate()
         {
             switch (Operator)
             {
@@ -67,5 +75,6 @@ namespace ExpressionEngine.Model
             }
             throw new ExpressionException("Invalid operator type.");
         }
+		*/
     }
 }

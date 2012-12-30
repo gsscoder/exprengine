@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 //
 // Expression Engine Library: LiteralExpression.cs
 //
@@ -26,10 +26,13 @@
 // THE SOFTWARE.
 //
 #endregion
+#region Using Directives
+using ExpressionEngine.Core;
+#endregion
 
 namespace ExpressionEngine.Model
 {
-    sealed class LiteralExpression : IExpression
+    sealed class LiteralExpression : Expression
     {
         private LiteralExpression() {}
 
@@ -40,9 +43,16 @@ namespace ExpressionEngine.Model
 
         public double Value;
 
-        public double Evaluate()
+		public override void Accept(ExpressionVisitor visitor)
+		{
+			visitor.Visit(this);
+		}
+
+		/*
+        public override double Evaluate()
         {
             return Value;
         }
+		*/
     }
 }

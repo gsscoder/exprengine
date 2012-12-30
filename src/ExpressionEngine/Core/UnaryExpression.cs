@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 //
 // Expression Engine Library: UnaryExpression.cs
 //
@@ -26,16 +26,25 @@
 // THE SOFTWARE.
 //
 #endregion
+#region Using Directives
+using ExpressionEngine.Core;
+#endregion
 
 namespace ExpressionEngine.Model
 {
-    sealed class UnaryExpression : IExpression
+    sealed class UnaryExpression : Expression
     {
         public OperatorType Operator;
 
-        public Model.IExpression Value;
+        public Model.Expression Value;
 
-        public double Evaluate()
+		public override void Accept(ExpressionVisitor visitor)
+		{
+			visitor.Visit(this);
+		}
+
+		/*
+        public override double Evaluate()
         {
             switch (Operator)
             {
@@ -46,5 +55,6 @@ namespace ExpressionEngine.Model
             }
             throw new ExpressionException("Invalid operator type.");
         }
+		*/
     }
 }

@@ -1,10 +1,12 @@
-Expression Engine Library 1.0.1.29 Alfa.
+Expression Engine Library 1.0.2.1 Alfa.
 ===
 This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and uses an AST-evaluation algorithm.
 It was written primarily for fun and currently doesn't support variables; but it will in near future, along with other features.
 
 News:
 ---
+  - Evaluation logic separated from Model.* types by means of visitor pattern;
+      this will allow a more clean implementation of expression in-memory compiler.
   - Built-In function pow(x, y) replaced with caret operator x ^ y.
   - Currently supported Built-In functions: cos(x), sin(x), log(x[,y]), sqrt(x).
   - Expression class is now really immutable.

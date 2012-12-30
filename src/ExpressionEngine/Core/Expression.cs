@@ -26,11 +26,16 @@
 // THE SOFTWARE.
 //
 #endregion
+#region Using Directives
+using ExpressionEngine.Core;
+#endregion
 
 namespace ExpressionEngine.Model
 {
-    interface IExpression
+    abstract class Expression
     {
-    	double Evaluate();
+    	//public abstract double Evaluate();
+
+		public abstract void Accept(ExpressionVisitor visitor);
     }
 }

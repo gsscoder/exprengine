@@ -48,7 +48,11 @@ namespace ExpressionEngine
 		/// <param name='text'>Infix notation string to be evaluated.</param>
 		public static Expression Create(string text)
 		{
-			return new Expression(text, Kernel.ParseString(text).Evaluate());
+			//return new Expression(text, Kernel.ParseString(text).Evaluate());
+			var tree = Kernel.ParseString(text);
+			var visitor = ExpressionVisitor.Create();
+			tree.Accept(visitor);
+			return new Expression(text, (double) visitor.Result);;
 		}
 
 		/// <summary>
