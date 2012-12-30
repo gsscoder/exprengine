@@ -2,7 +2,7 @@
 
   * Model.IExpression turned again to Model.Expression abstract class.
   * Evaluation logic separated from Model.* types by means of visitor pattern;
-      this will allow a more clean implementation of expression in-memory compiler.
+      this will allow a more clean implementation of expressions in-memory compiler.
   * Version incremented to 1.0.2.1 alfa.
 
 2012-12-30      Giacomo Stelluti Scala  <gsscoder@gmail.com>

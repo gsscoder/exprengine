@@ -6,7 +6,7 @@ It was written primarily for fun and currently doesn't support variables; but it
 News:
 ---
   - Evaluation logic separated from Model.* types by means of visitor pattern;
-      this will allow a more clean implementation of expression in-memory compiler.
+      this will allow a more clean implementation of expressions in-memory compiler.
   - Built-In function pow(x, y) replaced with caret operator x ^ y.
   - Currently supported Built-In functions: cos(x), sin(x), log(x[,y]), sqrt(x).
   - Expression class is now really immutable.
