@@ -109,6 +109,36 @@ namespace ExpressionEngine.Tests
         }
 
         [Test]
+        public void NestedFunctions()
+        {
+            Expression.Create("sqrt(pow(10, 3))").Value.Should().Equal(31.622776601683793D);
+        }
+
+        [Test]
+        public void NestedFunctions_2()
+        {
+            Expression.Create("pow(.301, -sqrt(10))").Value.Should().Equal(44.55716209442361D);
+        }
+
+        [Test]
+        public void NestedFunctions_3()
+        {
+            Expression.Create("pow(10, 3) * pow(10, sqrt(pow(.301, -sqrt(10))))").Value.Should().Equal(4732767141.9821711D);
+        }
+
+        [Test]
+        public void FunctionsWithNestedExpr()
+        {
+            Expression.Create("pow((10 * 3), -(1 + 3))").Value.Should().Equal(0.0000012345679012345679D);
+        }
+
+        [Test]
+        public void FunctionsWithNestedExpr_2()
+        {
+            Expression.Create("pow((10 * 3), -(1 + sqrt(10 * 10)))").Value.Should().Equal(0.00000000000000005645029269476762D);
+        }
+
+        [Test]
         public void NegativePositiveDecimalBracket()
         {
             Expression.Create(".2 / +9.99 * (-.123 + -2)").Value.Should().Equal(-0.042502502502502509D);

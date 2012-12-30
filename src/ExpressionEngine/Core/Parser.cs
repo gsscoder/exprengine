@@ -61,6 +61,20 @@ namespace ExpressionEngine
             return root;
         }
 
+        private void Ensure(params TokenType[] types)
+        {
+            if (_current == null)
+            {
+                throw new ExpressionException(_scanner.ColumnNumber,
+                    string.Format("Unexpected end of input, but found token(s): {0}.", TokenTypeArrayToString(types)));
+            }
+            if (!types.Contains(_current.Type))
+            {
+                throw new ExpressionException(_scanner.ColumnNumber,
+                    string.Format("Syntax error, expected token(s) {0}; but found '{1}'.", TokenTypeArrayToString(types), _current.Type));
+            }
+        }
+
 		private void Expect(params TokenType[] types)
 		{
 			var next = _scanner.PeekToken();
@@ -105,7 +119,8 @@ namespace ExpressionEngine
             }
             else // may allow ','
             {
-                Expect(TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier);
+                //Expect(TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier);
+                Ensure(TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier);
             }
             Model.IExpression expr = ParseBinaryAddSub();
             return expr;
@@ -161,8 +176,13 @@ namespace ExpressionEngine
             Expect(TokenType.OpenBracket);
             while (!_scanner.IsEof())
             {
+                Consume();
                 expr.Arguments.Add(ParseExpression(true));
                 //Expect(TokenType.Comma, TokenType.CloseBracket);
+                if (_current == null)
+                {
+                    break;
+                }
                 if (_current.IsComma())
                 {
                     continue; //Consume();

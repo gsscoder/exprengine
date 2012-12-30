@@ -1,3 +1,8 @@
+2012-12-30      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * Added unit tests and fixed minor parsing issues.
+  * Version incremented to 1.0.1.13 alfa.
+
 2012-12-29      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * Fixed a recursive problem between functions and unary operators.
