@@ -54,7 +54,7 @@ namespace ExpressionEngine.Model
 
 		public override void Accept(ExpressionVisitor visitor)
 		{
-			visitor.Visit(this);
+			visitor.VisitBinary(this);
 		}
 
 		/*

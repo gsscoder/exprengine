@@ -29,6 +29,7 @@
 #region Using Directives
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 #endregion
 
@@ -47,57 +48,91 @@ namespace ExpressionEngine.Core
         #region BuiltIns
         internal abstract class BuiltIn
         {
-            //public class Pow : BuiltIn { public override double Execute(double[] args)
-            //    {
-            //        if (args.Length != 2) { throw new ExpressionException("Syntax error, pow() requires two arguments."); }
-            //        return Math.Pow(args[0], args[1]);
-            //    }
-            //}
-            public class Cos : BuiltIn { public override double Execute(double[] args)
-                {
-                    if (args.Length != 1) { throw new ExpressionException("Syntax error, cos() requires one arguments."); }
-                    return Math.Cos(args[0]);
-                }
-            }
-            public class Sin : BuiltIn { public override double Execute(double[] args)
-                {
-                    if (args.Length != 1) { throw new ExpressionException("Syntax error, sin() requires one arguments."); }
-                    return Math.Sin(args[0]);
-                }
-            }
-            public class Log : BuiltIn { public override double Execute(double[] args)
-                {
-                    if (args.Length < 1 && args.Length > 2) { throw new ExpressionException("Syntax error, log() requires one or two arguments."); }
-                    return args.Length == 1 ? Math.Log(args[0]) : Math.Log(args[0], args[1]);
-                }
-            }
-            public class Sqrt : BuiltIn { public override double Execute(double[] args)
-                {
-                    if (args.Length != 1) { throw new ExpressionException("Syntax error, sqrt() requires one argument."); }
-                    return Math.Sqrt(args[0]);
-                }
-            }
-
-            public static BuiltIn FromString(string name)
+            private struct ParameterInfo
             {
-                BuiltIn builtIn;
-                if (Lookup.TryGetValue(name, out builtIn))
+                private ParameterInfo(byte min, byte max)
                 {
-                    return builtIn;
+                    _min = min;
+                    _max = max;
                 }
-                return null;
+                public static ParameterInfo OneParameter() { return new ParameterInfo(1, 1); }
+                public static ParameterInfo TwoParameter() { return new ParameterInfo(2, 2); }
+                public static ParameterInfo OneTwoParameter() { return new ParameterInfo(1, 2); }
+                public bool Match(int length)
+                {
+                    if (_min == 1 && _max == 1) return length == 1;
+                    if (_min == 1 && _max == 2) return length == 1 || length == 2;
+                    throw new InvalidOperationException(); // Unreachable code
+                }
+                public override string ToString()
+                {
+                    if (_min == 1 && _max == 1) { return "one parameter"; }
+                    if (_min == 2 && _max == 2) { return "two paramters"; }
+                    if (_min == 1 && _max == 2) { return "one or two parameters"; }
+                    throw new InvalidOperationException(); // Unreachable code
+                }
+                private readonly byte _min;
+                private readonly byte _max;
             }
+            public static double Function(string name, double[] args)
+            {
+                ParameterInfo param;
+                if (!FuncsLookup.TryGetValue(name, out param))
+                {
+                    throw new ExpressionException(string.Format(CultureInfo.InvariantCulture, "Undefined function: '{0}'.", name));
+                }
+                if (!param.Match(args.Length))
+                {
+                    throw new ExpressionException(string.Format(CultureInfo.InvariantCulture, "Function '{0}' requires only {1}.", name, param.ToString()));
+                };
+                if (string.CompareOrdinal("log", name) == 0)
+                {
+                    if (args.Length == 1) { return Math.Log(args[0]); }
+                    else if (args.Length == 2) { return Math.Log(args[0], args[1]); }
+                }
+                if (string.CompareOrdinal("abs", name) == 0) { return Math.Abs(args[0]); }
+                if (string.CompareOrdinal("asin", name) == 0) { return Math.Asin(args[0]); }
+                if (string.CompareOrdinal("sin", name) == 0) { return Math.Sin(args[0]); }
+                if (string.CompareOrdinal("sinh", name) == 0) { return Math.Sinh(args[0]); }
+                if (string.CompareOrdinal("acos", name) == 0) { return Math.Acos(args[0]); }
+                if (string.CompareOrdinal("cos", name) == 0) { return Math.Cos(args[0]); }
+                if (string.CompareOrdinal("cosh", name) == 0) { return Math.Cosh(args[0]); }
+                if (string.CompareOrdinal("sqrt", name) == 0) { return Math.Sqrt(args[0]); }
+                if (string.CompareOrdinal("atan", name) == 0) { return Math.Atan(args[0]); }
+                if (string.CompareOrdinal("tan", name) == 0) { return Math.Tan(args[0]); }
+                if (string.CompareOrdinal("tanh", name) == 0) { return Math.Tanh(args[0]); }
 
-            public abstract double Execute(double[] args);
-
-            private static readonly Dictionary<string, BuiltIn> Lookup = new Dictionary<string, BuiltIn>()
+                throw new InvalidOperationException(); // Unreachable code
+            }
+            public static double Variable(string name)
+            {
+                double value;
+                if (!VarsLookup.TryGetValue(name, out value))
+                {
+                    throw new ExpressionException(string.Format(CultureInfo.InvariantCulture, "Undefined variable: '{0}'.", name));
+                }
+                return value;
+            }
+            private static readonly Dictionary<string, ParameterInfo> FuncsLookup = new Dictionary<string, ParameterInfo>()
 	            {
-                    //{"pow",  new Pow()},
-                    {"log", new Log()},
-                    {"sin", new Sin()},
-                    {"cos", new Cos()},
-	                {"sqrt", new Sqrt()}
+                    {"log", ParameterInfo.OneTwoParameter()},
+                    {"abs", ParameterInfo.OneParameter()},
+                    {"asin", ParameterInfo.OneParameter()},
+                    {"sin", ParameterInfo.OneParameter()},
+                    {"sinh", ParameterInfo.OneParameter()},
+                    {"acos", ParameterInfo.OneParameter()},
+                    {"cos", ParameterInfo.OneParameter()},
+                    {"cosh", ParameterInfo.OneParameter()},
+	                {"sqrt", ParameterInfo.OneParameter()},
+                    {"atan", ParameterInfo.OneParameter()},
+                    {"tan", ParameterInfo.OneParameter()},
+                    {"tanh", ParameterInfo.OneParameter()}
 	            };
+            private static readonly Dictionary<string, double> VarsLookup = new Dictionary<string, double>()
+                {
+                    {"e", Math.E},
+                    {"pi", Math.PI}
+                };
         }
         #endregion
     }

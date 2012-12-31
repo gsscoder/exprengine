@@ -46,7 +46,7 @@ namespace ExpressionEngine.Model
 
 		public override void Accept(ExpressionVisitor visitor)
 		{
-			visitor.Visit(this);
+			visitor.VisitFunction(this);
 		}
 
 		/*
@@ -58,7 +58,7 @@ namespace ExpressionEngine.Model
                 throw new ExpressionException("Undefined function.");
             }
             var vals = GetValuesFromArguments();
-            return builtIn.Execute(vals);
+            return builtIn.Function(vals);
         }
 
         private double[] GetValuesFromArguments()

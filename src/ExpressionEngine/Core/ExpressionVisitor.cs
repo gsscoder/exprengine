@@ -35,30 +35,31 @@ namespace ExpressionEngine.Core
 {
 	abstract class ExpressionVisitor
 	{
-		public abstract void Visit(Model.LiteralExpression expression);
+		public abstract void VisitLiteral(Model.LiteralExpression expression);
 
-		public abstract void Visit(Model.UnaryExpression expression);
+		public abstract void VisitUnary(Model.UnaryExpression expression);
 
-		public abstract void Visit(Model.FunctionExpression expression);
+		public abstract void VisitFunction(Model.FunctionExpression expression);
 
-		public abstract void Visit(Model.BinaryExpression expression);
+		public abstract void VisitBinary(Model.BinaryExpression expression);
+
+	    public abstract void VisitVariable(Model.VariableExpression expression);
 
 		public abstract object Result { get; }
 
 		public class EvaluatingExpressionVisitor : ExpressionVisitor
 		{
-			public override void Visit(Model.LiteralExpression expression)
+			public override void VisitLiteral(Model.LiteralExpression expression)
 			{
 				_result = expression.Value;
 			}
 
-			public override void Visit(Model.UnaryExpression expression)
+			public override void VisitUnary(Model.UnaryExpression expression)
 			{
 				expression.Value.Accept(this);
 				switch (expression.Operator)
 				{
 					case Model.OperatorType.UnaryPlus:
-						//_result = _result;
 						break;
 					case Model.OperatorType.UnaryMinus:
 						_result = _result * -1;
@@ -68,23 +69,18 @@ namespace ExpressionEngine.Core
 				}
 			}
 
-			public override void Visit(Model.FunctionExpression expression)
+			public override void VisitFunction(Model.FunctionExpression expression)
 			{
-				List<double> argsList = new List<double>(expression.Arguments.Count);
+				var argsList = new List<double>(expression.Arguments.Count);
 				expression.Arguments.ForEach(arg => {
 					arg.Accept(this);
 					argsList.Add(_result);
 				});
 				var args = argsList.ToArray();
-				var builtIn = Kernel.BuiltIn.FromString(expression.Name);
-            	if (builtIn == null)
-            	{
-                	throw new ExpressionException("Undefined function.");
-            	}
-				_result = builtIn.Execute(args);
+			    _result = Kernel.BuiltIn.Function(expression.Name, args);
 			}
 
-			public override void Visit(Model.BinaryExpression expression)
+			public override void VisitBinary(Model.BinaryExpression expression)
 			{
 				Func<double> left = () => {
 					expression.Left.Accept(this);
@@ -118,13 +114,12 @@ namespace ExpressionEngine.Core
 				}
 			}
 
-			public override object Result
-			{
-				get
-				{
-					return _result;
-				}
-			}
+            public override void VisitVariable(Model.VariableExpression expression)
+            {
+                _result = Kernel.BuiltIn.Variable(expression.Name);
+            }
+
+            public override object Result { get { return _result; } }
 
 			private double _result;
 		}

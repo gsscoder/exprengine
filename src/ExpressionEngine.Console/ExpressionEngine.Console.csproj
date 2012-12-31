@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -35,6 +35,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\ExpressionEngine\Core\VariableExpression.cs">
+      <Link>ExpressionEngine\Core\VariableExpression.cs</Link>
+    </Compile>
     <Compile Include="CommandLine\CommandLine.cs" />
     <Compile Include="CommandLine\CommandLineText.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -82,8 +85,5 @@
       <Link>ExpressionEngine\Core\ExpressionVisitor.cs</Link>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ExpressionEngine\" />
-    <Folder Include="ExpressionEngine\Core\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

@@ -145,7 +145,7 @@ namespace ExpressionEngine
 
         private Model.Expression ParseMultiplicativeBinary()
         {
-            Model.Expression expr = ParseExponentBinary(); //ParseIdentifier();
+            Model.Expression expr = ParseExponentBinary(); //ParseFunction();
             while (!_scanner.IsEof() && (_current.IsStar() || _current.IsSlash()))
             {
                 var binaryMulDiv = new Model.BinaryExpression
@@ -155,7 +155,7 @@ namespace ExpressionEngine
                     };
                 // TODO: can remove CloseBracket?
                 Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier);
-                binaryMulDiv.Right = ParseExponentBinary(); //ParseIdentifier();
+                binaryMulDiv.Right = ParseExponentBinary(); //ParseFunction();
                 expr = binaryMulDiv;
             }
             return expr;
@@ -163,7 +163,7 @@ namespace ExpressionEngine
 
         private Model.Expression ParseExponentBinary()
         {
-            Model.Expression expr = ParseIdentifier();
+            Model.Expression expr = ParseFunction();
             while (!_scanner.IsEof() && _current.IsCaret())
             {
                 var binaryExp = new Model.BinaryExpression
@@ -172,13 +172,13 @@ namespace ExpressionEngine
                         Left = expr
                     };
                 Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier);
-                binaryExp.Right = ParseIdentifier();
+                binaryExp.Right = ParseFunction();
                 expr = binaryExp;
             }
             return expr;
         }
 
-        private Model.Expression ParseIdentifier()
+        private Model.Expression ParseFunction()
         {
             if (_current == null)
             {
@@ -188,21 +188,6 @@ namespace ExpressionEngine
             if (!_current.IsIdentifier())
             {
                 return ParseUnary();
-            }
-
-            if (_scanner.PeekToken() == null || (_scanner.PeekToken() != null && !_scanner.PeekToken().IsOpenBracket()))
-            {
-                // variable
-                var varExpr = new Model.VariableExpression() {Name = _current.Text};
-                if (_scanner.PeekToken() != null)
-                {
-                    Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.Star, TokenType.Slash, TokenType.Caret, TokenType.CloseBracket);
-                }
-                else
-                {
-                    Consume(); // Reach eof
-                }
-                return varExpr;
             }
 
             var expr = new Model.FunctionExpression() {Name = _current.Text};
@@ -266,7 +251,7 @@ namespace ExpressionEngine
             }
             else if (_current.IsIdentifier())
             {
-                unary.Value = ParseIdentifier();
+                unary.Value = ParseFunction();
             }
             else
             {
