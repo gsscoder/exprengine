@@ -21,7 +21,7 @@ MonoDevelop or Visual Studio.
 At glance:
 ---
 ```csharp
-var result = Expression.Create("-3 * 0.31 / ((19 + sqrt(1000)) - .7) + 5 * 2 ^ -log(1, 10)").Value;
+var result = Expression.Create("-3 * 0.31 / ((19 + sqrt(1000)) - .7) + 5 * 2 ^ -log(1, pi)").Value;
 ```
 
 Resources:
