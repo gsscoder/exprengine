@@ -41,6 +41,14 @@ namespace ExpressionEngine
     {
         private Parser() {}
 
+		private static readonly TokenType[] InitialGroup = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret};
+		private static readonly TokenType[] InitialGroupWithComma = {TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret};
+		private static readonly TokenType[] MiddleGroupAdditiveExponent = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier};
+		private static readonly TokenType[] MiddleGroupMultiplicative = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier};
+		private static readonly TokenType[] MiddleGroupIdentifier = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.Star, TokenType.Slash, TokenType.Caret, TokenType.CloseBracket};
+		private static readonly TokenType[] MiddleGroupUnary = {TokenType.Literal, TokenType.OpenBracket, TokenType.Identifier};
+		//private static readonly TokenType[] MiddleGroupExponent = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier};
+
         public Parser(Scanner scanner)
         {
             _scanner = scanner;
@@ -61,66 +69,15 @@ namespace ExpressionEngine
             return root;
         }
 
-        private void Ensure(params TokenType[] types)
-        {
-            if (_current == null)
-            {
-                throw new ExpressionException(_scanner.ColumnNumber,
-                    string.Format("Unexpected end of input, but found token(s): {0}.", TokenTypeArrayToString(types)));
-            }
-            if (!types.Contains(_current.Type))
-            {
-                throw new ExpressionException(_scanner.ColumnNumber,
-                    string.Format("Syntax error, expected token(s) {0}; but found '{1}'.", TokenTypeArrayToString(types), _current.Type));
-            }
-        }
-
-		private void Expect(params TokenType[] types)
-		{
-			var next = _scanner.PeekToken();
-            if (next == null)
-            {
-                throw new ExpressionException(_scanner.ColumnNumber,
-                    string.Format("Unexpected end of input, but found token(s): {0}.", TokenTypeArrayToString(types)));
-            }
-			if (types.Contains(next.Type))
-			{
-				Consume();
-			}
-			else
-			{
-				throw new ExpressionException(_scanner.ColumnNumber,
-					string.Format("Syntax error, expected token(s) {0}; but found '{1}'.", TokenTypeArrayToString(types), next.Type));
-			}
-		}
-
-        private void Consume()
-        {
-            //_previous = _current;
-            _current = _scanner.NextToken();
-            if (_current != null)
-            {
-                if (_current.IsOpenBracket())
-                {
-                    _brackets++;
-                }
-                else if (_current.IsCloseBracket())
-                {
-                    _brackets--;
-                }
-            }
-        }
-
         private Model.Expression ParseExpression(bool insideFunc = false)
         {
             if (!insideFunc)
             {
-                Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret);
+				Expect(InitialGroup); //Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret);
             }
-            else // may allow ','
+            else
             {
-                //Expect(TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier);
-                Ensure(TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret);
+				Ensure(InitialGroupWithComma); //Ensure(TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret);
             }
             Model.Expression expr = ParseAdditiveBinary();
             return expr;
@@ -136,7 +93,7 @@ namespace ExpressionEngine
                         Operator = _current.IsPlus() ? Model.OperatorType.Add : Model.OperatorType.Subtract,
                         Left = expr
                     };
-				Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier);
+				Expect(MiddleGroupAdditiveExponent); //Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier);
                 binaryAddSub.Right = ParseMultiplicativeBinary();
                 expr = binaryAddSub;
             }
@@ -145,7 +102,7 @@ namespace ExpressionEngine
 
         private Model.Expression ParseMultiplicativeBinary()
         {
-            Model.Expression expr = ParseExponentBinary(); //ParseIdentifier();
+            Model.Expression expr = ParseExponentBinary();
             while (!_scanner.IsEof() && (_current.IsStar() || _current.IsSlash()))
             {
                 var binaryMulDiv = new Model.BinaryExpression
@@ -153,9 +110,8 @@ namespace ExpressionEngine
                         Operator = _current.IsStar() ? Model.OperatorType.Multiply : Model.OperatorType.Divide,
                         Left = expr
                     };
-                // TODO: can remove CloseBracket?
-                Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier);
-                binaryMulDiv.Right = ParseExponentBinary(); //ParseIdentifier();
+				Expect(MiddleGroupMultiplicative); //Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier);
+                binaryMulDiv.Right = ParseExponentBinary();
                 expr = binaryMulDiv;
             }
             return expr;
@@ -171,7 +127,7 @@ namespace ExpressionEngine
                         Operator = Model.OperatorType.Exponent,
                         Left = expr
                     };
-                Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier);
+				Expect(MiddleGroupAdditiveExponent); //Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier);
                 binaryExp.Right = ParseIdentifier();
                 expr = binaryExp;
             }
@@ -196,7 +152,7 @@ namespace ExpressionEngine
                 var varExpr = new Model.VariableExpression() {Name = _current.Text};
                 if (_scanner.PeekToken() != null)
                 {
-                    Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.Star, TokenType.Slash, TokenType.Caret, TokenType.CloseBracket);
+					Expect(MiddleGroupIdentifier); //Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.Star, TokenType.Slash, TokenType.Caret, TokenType.CloseBracket);
                 }
                 else
                 {
@@ -211,14 +167,13 @@ namespace ExpressionEngine
             {
                 Consume();
                 expr.Arguments.Add(ParseExpression(true));
-                //Expect(TokenType.Comma, TokenType.CloseBracket);
                 if (_current == null)
                 {
                     break;
                 }
                 if (_current.IsComma())
                 {
-                    continue; //Consume();
+                    continue;
                 }
                 else if (_current.IsCloseBracket())
                 {
@@ -244,12 +199,12 @@ namespace ExpressionEngine
             if (_current.IsMinus())
             {
                	unary.Operator = Model.OperatorType.UnaryMinus;
-				Expect(TokenType.Literal, TokenType.OpenBracket, TokenType.Identifier);
+				Expect(MiddleGroupUnary); //Expect(TokenType.Literal, TokenType.OpenBracket, TokenType.Identifier);
             }
             else if (_current.IsPlus())
             {
                 unary.Operator = Model.OperatorType.UnaryPlus;
-                Expect(TokenType.Literal, TokenType.OpenBracket, TokenType.Identifier);
+				Expect(MiddleGroupUnary); //Expect(TokenType.Literal, TokenType.OpenBracket, TokenType.Identifier);
             }
 
             if (_current.IsLiteral())
@@ -302,6 +257,9 @@ namespace ExpressionEngine
 					case TokenType.Slash:
 						b.Append("/");
 						break;
+                    case TokenType.Caret:
+				        b.Append("^");
+                        break;
                     case TokenType.Comma:
 				        b.Append(",");
                         break;
@@ -311,9 +269,6 @@ namespace ExpressionEngine
                     case TokenType.Identifier:
 				        b.Append("IDENT");
                         break;
-                    case TokenType.Caret:
-				        b.Append("^");
-                        break;
 				}
 				b.Append("'");
 				b.Append(", ");
@@ -321,9 +276,78 @@ namespace ExpressionEngine
 			return b.ToString(0, b.Length - 2);
 		}
 
+		#region Token Stream Controllers
+		private void Ensure(TokenType[] types)
+        {
+            if (_current == null)
+            {
+                throw new ExpressionException(_scanner.ColumnNumber,
+                    string.Format("Unexpected end of input, but found token(s): {0}.", TokenTypeArrayToString(types)));
+            }
+            if (!types.Contains(_current.Type))
+            {
+                throw new ExpressionException(_scanner.ColumnNumber,
+                    string.Format("Syntax error, expected token(s) {0}; but found '{1}'.", TokenTypeArrayToString(types), _current.Type));
+            }
+        }
+
+		private void Expect(TokenType[] types)
+		{
+			var next = _scanner.PeekToken();
+            if (next == null)
+            {
+                throw new ExpressionException(_scanner.ColumnNumber,
+                    string.Format("Unexpected end of input, instead of token(s): {0}.", TokenTypeArrayToString(types)));
+            }
+			if (types.Contains(next.Type))
+			{
+				Consume();
+			}
+			else
+			{
+				throw new ExpressionException(_scanner.ColumnNumber,
+					string.Format("Syntax error, expected token(s) {0}; but found '{1}'.", TokenTypeArrayToString(types), next.Type));
+			}
+		}
+
+		private void Expect(TokenType type)
+		{
+			var next = _scanner.PeekToken();
+            if (next == null)
+            {
+                throw new ExpressionException(_scanner.ColumnNumber,
+                    string.Format("Unexpected end of input, instead of token(s): '{0}'.", type.ToString()));
+            }
+			if (type == next.Type)
+			{
+				Consume();
+			}
+			else
+			{
+				throw new ExpressionException(_scanner.ColumnNumber,
+					string.Format("Syntax error, expected token(s) '{0}'; but found '{1}'.", type.ToString(), next.Type));
+			}
+		}
+
+        private void Consume()
+        {
+            _current = _scanner.NextToken();
+            if (_current != null)
+            {
+                if (_current.IsOpenBracket())
+                {
+                    _brackets++;
+                }
+                else if (_current.IsCloseBracket())
+                {
+                    _brackets--;
+                }
+            }
+        }
+		#endregion
+
         private int _brackets;
         private Token _current;
-        //private Token _previous;
         private readonly Scanner _scanner;
     }
 }

@@ -200,7 +200,7 @@ namespace ExpressionEngine.Tests
 
 		#region Expected Exceptions
         [Test]
-        [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Unexpected end of input, but found token(s): 'NUMBER', '+', '-', '(', 'IDENT', '^'.")]
+        [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Unexpected end of input, instead of token(s): 'NUMBER', '+', '-', '(', 'IDENT', '^'.")]
         public void IncompleteExpressioThrowsException()
         {
         	Expression.Create("3 + 1 - (");

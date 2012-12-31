@@ -1,5 +1,10 @@
 2012-12-31      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
+  * Parser performance improvement.
+  * Version incremented to 1.0.2.11 alfa.
+
+2012-12-31      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
   * Added support for built-in variables (pi->Math.PI, e->Math.E).
   * Added more functions (abs,atan,tan,tanh,asin,sinh,acos,cosh).
   * Added unit tests.

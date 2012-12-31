@@ -31,9 +31,9 @@ namespace ExpressionEngine
 {
     public static class ThisLibrary
     {
-        internal const string Name = "ExpressionEngine";
-        internal const string ProductName = "Expression Engine Library";
-        internal const string Version = "1.0.2.9";
-        internal const string ReleaseType = "alfa";
+        public const string Name = "ExpressionEngine";
+        public const string ProductName = "Expression Engine Library";
+        public const string Version = "1.0.2.11";
+        public const string ReleaseType = "alfa";
     }
 }
