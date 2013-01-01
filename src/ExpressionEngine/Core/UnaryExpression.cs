@@ -5,7 +5,7 @@
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
 //
-// Copyright (C) 2012 Giacomo Stelluti Scala
+// Copyright (C) 2012 - 2013 Giacomo Stelluti Scala
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -42,19 +42,5 @@ namespace ExpressionEngine.Model
 		{
 			visitor.VisitUnary(this);
 		}
-
-		/*
-        public override double Evaluate()
-        {
-            switch (Operator)
-            {
-                case OperatorType.UnaryPlus:
-                    return Value.Evaluate();
-                case OperatorType.UnaryMinus:
-                    return Value.Evaluate() * -1;
-            }
-            throw new ExpressionException("Invalid operator type.");
-        }
-		*/
     }
 }

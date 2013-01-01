@@ -5,7 +5,7 @@
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
 //
-// Copyright (C) 2012 Giacomo Stelluti Scala
+// Copyright (C) 2012 - 2013 Giacomo Stelluti Scala
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,28 +48,5 @@ namespace ExpressionEngine.Model
 		{
 			visitor.VisitFunction(this);
 		}
-
-		/*
-        public override double Evaluate()
-        {
-            var builtIn = Kernel.BuiltIn.FromString(Name);
-            if (builtIn == null)
-            {
-                throw new ExpressionException("Undefined function.");
-            }
-            var vals = GetValuesFromArguments();
-            return builtIn.Function(vals);
-        }
-
-        private double[] GetValuesFromArguments()
-        {
-            var values = new double[Arguments.Count];
-            for (int i = 0; i < Arguments.Count; i++)
-            {
-                values[i] = Arguments[i].Evaluate();
-            }
-            return values;
-        }
-		*/
     }
 }

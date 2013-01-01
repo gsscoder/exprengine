@@ -5,7 +5,7 @@
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
 //
-// Copyright (C) 2012 Giacomo Stelluti Scala
+// Copyright (C) 2012 - 2013 Giacomo Stelluti Scala
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -166,7 +166,7 @@ namespace ExpressionEngine
         {
             Console.WriteLine(_heading.ToString());
             Console.WriteLine(ThisAssembly.Copyright);
-            Console.WriteLine("Embeds {0}, Version {1} {2}.", ThisLibrary.ProductName, ThisLibrary.Version, ThisLibrary.ReleaseType);
+            Console.WriteLine("Embeds {0}, Version {1} {2}.", Core.ThisLibrary.ProductName, Core.ThisLibrary.Version, Core.ThisLibrary.ReleaseType);
         }
 
         private string FormatException(string expression, ExpressionException e)

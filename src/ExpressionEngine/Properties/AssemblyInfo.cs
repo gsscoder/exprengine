@@ -5,7 +5,7 @@
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
 //
-// Copyright (C) 2012 Giacomo Stelluti Scala
+// Copyright (C) 2012 - 2013 Giacomo Stelluti Scala
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,14 +35,14 @@ using System.Runtime.InteropServices;
 #endregion
 
 [assembly: AssemblyTitle(ThisAssembly.Title)]
-[assembly: AssemblyProduct(ExpressionEngine.ThisLibrary.ProductName)]
+[assembly: AssemblyProduct(ExpressionEngine.Core.ThisLibrary.ProductName)]
 [assembly: AssemblyDescription(ThisAssembly.Title)]
 [assembly: AssemblyCopyright(ThisAssembly.Copyright)]
 [assembly: AssemblyVersion(ThisAssembly.Version)]
 [assembly: AssemblyInformationalVersion(ThisAssembly.InformationalVersion)]
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: AssemblyCulture("")]
-[assembly: InternalsVisibleTo(ExpressionEngine.ThisLibrary.Name + ".Tests")]
+[assembly: InternalsVisibleTo(ExpressionEngine.Core.ThisLibrary.Name + ".Tests")]
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
 #else

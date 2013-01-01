@@ -5,7 +5,7 @@
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
 //
-// Copyright (C) 2012 Giacomo Stelluti Scala
+// Copyright (C) 2012 - 2013 Giacomo Stelluti Scala
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,6 @@ namespace ExpressionEngine
 		private static readonly TokenType[] MiddleGroupMultiplicative = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier};
 		private static readonly TokenType[] MiddleGroupIdentifier = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.Star, TokenType.Slash, TokenType.Caret, TokenType.CloseBracket};
 		private static readonly TokenType[] MiddleGroupUnary = {TokenType.Literal, TokenType.OpenBracket, TokenType.Identifier};
-		//private static readonly TokenType[] MiddleGroupExponent = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier};
 
         public Parser(Scanner scanner)
         {
@@ -73,11 +72,11 @@ namespace ExpressionEngine
         {
             if (!insideFunc)
             {
-				Expect(InitialGroup); //Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret);
+				Expect(InitialGroup);
             }
             else
             {
-				Ensure(InitialGroupWithComma); //Ensure(TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret);
+				Ensure(InitialGroupWithComma);
             }
             Model.Expression expr = ParseAdditiveBinary();
             return expr;
@@ -93,7 +92,7 @@ namespace ExpressionEngine
                         Operator = _current.IsPlus() ? Model.OperatorType.Add : Model.OperatorType.Subtract,
                         Left = expr
                     };
-				Expect(MiddleGroupAdditiveExponent); //Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier);
+				Expect(MiddleGroupAdditiveExponent);
                 binaryAddSub.Right = ParseMultiplicativeBinary();
                 expr = binaryAddSub;
             }
@@ -110,7 +109,7 @@ namespace ExpressionEngine
                         Operator = _current.IsStar() ? Model.OperatorType.Multiply : Model.OperatorType.Divide,
                         Left = expr
                     };
-				Expect(MiddleGroupMultiplicative); //Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier);
+				Expect(MiddleGroupMultiplicative);
                 binaryMulDiv.Right = ParseExponentBinary();
                 expr = binaryMulDiv;
             }
@@ -127,7 +126,7 @@ namespace ExpressionEngine
                         Operator = Model.OperatorType.Exponent,
                         Left = expr
                     };
-				Expect(MiddleGroupAdditiveExponent); //Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier);
+				Expect(MiddleGroupAdditiveExponent);
                 binaryExp.Right = ParseIdentifier();
                 expr = binaryExp;
             }
@@ -152,7 +151,7 @@ namespace ExpressionEngine
                 var varExpr = new Model.VariableExpression() {Name = _current.Text};
                 if (_scanner.PeekToken() != null)
                 {
-					Expect(MiddleGroupIdentifier); //Expect(TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.Star, TokenType.Slash, TokenType.Caret, TokenType.CloseBracket);
+					Expect(MiddleGroupIdentifier);
                 }
                 else
                 {
@@ -199,12 +198,12 @@ namespace ExpressionEngine
             if (_current.IsMinus())
             {
                	unary.Operator = Model.OperatorType.UnaryMinus;
-				Expect(MiddleGroupUnary); //Expect(TokenType.Literal, TokenType.OpenBracket, TokenType.Identifier);
+				Expect(MiddleGroupUnary);
             }
             else if (_current.IsPlus())
             {
                 unary.Operator = Model.OperatorType.UnaryPlus;
-				Expect(MiddleGroupUnary); //Expect(TokenType.Literal, TokenType.OpenBracket, TokenType.Identifier);
+				Expect(MiddleGroupUnary);
             }
 
             if (_current.IsLiteral())

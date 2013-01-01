@@ -72,9 +72,6 @@
     <Compile Include="..\ExpressionEngine\ExpressionException.cs">
       <Link>ExpressionEngine\ExpressionException.cs</Link>
     </Compile>
-    <Compile Include="..\ExpressionEngine\Properties\ThisLibrary.cs">
-      <Link>ExpressionEngine\ThisLibrary.cs</Link>
-    </Compile>
     <Compile Include="..\ExpressionEngine\Core\FunctionExpression.cs">
       <Link>ExpressionEngine\Core\FunctionExpression.cs</Link>
     </Compile>

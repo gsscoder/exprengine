@@ -5,7 +5,7 @@
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
 //
-// Copyright (C) 2012 Giacomo Stelluti Scala
+// Copyright (C) 2012 - 2013 Giacomo Stelluti Scala
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +48,6 @@ namespace ExpressionEngine
 		/// <param name='text'>Infix notation string to be evaluated.</param>
 		public static Expression Create(string text)
 		{
-			//return new Expression(text, Kernel.ParseString(text).Evaluate());
 			var tree = Kernel.ParseString(text);
 			var visitor = ExpressionVisitor.Create();
 			tree.Accept(visitor);
