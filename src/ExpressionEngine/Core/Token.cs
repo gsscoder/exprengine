@@ -32,7 +32,7 @@ using System.Globalization;
 
 namespace ExpressionEngine
 {
-    enum TokenType
+    enum TokenType : byte
     {
         Plus,
         Minus,
@@ -119,18 +119,6 @@ namespace ExpressionEngine
             return Type == TokenType.Caret;
         }
 
-        //public byte Precedence
-        //{
-        //    get
-        //    {
-        //        if (Type == TokenType.Plus || Type == TokenType.Minus)
-        //        {
-        //            return 1;
-        //        }
-        //        return 2;
-        //    }
-        //}
-
         public static Token Punctuator(int @char)
         {
             var token = new Token(new string((char) @char, 1));
@@ -196,14 +184,5 @@ namespace ExpressionEngine
         {
             return new Token(text, TokenType.Identifier);
         }
-
-        //public static string ToText(Token token)
-        //{
-        //    if (token == null)
-        //    {
-        //        return "end of input";
-        //    }
-        //    return token.Text;
-        //}
     }
 }

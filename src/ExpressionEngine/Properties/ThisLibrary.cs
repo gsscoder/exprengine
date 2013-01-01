@@ -33,7 +33,7 @@ namespace ExpressionEngine
     {
         public const string Name = "ExpressionEngine";
         public const string ProductName = "Expression Engine Library";
-        public const string Version = "1.0.2.11";
+        public const string Version = "1.0.2.13";
         public const string ReleaseType = "alfa";
     }
 }

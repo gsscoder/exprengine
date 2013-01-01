@@ -33,7 +33,7 @@ using ExpressionEngine.Core;
 
 namespace ExpressionEngine.Model
 {
-    enum OperatorType
+    enum OperatorType : byte
     {
         UnaryPlus,
         UnaryMinus,

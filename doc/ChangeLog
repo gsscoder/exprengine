@@ -1,3 +1,8 @@
+2013-01-01      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * Enum now inherits from byte (System.Byte).
+  * Version incremented to 1.0.2.13 alfa.
+
 2012-12-31      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * Parser performance improvement.
