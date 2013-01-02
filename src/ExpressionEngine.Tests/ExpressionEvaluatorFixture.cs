@@ -73,6 +73,12 @@ namespace ExpressionEngine.Tests
         }
 
         [Test]
+        public void PlainModulo()
+        {
+            Expression.Create("10 % 4").Value.Should().Equal(2D);
+        }
+
+        [Test]
         public void SmallExpr()
         {
             Expression.Create("1 + 2 * 3 / 1").Value.Should().Equal(7D);
@@ -82,6 +88,12 @@ namespace ExpressionEngine.Tests
         public void SmallExprWithDecimal()
         {
             Expression.Create(".90 - 3 * 4 + 11.123").Value.Should().Equal(0.022999999999999687D);
+        }
+
+        [Test]
+        public void SmallExprWithModulo()
+        {
+            Expression.Create("+0.90 - 3 * 4 + 11 - (123 % 23)").Value.Should().Equal(-8.1D);
         }
 
         [Test]
@@ -100,6 +112,18 @@ namespace ExpressionEngine.Tests
         public void SmallExprWithFunction_2()
         {
             Expression.Create("sqrt(10000) / 2").Value.Should().Equal(50D);
+        }
+
+        [Test]
+        public void SmallExprWithFunction_3()
+        {
+            Expression.Create("sqrt(1000) % 3").Value.Should().Equal(1.6227766016837926D);
+        }
+
+        [Test]
+        public void SmallExprWithFunction_4()
+        {
+            Expression.Create("cos(999) % .3").Value.Should().Equal(0.099649852980826459D);
         }
 
 		[Test]
@@ -124,6 +148,12 @@ namespace ExpressionEngine.Tests
         public void ExprWithBrackets_2()
         {
             Expression.Create("3 * 0.31 / ((19 + 10) - .7)").Value.Should().Equal(0.032862190812720848D);
+        }
+
+        [Test]
+        public void ExprWithBrackets_3()
+        {
+            Expression.Create("3 * 0.31 / 19 + 10 - (1.7 % 2)").Value.Should().Equal(8.3489473684210527D);
         }
 
         [Test]

@@ -35,14 +35,15 @@ namespace ExpressionEngine
 {
     enum TokenType : byte
     {
-        Plus,
-        Minus,
-        Star,
-        Slash,
-        OpenBracket,
-        CloseBracket,
-        Comma,
-        Caret,
+        Plus,           /*  +  */
+        Minus,          /*  -  */
+        Star,           /*  *  */
+        Slash,          /*  /  */
+        Percent,        /*  %  */
+        OpenBracket,    /*  (  */
+        CloseBracket,   /*  )  */
+        Comma,          /*  ,  */
+        Caret,          /*  ^  */
         Literal,
         Identifier
     }
@@ -120,6 +121,11 @@ namespace ExpressionEngine
             return Type == TokenType.Caret;
         }
 
+        public bool IsPercent()
+        {
+            return Type == TokenType.Percent;
+        }
+
         public static Token Punctuator(int @char)
         {
             var token = new Token(new string((char) @char, 1));
@@ -136,6 +142,9 @@ namespace ExpressionEngine
                     break;
                 case "/":
                     token.Type = TokenType.Slash;
+                    break;
+                case "%":
+                    token.Type = TokenType.Percent;
                     break;
                 case "(":
                     token.Type = TokenType.OpenBracket;
@@ -160,7 +169,7 @@ namespace ExpressionEngine
             return Convert.ToDouble(Text, CultureInfo.InvariantCulture);
         }
 
-        private Model.OperatorType GetOperator()
+        public Model.OperatorType GetAdditiveOperator()
         {
             switch (Type)
             {
@@ -168,12 +177,22 @@ namespace ExpressionEngine
                     return Model.OperatorType.Add;
                 case TokenType.Minus:
                     return Model.OperatorType.Subtract;
+            }
+            throw new ExpressionException("Expected additive (+, -) binary operator.");
+        }
+
+        public Model.OperatorType GetMultiplicativeOperator()
+        {
+            switch (Type)
+            {
                 case TokenType.Star:
                     return Model.OperatorType.Multiply;
                 case TokenType.Slash:
                     return Model.OperatorType.Divide;
+                case TokenType.Percent:
+                    return Model.OperatorType.Modulo;
             }
-            throw new ExpressionException("Expected binary operator.");
+            throw new ExpressionException("Expected multiplicative (*, /, %) binary operator.");
         }
 
         public static Token Literal(string text)

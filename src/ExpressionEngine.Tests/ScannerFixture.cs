@@ -85,6 +85,27 @@ namespace ExpressionEngine.Tests
         }
 
         [Test]
+        public void SmallExprWithModulo()
+        {
+            var scanner = new Scanner(new StringReader("10 % 2"));
+
+            scanner.PeekToken().ShouldLiteralEqual("10");
+
+            scanner.NextToken().ShouldLiteralEqual("10");
+
+            scanner.PeekToken().ShouldPunctuatorEqual(TokenType.Percent, "%");
+
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.Percent, "%");
+
+            scanner.PeekToken().ShouldLiteralEqual("2");
+
+            scanner.NextToken().ShouldLiteralEqual("2");
+
+            scanner.PeekToken().Should().Be.Null();
+            scanner.NextToken().Should().Be.Null();
+        }
+
+        [Test]
         public void SingleNumberExpr()
         {
             var scanner = new Scanner(new StringReader("123"));

@@ -98,14 +98,17 @@ namespace ExpressionEngine.Core
 	                    _result = left() + right();
 						break;
 	                case Model.OperatorType.Subtract:
-	                    _result =  left() - right();
+	                    _result = left() - right();
 						break;
 	                case Model.OperatorType.Multiply:
-	                    _result =  left() * right();
+	                    _result = left() * right();
 						break;
 	                case Model.OperatorType.Divide:
-						_result =  left() / right();
+						_result = left() / right();
 						break;
+                    case Model.OperatorType.Modulo:
+	                    _result = left() % right();
+                        break;;
 	                case Model.OperatorType.Exponent:
 	                    _result =  Math.Pow(left(), right());
 						break;

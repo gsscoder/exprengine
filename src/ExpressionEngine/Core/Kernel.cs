@@ -141,7 +141,7 @@ namespace ExpressionEngine.Core
     {
         public const string Name = "ExpressionEngine";
         public const string ProductName = "Expression Engine Library";
-        public const string Version = "1.0.2.15";
+        public const string Version = "1.0.2.19";
         public const string ReleaseType = "alfa";
     }
 	#endregion

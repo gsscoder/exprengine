@@ -1,3 +1,9 @@
+2013-01-02      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * Implemented modulo operator (%).
+  * Better IDisposable implementation for Parser class.
+  * Version incremented to 1.0.2.19 alfa.
+
 2013-01-01      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * Removed old commented code.

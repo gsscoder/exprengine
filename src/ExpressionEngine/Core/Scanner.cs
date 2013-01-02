@@ -68,7 +68,7 @@ namespace ExpressionEngine
 
             if (IsPunctuatorChar(_c))
             {
-                // '(', ')', '+', '-', '*', '/', '^', ','
+                // '(', ')', '+', '-', '*', '/', '^', '%', ','
                 token = ScanPunctuator();
             }
             else if (char.IsLetter((char) _c))

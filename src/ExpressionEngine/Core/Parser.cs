@@ -55,7 +55,18 @@ namespace ExpressionEngine
 
         public void Dispose()
         {
-            _scanner.Dispose();
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                _scanner.Dispose();
+                _disposed = true;
+            }
         }
 
         public Model.Expression Parse()
@@ -89,7 +100,7 @@ namespace ExpressionEngine
             {
                 var binaryAddSub = new Model.BinaryExpression
                     {
-                        Operator = _current.IsPlus() ? Model.OperatorType.Add : Model.OperatorType.Subtract,
+                        Operator = _current.GetAdditiveOperator(),
                         Left = expr
                     };
 				Expect(MiddleGroupAdditiveExponent);
@@ -102,11 +113,11 @@ namespace ExpressionEngine
         private Model.Expression ParseMultiplicativeBinary()
         {
             Model.Expression expr = ParseExponentBinary();
-            while (!_scanner.IsEof() && (_current.IsStar() || _current.IsSlash()))
+            while (!_scanner.IsEof() && (_current.IsStar() || _current.IsSlash() || _current.IsPercent()))
             {
                 var binaryMulDiv = new Model.BinaryExpression
                     {
-                        Operator = _current.IsStar() ? Model.OperatorType.Multiply : Model.OperatorType.Divide,
+                        Operator = _current.GetMultiplicativeOperator(),
                         Left = expr
                     };
 				Expect(MiddleGroupMultiplicative);
@@ -345,6 +356,7 @@ namespace ExpressionEngine
         }
 		#endregion
 
+        private bool _disposed;
         private int _brackets;
         private Token _current;
         private readonly Scanner _scanner;

@@ -40,6 +40,7 @@ namespace ExpressionEngine.Model
         Exponent,
         Multiply,
         Divide,
+        Modulo,
         Add,
         Subtract
     }
