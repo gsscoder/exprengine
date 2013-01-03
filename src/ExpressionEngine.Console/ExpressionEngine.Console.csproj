@@ -35,8 +35,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\ExpressionEngine\Core\VariableExpression.cs">
-      <Link>ExpressionEngine\Core\VariableExpression.cs</Link>
+    <Compile Include="..\ExpressionEngine\Core\Model.cs">
+      <Link>ExpressionEngine\Core\Model.cs</Link>
     </Compile>
     <Compile Include="CommandLine\CommandLine.cs" />
     <Compile Include="CommandLine\CommandLineText.cs" />
@@ -45,14 +45,8 @@
     <Compile Include="StringUtil.cs" />
     <Compile Include="XEvalTool.cs" />
     <Compile Include="XEvalTool.Options.cs" />
-    <Compile Include="..\ExpressionEngine\Core\BinaryExpression.cs">
-      <Link>ExpressionEngine\Core\BinaryExpression.cs</Link>
-    </Compile>
     <Compile Include="..\ExpressionEngine\Core\Kernel.cs">
       <Link>ExpressionEngine\Core\Kernel.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Core\LiteralExpression.cs">
-      <Link>ExpressionEngine\Core\LiteralExpression.cs</Link>
     </Compile>
     <Compile Include="..\ExpressionEngine\Core\Parser.cs">
       <Link>ExpressionEngine\Core\Parser.cs</Link>
@@ -63,20 +57,11 @@
     <Compile Include="..\ExpressionEngine\Core\Token.cs">
       <Link>ExpressionEngine\Core\Token.cs</Link>
     </Compile>
-    <Compile Include="..\ExpressionEngine\Core\UnaryExpression.cs">
-      <Link>ExpressionEngine\Core\UnaryExpression.cs</Link>
-    </Compile>
     <Compile Include="..\ExpressionEngine\Expression.cs">
       <Link>ExpressionEngine\Expression.cs</Link>
     </Compile>
     <Compile Include="..\ExpressionEngine\ExpressionException.cs">
       <Link>ExpressionEngine\ExpressionException.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Core\FunctionExpression.cs">
-      <Link>ExpressionEngine\Core\FunctionExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Core\Expression.cs">
-      <Link>ExpressionEngine\Core\Expression.cs</Link>
     </Compile>
     <Compile Include="..\ExpressionEngine\Core\ExpressionVisitor.cs">
       <Link>ExpressionEngine\Core\ExpressionVisitor.cs</Link>

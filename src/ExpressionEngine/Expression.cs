@@ -27,32 +27,68 @@
 //
 #endregion
 #region Using Directives
+using System;
+using System.Collections.Generic;
 using ExpressionEngine.Core;
 #endregion
+
 namespace ExpressionEngine
 {
 	/// <summary>
-	/// Represents an immutable mathematical expression. Its result is stored in the <see cref="Value"/> property.
+	/// Represents mathematical expression. Its result is stored in the <see cref="Value"/> property.
 	/// </summary>
-    public sealed class Expression
+    public class Expression
     {
-		private Expression(string text, double value)
+        private Expression() {}
+
+        private Expression(string text)
+        {
+            _value = double.NaN;
+        }
+
+		protected Expression(string text, double value)
 		{
 			_text = text;
 			_value = value;
 		}
 
 		/// <summary>
-		/// Creates an <see cref="ExpressionEngine.Expression" instance with infix notation string./>
+		/// Creates an <see cref="ExpressionEngine.Expression"/> instance with infix notation string./>
 		/// </summary>
 		/// <param name='text'>Infix notation string to be evaluated.</param>
 		public static Expression Create(string text)
 		{
-			var tree = Kernel.ParseString(text);
-			var visitor = ExpressionVisitor.Create();
-			tree.Accept(visitor);
-			return new Expression(text, (double) visitor.Result);;
+		    return Create(text, null, null);
 		}
+
+        public static Expression Create(string text, IDictionary<string, double> variables)
+        {
+            return Create(text, variables, null);
+        }
+
+        public static Expression Create(string text, IDictionary<string, Func<double[], double>> functions)
+        {
+            return Create(text, null, functions);
+        }
+
+        public static Expression Create(string text, IDictionary<string, double> variables,
+            IDictionary<string, Func<double[], double>> functions)
+        {
+            var tree = Kernel.ParseString(text);
+            if (!tree.HasUserDefinedNames)
+            {
+                if (variables != null || functions != null)
+                {
+                    throw new ExpressionException("Functions or variables supplied for an immutable expression.");
+                }
+                // No user defined names? Expression can be immutable.
+                var visitor = ExpressionVisitor.Create();
+                tree.Root.Accept(visitor);
+                return new Expression(text, (double)visitor.Result);
+            }
+            // We can create a mutable expression.
+            return new MutableExpression(text, variables, functions);
+        }
 
 		/// <summary>
 		/// Gets the <see cref="System.String"/> with the mathematical expression of the current instance.
@@ -60,7 +96,21 @@ namespace ExpressionEngine
 		/// <value>A <see cref="System.String"/> with the mathematical expression.</value>
 		public string Text { get { return _text; } }
 
-		public double Value { get { return _value; } }
+        /// <summary>
+        /// Evaluates the mathematical expression as a <see cref="System.Double"/>.
+        /// </summary>
+        /// <value>The <see cref="System.Double"/> of the expression.</value>
+		public virtual double Value { get { return _value; } } // Here will be placed a caching subsystem
+
+        public virtual void DefineVariable(string name, double value)
+        {
+            throw new ExpressionException("Immutable exceptions do not support variables.");
+        }
+
+        public virtual void DefineFunction(string name, Func<double[], double> body)
+        {
+            throw new ExpressionException("Immutable exceptions do not support functions.");
+        }
 
 		/// <summary>
 		/// Serves as a hash function for a <see cref="ExpressionEngine.Expression"/> object.
@@ -74,5 +124,61 @@ namespace ExpressionEngine
 
 		private readonly string _text;
 		private readonly double _value;
+
+        private sealed class MutableExpression : Expression
+        {
+            private MutableExpression() {}
+
+            public MutableExpression(string text, IDictionary<string, double> variables,
+                IDictionary<string, Func<double[], double>> functions) : base(text)
+            {
+                _variables = variables == null ? new Dictionary<string, double>() :
+                    new Dictionary<string, double>(variables);
+                _functions = functions == null ? new Dictionary<string, Func<double[], double>>() :
+                    new Dictionary<string, Func<double[], double>>(functions);
+                _tree = Kernel.ParseString(text);
+            }
+
+            public override double Value
+            {
+                get
+                {
+                    // Here will be placed a caching subsystem
+                    var visitor = ExpressionVisitor.Create();
+                    visitor.UserDefinedVariables = _variables;
+                    visitor.UserDefinedFunctions = _functions;
+                    _tree.Root.Accept(visitor);
+                    return (double) visitor.Result;
+                }
+            }
+
+            public override void DefineVariable(string name, double value)
+            {
+                if (_variables.ContainsKey(name))
+                {
+                    _variables[name] = value;
+                }
+                else
+                {
+                    _variables.Add(name, value);
+                }
+            }
+
+            public override void DefineFunction(string name, Func<double[], double> body)
+            {
+                if (_variables.ContainsKey(name))
+                {
+                    _functions[name] = body;
+                }
+                else
+                {
+                    _functions.Add(name, body);
+                }
+            }
+
+            private readonly Model.Ast _tree;
+            private readonly IDictionary<string, double> _variables;
+            private readonly IDictionary<string, Func<double[], double>> _functions;
+        }
     }
 }

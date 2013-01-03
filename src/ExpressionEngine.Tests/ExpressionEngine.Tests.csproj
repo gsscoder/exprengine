@@ -45,7 +45,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExpressionEvaluatorFixture.cs" />
+    <Compile Include="ExpressionFixture.cs" />
+    <Compile Include="MutableExpressionFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScannerFixture.cs" />
     <Compile Include="TokenUtil.cs" />
@@ -56,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExpressionEngine\ExpressionEngine.csproj">
-      <Project>{241A5DBC-BB66-4E65-BEDA-98B1DB83D2EB}</Project>
+      <Project>{241a5dbc-bb66-4e65-beda-98b1db83d2eb}</Project>
       <Name>ExpressionEngine</Name>
     </ProjectReference>
   </ItemGroup>

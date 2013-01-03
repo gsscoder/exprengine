@@ -283,6 +283,14 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
+        [Test]
+        public void Underscore()
+        {
+            var scanner = new Scanner(new StringReader("var_name"));
+
+            scanner.NextToken().ShouldIdentifierEqual("var_name");
+        }
+
 		#region Expected Exceptions
 		[Test]
 		[ExpectedException(typeof(ExpressionException), ExpectedMessage="Line terminator is not allowed.")]

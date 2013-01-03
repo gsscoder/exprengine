@@ -1,10 +1,12 @@
-Expression Engine Library 1.0.2.19 Alfa.
+Expression Engine Library 1.0.3.1 Beta.
 ===
 This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and uses an AST-evaluation algorithm.
-It was written primarily for fun and currently doesn't support user defined variables/functions; but it will in near future, along with other features.
+It was written primarily for fun and and as programming exercise; anyway if you anyone find it useful, please send feature requests or issues.
 
 News:
 ---
+  - Public API should have reached its final shape.
+  - Implemented user defined functions and variables.
   - Implemented modulo operator (%).
   - Parser performance improved.
   - Added support for built-in variables (pi->Math.PI, e->Math.E).

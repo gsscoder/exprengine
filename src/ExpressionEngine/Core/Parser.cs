@@ -31,8 +31,8 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using ExpressionEngine.Core;
 using ExpressionEngine.Model;
-
 #endregion
 
 namespace ExpressionEngine
@@ -45,7 +45,7 @@ namespace ExpressionEngine
 		private static readonly TokenType[] InitialGroupWithComma = {TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret};
 		private static readonly TokenType[] MiddleGroupAdditiveExponent = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier};
 		private static readonly TokenType[] MiddleGroupMultiplicative = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier};
-		private static readonly TokenType[] MiddleGroupIdentifier = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.Star, TokenType.Slash, TokenType.Caret, TokenType.CloseBracket};
+		private static readonly TokenType[] MiddleGroupIdentifier = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.Star, TokenType.Slash, TokenType.Caret, TokenType.CloseBracket, TokenType.Comma};
 		private static readonly TokenType[] MiddleGroupUnary = {TokenType.Literal, TokenType.OpenBracket, TokenType.Identifier};
 
         public Parser(Scanner scanner)
@@ -69,14 +69,14 @@ namespace ExpressionEngine
             }
         }
 
-        public Model.Expression Parse()
+        public Model.Ast Parse()
         {
             Model.Expression root = ParseExpression();
             if (_brackets != 0)
             {
                 throw new ExpressionException(_scanner.ColumnNumber, "Syntax error, odd number of brackets.");
             }
-            return root;
+            return new Model.Ast(root, _userVariables, _userFunctions);
         }
 
         private Model.Expression ParseExpression(bool insideFunc = false)
@@ -159,7 +159,8 @@ namespace ExpressionEngine
             if (_scanner.PeekToken() == null || (_scanner.PeekToken() != null && !_scanner.PeekToken().IsOpenBracket()))
             {
                 // variable
-                var varExpr = new Model.VariableExpression() {Name = _current.Text};
+                var varExpr = new Model.VariableExpression() { Name = _current.Text };
+                if (!Kernel.BuiltIn.IsBuiltInVariable(varExpr.Name)) { _userVariables++; }
                 if (_scanner.PeekToken() != null)
                 {
 					Expect(MiddleGroupIdentifier);
@@ -171,7 +172,8 @@ namespace ExpressionEngine
                 return varExpr;
             }
 
-            var expr = new Model.FunctionExpression() {Name = _current.Text};
+            var expr = new Model.FunctionExpression() { Name = _current.Text };
+            if (!Kernel.BuiltIn.IsBuiltInFunction(expr.Name)) { _userFunctions++; }
             Expect(TokenType.OpenBracket);
             while (!_scanner.IsEof())
             {
@@ -356,6 +358,13 @@ namespace ExpressionEngine
         }
 		#endregion
 
+        ~Parser()
+		{
+			Dispose(false);
+		}
+
+        private int _userVariables;
+        private int _userFunctions;
         private bool _disposed;
         private int _brackets;
         private Token _current;

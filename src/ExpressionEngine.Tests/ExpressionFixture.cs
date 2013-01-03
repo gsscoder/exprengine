@@ -34,8 +34,14 @@ using Should.Fluent;
 namespace ExpressionEngine.Tests
 {
     [TestFixture]
-    public sealed class ExpressionEvaluatorFixture
+    public sealed class ExpressionFixture
     {
+        [Test]
+        public void ExpressionWithoutUserDefinedNamesIsImmutable()
+        {
+            Expression.Create("1 + (3 / 4) * (2 - 1)").Should().Be.OfType<Expression>();
+        }
+
         [Test]
         public void PlainAddition()
         {
@@ -247,13 +253,13 @@ namespace ExpressionEngine.Tests
         }
 
         [Test]
-        public void Variable_3()
+        public void Constant_3()
         {
             Expression.Create("-e").Value.Should().Equal(-2.7182818284590451D);
         }
 
         [Test]
-        public void VariableFunction()
+        public void Variable_Function()
         {
             Expression.Create("10 - (pi * atan(10)) - -e").Value.Should().Equal(8.0965979343737935D);
         }

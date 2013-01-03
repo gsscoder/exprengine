@@ -37,7 +37,7 @@ namespace ExpressionEngine.Core
 {
 	static class Kernel
 	{
-		public static Model.Expression ParseString(string value)
+		public static Model.Ast ParseString(string value)
 		{
 			using (var scanner = new Scanner(new StringReader(value)))
 			{
@@ -74,17 +74,19 @@ namespace ExpressionEngine.Core
                 private readonly byte _min;
                 private readonly byte _max;
             }
+
             public static double Function(string name, double[] args)
             {
-                ParameterInfo param;
-                if (!FuncsLookup.TryGetValue(name, out param))
-                {
-                    throw new ExpressionException(string.Format(CultureInfo.InvariantCulture, "Undefined function: '{0}'.", name));
-                }
+                //ParameterInfo param;
+                //if (!FuncsLookup.TryGetValue(name, out param))
+                //{
+                //    throw new ExpressionException(string.Format(CultureInfo.InvariantCulture, "Undefined function: '{0}'.", name));
+                //}
+                var param = FuncsLookup[name];
                 if (!param.Match(args.Length))
                 {
                     throw new ExpressionException(string.Format(CultureInfo.InvariantCulture, "Function '{0}' requires only {1}.", name, param.ToString()));
-                };
+                }
                 if (string.CompareOrdinal("log", name) == 0)
                 {
                     if (args.Length == 1) { return Math.Log(args[0]); }
@@ -104,15 +106,22 @@ namespace ExpressionEngine.Core
 
                 throw new InvalidOperationException(); // Unreachable code
             }
+
             public static double Variable(string name)
             {
-                double value;
-                if (!VarsLookup.TryGetValue(name, out value))
-                {
-                    throw new ExpressionException(string.Format(CultureInfo.InvariantCulture, "Undefined variable: '{0}'.", name));
-                }
-                return value;
+                return VarsLookup[name];
             }
+            
+            public static bool IsBuiltInFunction(string name)
+            {
+                return FuncsLookup.ContainsKey(name);
+            }
+
+            public static bool IsBuiltInVariable(string name)
+            {
+                return VarsLookup.ContainsKey(name);
+            }
+
             private static readonly Dictionary<string, ParameterInfo> FuncsLookup = new Dictionary<string, ParameterInfo>()
 	            {
                     {"log", ParameterInfo.OneTwoParameter()},
@@ -141,8 +150,8 @@ namespace ExpressionEngine.Core
     {
         public const string Name = "ExpressionEngine";
         public const string ProductName = "Expression Engine Library";
-        public const string Version = "1.0.2.19";
-        public const string ReleaseType = "alfa";
+        public const string Version = "1.0.3.1";
+        public const string ReleaseType = "beta";
     }
 	#endregion
 }

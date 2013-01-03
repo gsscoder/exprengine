@@ -71,9 +71,9 @@ namespace ExpressionEngine
                 // '(', ')', '+', '-', '*', '/', '^', '%', ','
                 token = ScanPunctuator();
             }
-            else if (char.IsLetter((char) _c))
+            else if (IsIdentifierStartChar(_c)) //(char.IsLetter((char) _c))
             {
-                // [a|A-z|Z]
+                // [_|a|A-z|Z][_|a|A-z|Z|0-9]
                 token = ScanIdentifier();
             }
             else if (IsLiteralChar(_c))
@@ -179,7 +179,7 @@ namespace ExpressionEngine
             while (true)
             {
                 int c = Peek();
-                if (!char.IsLetter((char) c) || c == -1)
+                if (!IsIdentifierChar((char) c) || c == -1)  //if (!char.IsLetter((char) c) || c == -1)
                 {
                     break;
                 }
@@ -225,6 +225,25 @@ namespace ExpressionEngine
         private static bool IsLiteralChar(int c)
         {
             return c == '.' || (c >= '0' && c <= '9');
+        }
+
+        private static bool IsIdentifierStartChar(int c)
+        {
+            var cat = char.GetUnicodeCategory((char) c);
+            return c == '_' ||
+                   cat == UnicodeCategory.UppercaseLetter ||
+                   cat == UnicodeCategory.LowercaseLetter ||
+                   cat == UnicodeCategory.TitlecaseLetter;
+        }
+
+        private static bool IsIdentifierChar(int c)
+        {
+            var cat = char.GetUnicodeCategory((char)c);
+            return c == '_' ||
+                   cat == UnicodeCategory.UppercaseLetter ||
+                   cat == UnicodeCategory.LowercaseLetter ||
+                   cat == UnicodeCategory.TitlecaseLetter ||
+                   cat == UnicodeCategory.DecimalDigitNumber;
         }
         #endregion
 

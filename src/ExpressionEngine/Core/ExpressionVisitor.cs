@@ -29,6 +29,7 @@
 #region Using Directives
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 #endregion
 
 namespace ExpressionEngine.Core
@@ -46,6 +47,15 @@ namespace ExpressionEngine.Core
 	    public abstract void VisitVariable(Model.VariableExpression expression);
 
 		public abstract object Result { get; }
+
+        public IDictionary<string, double> UserDefinedVariables { protected get; set; }
+
+        public IDictionary<string, Func<double[], double>> UserDefinedFunctions { protected get; set; } 
+
+        public static ExpressionVisitor Create()
+        {
+            return new EvaluatingExpressionVisitor();
+        }
 
 		public class EvaluatingExpressionVisitor : ExpressionVisitor
 		{
@@ -71,13 +81,21 @@ namespace ExpressionEngine.Core
 
 			public override void VisitFunction(Model.FunctionExpression expression)
 			{
+			    var name = expression.Name;
 				var argsList = new List<double>(expression.Arguments.Count);
 				expression.Arguments.ForEach(arg => {
 					arg.Accept(this);
 					argsList.Add(_result);
 				});
 				var args = argsList.ToArray();
-			    _result = Kernel.BuiltIn.Function(expression.Name, args);
+			    if (Kernel.BuiltIn.IsBuiltInFunction(name))
+			    {
+			        _result = Kernel.BuiltIn.Function(expression.Name, args);
+			    }
+			    else
+			    {
+			        _result = UserDefinedFunctions[name](args);
+			    }
 			}
 
 			public override void VisitBinary(Model.BinaryExpression expression)
@@ -108,7 +126,7 @@ namespace ExpressionEngine.Core
 						break;
                     case Model.OperatorType.Modulo:
 	                    _result = left() % right();
-                        break;;
+                        break;
 	                case Model.OperatorType.Exponent:
 	                    _result =  Math.Pow(left(), right());
 						break;
@@ -119,17 +137,24 @@ namespace ExpressionEngine.Core
 
             public override void VisitVariable(Model.VariableExpression expression)
             {
-                _result = Kernel.BuiltIn.Variable(expression.Name);
+                var name = expression.Name;
+                if (Kernel.BuiltIn.IsBuiltInVariable(name))
+                {
+                    _result = Kernel.BuiltIn.Variable(name);
+                }
+                else
+                {
+                    if (!UserDefinedVariables.ContainsKey(name))
+                    {
+                        throw new ExpressionException(string.Format(CultureInfo.InvariantCulture, "Undefined variable: '{0}'.", name));
+                    }
+                    _result = UserDefinedVariables[name];
+                }
             }
 
             public override object Result { get { return _result; } }
 
 			private double _result;
-		}
-
-		public static ExpressionVisitor Create()
-		{
-			return new EvaluatingExpressionVisitor();
 		}
 	}
 }
