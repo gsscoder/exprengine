@@ -61,7 +61,16 @@ namespace ExpressionEngine
             Type = type;
         }
 
+        private Token(string text, double value)
+        {
+            Type = TokenType.Literal;
+            Text = text;
+            Value = value;
+        }
+
         public string Text;
+
+        public double Value = double.NaN;
 
         public TokenType Type;
 
@@ -195,9 +204,9 @@ namespace ExpressionEngine
             throw new ExpressionException("Expected multiplicative (*, /, %) binary operator.");
         }
 
-        public static Token Literal(string text)
+        public static Token Literal(string text, double value)
         {
-            return new Token(text, TokenType.Literal);
+            return new Token(text, value);
         }
 
         public static Token Identifier(string text)

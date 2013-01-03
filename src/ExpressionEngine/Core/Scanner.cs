@@ -35,6 +35,13 @@ using System.Text;
 
 namespace ExpressionEngine
 {
+    enum NumberFormats
+    {
+        Integer,
+        Decimal
+        // hex and more in future..
+    }
+
     sealed class Scanner : IDisposable
     {
         private Scanner() {}
@@ -140,11 +147,6 @@ namespace ExpressionEngine
             _c = _reader.Read();
         }
 
-        private int Peek()
-        {
-            return _reader.Peek();
-        }
-
         #region Specialized Readers
         private Token ScanPunctuator()
         {
@@ -153,24 +155,21 @@ namespace ExpressionEngine
 
         private Token ScanLiteral()
         {
-            var numericText = new StringBuilder(new string((char) _c, 1));
+            var hasDot = _c == '.';
+            var number = new StringBuilder(new string((char) _c, 1));
             while (true)
             {
-                int c = Peek();
+                int c = _reader.Peek();
                 if (!IsLiteralChar(c) || c == -1)
                 {
                     break;
                 }
-                numericText.Append((char) c);
+                if (c == '.') { hasDot = true; }
+                number.Append((char) c);
                 Advance();
             }
-            var number = numericText.ToString();
-            if (number[0] == '.')
-            {
-				// explicit zero-dot notation for easy conversion
-                number = string.Concat("0", number);
-            }
-            return Token.Literal(number);
+            var text = number.ToString();
+            return Token.Literal(text, ParseNumber(text, hasDot ? NumberFormats.Decimal : NumberFormats.Integer));
         }
 
         private Token ScanIdentifier()
@@ -178,7 +177,7 @@ namespace ExpressionEngine
             var identText = new StringBuilder(new string((char) _c, 1));
             while (true)
             {
-                int c = Peek();
+                int c = _reader.Peek();
                 if (!IsIdentifierChar((char) c) || c == -1)  //if (!char.IsLetter((char) c) || c == -1)
                 {
                     break;
@@ -193,7 +192,7 @@ namespace ExpressionEngine
         {
             while (true)
             {
-                if (!IsWhiteSpace(Peek()))
+                if (!IsWhiteSpace(_reader.Peek()))
                 {
                     break;
                 }
@@ -247,11 +246,22 @@ namespace ExpressionEngine
         }
         #endregion
 
+        private static double ParseNumber(string text, NumberFormats numberFormat)
+        {
+            if (numberFormat == NumberFormats.Integer)
+            {
+                return (double) int.Parse(text, NumberStyles.None);
+
+            }
+            return double.Parse(text, NumberStyles.AllowDecimalPoint, NumberFormatInfo);
+        }
+
 		~Scanner()
 		{
 			Dispose(false);
 		}
 
+        private static readonly NumberFormatInfo NumberFormatInfo = CultureInfo.InvariantCulture.NumberFormat;
 		private bool _disposed;
         private readonly TextReader _reader;
         private int _c;

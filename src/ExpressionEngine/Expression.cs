@@ -53,24 +53,51 @@ namespace ExpressionEngine
 		}
 
 		/// <summary>
-		/// Creates an <see cref="ExpressionEngine.Expression"/> instance with infix notation string./>
+		/// Creates an <see cref="ExpressionEngine.Expression"/> instance with infix notation string.
 		/// </summary>
 		/// <param name='text'>Infix notation string to be evaluated.</param>
+        /// <returns>A <see cref="ExpressionEngine.Expression"/> instance or appropriate mutable derived type.</returns>
 		public static Expression Create(string text)
 		{
 		    return Create(text, null, null);
 		}
 
+        /// <summary>
+        /// Creates an <see cref="ExpressionEngine.Expression"/> instance with infix notation string,
+        /// with user defined variables.
+        /// </summary> 
+        /// <param name="text">Infix notation string to be evaluated.</param>
+        /// <param name="variables">A generic dictionary of <see cref="System.String"/> keys as variable names
+        /// and <see cref="System.Double"/> for values.</param>
+        /// <returns>A <see cref="ExpressionEngine.Expression"/> instance or appropriate mutable derived type.</returns>
         public static Expression Create(string text, IDictionary<string, double> variables)
         {
             return Create(text, variables, null);
         }
 
+        /// <summary>
+        /// Creates an <see cref="ExpressionEngine.Expression"/> instance with infix notation string,
+        /// with user defined functions.
+        /// </summary> 
+        /// <param name="text">Infix notation string to be evaluated.</param>
+        /// <param name="functions">A generic dictionary of <see cref="System.String"/> keys as function names
+        /// and lambda expressions for function bodies.</param>
+        /// <returns>A <see cref="ExpressionEngine.Expression"/> instance or appropriate mutable derived type.</returns>
         public static Expression Create(string text, IDictionary<string, Func<double[], double>> functions)
         {
             return Create(text, null, functions);
         }
 
+        /// <summary>
+        /// Creates an <see cref="ExpressionEngine.Expression"/> instance with infix notation string,
+        /// with user defined variables and functions.
+        /// </summary> 
+        /// <param name="text">Infix notation string to be evaluated.</param>
+        /// <param name="variables">A generic dictionary of <see cref="System.String"/> keys as variable names
+        /// and <see cref="System.Double"/> for values.</param>
+        /// <param name="functions">A generic dictionary of <see cref="System.String"/> keys as function names
+        /// and lambda expressions for function bodies.</param>
+        /// <returns>A <see cref="ExpressionEngine.Expression"/> instance or appropriate mutable derived type.</returns>
         public static Expression Create(string text, IDictionary<string, double> variables,
             IDictionary<string, Func<double[], double>> functions)
         {
@@ -102,11 +129,24 @@ namespace ExpressionEngine
         /// <value>The <see cref="System.Double"/> of the expression.</value>
 		public virtual double Value { get { return _value; } } // Here will be placed a caching subsystem
 
+        /// <summary>
+        /// Provides a way to define o change a variable value using its name. Calling this method when the
+        /// expression is immutable will raise a <see cref="ExpressionEngine.ExpressionException"/>.
+        /// </summary>
+        /// <param name="name">A <see cref="System.String"/> name of the variable to create or change.</param>
+        /// <param name="value">A <see cref="System.Double"/> of the value.</param>
         public virtual void DefineVariable(string name, double value)
         {
             throw new ExpressionException("Immutable exceptions do not support variables.");
         }
 
+        /// <summary>
+        /// Provides a way to define o change a function using its name. Calling this method when the
+        /// expression is immutable will raise a <see cref="ExpressionEngine.ExpressionException"/>.
+        /// </summary>
+        /// <param name="name">A <see cref="System.String"/> name of the function to create or change.</param>
+        /// <param name="body">A lambda expression that accepts an array of <see cref="System.Double"/> and
+        /// returns a <see cref="System.Double"/> scalar.</param>
         public virtual void DefineFunction(string name, Func<double[], double> body)
         {
             throw new ExpressionException("Immutable exceptions do not support functions.");
@@ -121,6 +161,15 @@ namespace ExpressionEngine
 		{
 			return _text.GetHashCode() ^ _value.GetHashCode();
 		}
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents the current <see cref="ExpressionEngine.Expression"/> instance.
+        /// </summary>
+        /// <returns>A <see cref="System.String"/> that represents the current <see cref="ExpressionEngine.Expression"/> instance.</returns>
+        public override string ToString()
+        {
+            return Text;
+        }
 
 		private readonly string _text;
 		private readonly double _value;

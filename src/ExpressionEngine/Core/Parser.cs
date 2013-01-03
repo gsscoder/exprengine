@@ -32,7 +32,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using ExpressionEngine.Core;
-using ExpressionEngine.Model;
 #endregion
 
 namespace ExpressionEngine
@@ -221,7 +220,8 @@ namespace ExpressionEngine
 
             if (_current.IsLiteral())
             {
-                unary.Value = new Model.LiteralExpression(Convert.ToDouble(_current.Text, CultureInfo.InvariantCulture));
+                //unary.Value = new Model.LiteralExpression(Convert.ToDouble(_current.Text, CultureInfo.InvariantCulture));
+                unary.Value = new Model.LiteralExpression(_current.Value);
                 if (_scanner.PeekToken() != null && _scanner.PeekToken().IsLiteral())
                 {
                     throw new ExpressionException(_scanner.ColumnNumber, "Expected expression.");
