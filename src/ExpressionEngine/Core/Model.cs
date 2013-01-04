@@ -42,7 +42,7 @@ namespace ExpressionEngine.Model
             Root = root;
             HasUserDefinedVariables = userVariables > 0;
             HasUserDefinedFunctions = userFunctions > 0;
-            HasUserDefinedNames = HasUserDefinedVariables && HasUserDefinedFunctions;
+            HasUserDefinedNames = HasUserDefinedVariables || HasUserDefinedFunctions;
         }
 
         public Expression Root { get; private set; }

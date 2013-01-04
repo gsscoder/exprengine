@@ -36,6 +36,14 @@ namespace ExpressionEngine.Core
 {
 	abstract class ExpressionVisitor
 	{
+        private ExpressionVisitor() {}
+
+        protected ExpressionVisitor(IDictionary<string, double> variables, IDictionary<string, Func<double[], double>> functions)
+        {
+            InitializeVariables(variables);
+            InitializeFunctions(functions);
+        }
+
 		public abstract void VisitLiteral(Model.LiteralExpression expression);
 
 		public abstract void VisitUnary(Model.UnaryExpression expression);
@@ -46,19 +54,48 @@ namespace ExpressionEngine.Core
 
 	    public abstract void VisitVariable(Model.VariableExpression expression);
 
+        // Result is an object rather than a dobule for support the compiler-visitor.
 		public abstract object Result { get; }
 
-        public IDictionary<string, double> UserDefinedVariables { protected get; set; }
-
-        public IDictionary<string, Func<double[], double>> UserDefinedFunctions { protected get; set; } 
-
-        public static ExpressionVisitor Create()
+        protected void InitializeVariables(IDictionary<string, double> variables)
         {
-            return new EvaluatingExpressionVisitor();
+            if (variables == null || variables.Count == 0)
+            {
+                UserDefinedVariables = new Dictionary<string, double>();
+                return;
+            }
+            UserDefinedVariables = new Dictionary<string, double>(variables);
+        }
+
+        protected void InitializeFunctions(IDictionary<string, Func<double[], double>> functions)
+        {
+            if (functions == null || functions.Count == 0)
+            {
+                UserDefinedFunctions = new Dictionary<string, Func<double[], double>>();
+                return;
+            }
+            UserDefinedFunctions = new Dictionary<string, Func<double[], double>>(functions);
+        }
+
+        protected IDictionary<string, double> UserDefinedVariables { get; private set; }
+
+        protected IDictionary<string, Func<double[], double>> UserDefinedFunctions { get; private set; } 
+
+        public static ExpressionVisitor Create(IDictionary<string, double> variables, IDictionary<string, Func<double[], double>> functions)
+        {
+            return new EvaluatingExpressionVisitor(variables, functions);
         }
 
 		public class EvaluatingExpressionVisitor : ExpressionVisitor
 		{
+            private EvaluatingExpressionVisitor() {}
+
+            public EvaluatingExpressionVisitor(IDictionary<string, double> variables,
+                                               IDictionary<string, Func<double[], double>> functions) : base(variables, functions)
+            {
+                
+            }
+
 			public override void VisitLiteral(Model.LiteralExpression expression)
 			{
 				_result = expression.Value;

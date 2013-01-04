@@ -35,13 +35,13 @@ using ExpressionEngine.Core;
 namespace ExpressionEngine
 {
 	/// <summary>
-	/// Represents mathematical expression. Its result is stored in the <see cref="Value"/> property.
+	/// Represents mathematical immutable expression. Its result is stored in the <see cref="Value"/> property.
 	/// </summary>
     public class Expression
     {
-        private Expression() {}
+        protected Expression() {}
 
-        private Expression(string text)
+        protected Expression(string text)
         {
             _value = double.NaN;
         }
@@ -109,12 +109,27 @@ namespace ExpressionEngine
                     throw new ExpressionException("Functions or variables supplied for an immutable expression.");
                 }
                 // No user defined names? Expression can be immutable.
-                var visitor = ExpressionVisitor.Create();
+                var visitor = ExpressionVisitor.Create(null, null);
                 tree.Root.Accept(visitor);
                 return new Expression(text, (double)visitor.Result);
             }
             // We can create a mutable expression.
             return new MutableExpression(text, variables, functions);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="ExpressionEngine.Expression"/> wrapper that is synchronized (thread safe).
+        /// </summary>
+        /// <param name="mutableExpression">A mutable derived type of <see cref="ExpressionEngine.Expression"/>.</param>
+        /// <returns>A <see cref="ExpressionEngine.Expression"/> wrapper synchronized (thread safe).</returns>
+        public static SynchronizedMutableExpression Synchronized(Expression mutableExpression)
+        {
+            var synchronized = mutableExpression as MutableExpression;
+            if (synchronized == null)
+            {
+                throw new ExpressionException("Immutable expressions are implicitly thread safe.");
+            }
+            return new SynchronizedMutableExpression(synchronized);
         }
 
 		/// <summary>
@@ -173,61 +188,118 @@ namespace ExpressionEngine
 
 		private readonly string _text;
 		private readonly double _value;
+    }
 
-        private sealed class MutableExpression : Expression
+    /// <summary>
+    /// Represents mathematical mutable expression. Its result is calculated when the <see cref="Value"/> property is read.
+    /// This type has no public constructor, because its instances are managed by <see cref="ExpressionEngine.Expression"/>.
+    /// Do not write code that depends directly on it (e.g.: checking its type name).
+    /// </summary>
+    public sealed class MutableExpression : Expression
+    {
+        private MutableExpression() : base() { }
+
+        internal MutableExpression(string text, IDictionary<string, double> variables,
+            IDictionary<string, Func<double[], double>> functions)
+            : base(text)
         {
-            private MutableExpression() {}
-
-            public MutableExpression(string text, IDictionary<string, double> variables,
-                IDictionary<string, Func<double[], double>> functions) : base(text)
-            {
-                _variables = variables == null ? new Dictionary<string, double>() :
-                    new Dictionary<string, double>(variables);
-                _functions = functions == null ? new Dictionary<string, Func<double[], double>>() :
-                    new Dictionary<string, Func<double[], double>>(functions);
-                _tree = Kernel.ParseString(text);
-            }
-
-            public override double Value
-            {
-                get
-                {
-                    // Here will be placed a caching subsystem
-                    var visitor = ExpressionVisitor.Create();
-                    visitor.UserDefinedVariables = _variables;
-                    visitor.UserDefinedFunctions = _functions;
-                    _tree.Root.Accept(visitor);
-                    return (double) visitor.Result;
-                }
-            }
-
-            public override void DefineVariable(string name, double value)
-            {
-                if (_variables.ContainsKey(name))
-                {
-                    _variables[name] = value;
-                }
-                else
-                {
-                    _variables.Add(name, value);
-                }
-            }
-
-            public override void DefineFunction(string name, Func<double[], double> body)
-            {
-                if (_variables.ContainsKey(name))
-                {
-                    _functions[name] = body;
-                }
-                else
-                {
-                    _functions.Add(name, body);
-                }
-            }
-
-            private readonly Model.Ast _tree;
-            private readonly IDictionary<string, double> _variables;
-            private readonly IDictionary<string, Func<double[], double>> _functions;
+            _variables = variables == null ? new Dictionary<string, double>() :
+                new Dictionary<string, double>(variables);
+            _functions = functions == null ? new Dictionary<string, Func<double[], double>>() :
+                new Dictionary<string, Func<double[], double>>(functions);
+            _tree = Kernel.ParseString(text);
         }
+
+        public override double Value
+        {
+            get
+            {
+                // Here will be placed a caching subsystem
+                var visitor = ExpressionVisitor.Create(_variables, _functions);
+                _tree.Root.Accept(visitor);
+                return (double)visitor.Result;
+            }
+        }
+
+        public override void DefineVariable(string name, double value)
+        {
+            if (Kernel.BuiltIn.IsBuiltInVariable(name))
+            {
+                throw new ExpressionException("Can't (re)define a built-in variable.");
+            }
+            if (_variables.ContainsKey(name))
+            {
+                _variables[name] = value;
+            }
+            else
+            {
+                _variables.Add(name, value);
+            }
+        }
+
+        public override void DefineFunction(string name, Func<double[], double> body)
+        {
+            if (Kernel.BuiltIn.IsBuiltInFunction(name))
+            {
+                throw new ExpressionException("Can't (re)define a built-in function.");
+            }
+            if (_variables.ContainsKey(name))
+            {
+                _functions[name] = body;
+            }
+            else
+            {
+                _functions.Add(name, body);
+            }
+        }
+
+        private readonly Model.Ast _tree;
+        private readonly IDictionary<string, double> _variables;
+        private readonly IDictionary<string, Func<double[], double>> _functions;
+    }
+
+    /// <summary>
+    /// Represents mathematical thread safe <see cref="ExpressionEngine.Expression"/> wrapper. This type has no
+    /// public constructor, because its instances are managed by <see cref="ExpressionEngine.Expression"/>.
+    /// Do not write code that depends directly on it (e.g.: checking its type name).
+    /// </summary>
+    public sealed class SynchronizedMutableExpression : Expression
+    {
+        private SynchronizedMutableExpression() { }
+
+        internal SynchronizedMutableExpression(MutableExpression expression)
+        {
+            _innerExpression = expression;
+        }
+
+        public override double Value
+        {
+            get
+            {
+                lock (_this)
+                {
+                    return _innerExpression.Value;
+                }
+            }
+        }
+
+        public override void DefineVariable(string name, double value)
+        {
+            lock (_this)
+            {
+                _innerExpression.DefineVariable(name, value);
+            }
+        }
+
+        public override void DefineFunction(string name, Func<double[], double> body)
+        {
+            lock (_this)
+            {
+                _innerExpression.DefineFunction(name, body);
+            }
+        }
+
+        private readonly MutableExpression _innerExpression;
+        private readonly object _this = new object();
     }
 }

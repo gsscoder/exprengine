@@ -1,3 +1,9 @@
+2013-01-04      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * Created synchronized wrapper for mutable expressions.
+  * Fixed some issues.
+  * Version incremented to 1.0.3.9 beta.
+
 2013-01-03      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * Number parsing refactored in Core.Scanner class.
