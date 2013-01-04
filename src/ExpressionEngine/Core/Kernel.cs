@@ -77,11 +77,6 @@ namespace ExpressionEngine.Core
 
             public static double Function(string name, double[] args)
             {
-                //ParameterInfo param;
-                //if (!FuncsLookup.TryGetValue(name, out param))
-                //{
-                //    throw new ExpressionException(string.Format(CultureInfo.InvariantCulture, "Undefined function: '{0}'.", name));
-                //}
                 var param = FuncsLookup[name];
                 if (!param.Match(args.Length))
                 {
@@ -132,7 +127,7 @@ namespace ExpressionEngine.Core
                     {"acos", ParameterInfo.OneParameter()},
                     {"cos", ParameterInfo.OneParameter()},
                     {"cosh", ParameterInfo.OneParameter()},
-	            {"sqrt", ParameterInfo.OneParameter()},
+                    {"sqrt", ParameterInfo.OneParameter()},
                     {"atan", ParameterInfo.OneParameter()},
                     {"tan", ParameterInfo.OneParameter()},
                     {"tanh", ParameterInfo.OneParameter()}
@@ -150,7 +145,7 @@ namespace ExpressionEngine.Core
     {
         public const string Name = "ExpressionEngine";
         public const string ProductName = "Expression Engine Library";
-        public const string Version = "1.0.3.11";
+        public const string Version = "1.0.3.15";
         public const string ReleaseType = "beta";
     }
 	#endregion

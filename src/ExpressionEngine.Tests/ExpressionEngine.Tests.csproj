@@ -45,6 +45,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComparisonFixture.cs" />
     <Compile Include="ExpressionFixture.cs" />
     <Compile Include="MutableExpressionFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

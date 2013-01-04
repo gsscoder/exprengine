@@ -1,5 +1,10 @@
 2013-01-04      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
+  * Provided implementation for comparisons (Equals, ==, !=).
+  * Version incremented to 1.0.3.15 beta.
+
+2013-01-04      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
   * Derived of Expression hidden from public interface
       (both mutable that synchronized).
   * Version incremented to 1.0.3.11 beta.

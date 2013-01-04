@@ -29,6 +29,8 @@
 #region Using Directives
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Threading;
 using ExpressionEngine.Core;
 #endregion
 
@@ -146,7 +148,7 @@ namespace ExpressionEngine
 
         /// <summary>
         /// Provides a way to define o change a variable value using its name. Calling this method when the
-        /// expression is immutable will raise a <see cref="ExpressionEngine.ExpressionException"/>.
+        /// expression is immutable will raise a <see cref="ExpressionEngine.Expression"/>.
         /// </summary>
         /// <param name="name">A <see cref="System.String"/> name of the variable to create or change.</param>
         /// <param name="value">A <see cref="System.Double"/> of the value.</param>
@@ -157,7 +159,7 @@ namespace ExpressionEngine
 
         /// <summary>
         /// Provides a way to define o change a function using its name. Calling this method when the
-        /// expression is immutable will raise a <see cref="ExpressionEngine.ExpressionException"/>.
+        /// expression is immutable will raise a <see cref="ExpressionEngine.Expression"/>.
         /// </summary>
         /// <param name="name">A <see cref="System.String"/> name of the function to create or change.</param>
         /// <param name="body">A lambda expression that accepts an array of <see cref="System.Double"/> and
@@ -174,8 +176,73 @@ namespace ExpressionEngine
 		/// data structures such as a hash table.</returns>
 		public override int GetHashCode()
 		{
-			return _text.GetHashCode() ^ _value.GetHashCode();
+            return NormalizedText.GetHashCode() ^ _value.GetHashCode();
 		}
+
+        /// <summary>
+        /// Returns a value that indicates whether the current instance and a specified expression are equal.
+        /// </summary>
+        /// <param name="value">true if this expression and <paramref name="value"/> are equal; otherwise, false.</param>
+        /// <returns>The expression to compare.</returns>
+        public virtual bool Equals(Expression value)
+        {
+            if ((object) value == null)
+            {
+                return false;
+            }
+            return NormalizedText == value.NormalizedText && Value.Equals(value.Value);
+        }
+
+        /// <summary>
+        /// Returns a value that indicates whether the current instance and a specified object have the same value.
+        /// </summary>
+        /// <param name="obj">true if the <paramref name="obj"/> parameter is a <see cref="ExpressionEngine.Expression"/> object or
+        /// a type capable of implicit conversion to a <see cref="ExpressionEngine.Expression"/> object, and its value is equal to
+        /// the current <see cref="ExpressionEngine.Expression"/> object; otherwise, false.</param>
+        /// <returns>The object to compare.</returns>
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+            var typed = obj as Expression;
+            if (typed == null)
+            {
+                return false;
+            }
+            return NormalizedText == typed.NormalizedText && Value.Equals(typed.Value);
+        }
+
+        /// <summary>
+        /// Returns a value that indicates whether two expressions are equal.
+        /// </summary>
+        /// <param name="left">The first expression number to compare.</param>
+        /// <param name="right">The second expression number to compare.</param>
+        /// <returns>true if the <paramref name="left"/> and <paramref name="right"/> parameters are equal; otherwise, false.</returns>
+        public static bool operator ==(Expression left, Expression right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+            if (((object)left == null) || ((object)right == null))
+            {
+                return false;
+            }
+            return left.NormalizedText == right.NormalizedText && left.Value.Equals(right.Value);
+        }
+
+        /// <summary>
+        /// Returns a value that indicates whether two expressions are not equal.
+        /// </summary>
+        /// <param name="left">The first expression number to compare.</param>
+        /// <param name="right">The second expression number to compare.</param>
+        /// <returns>true if the <paramref name="left"/> and <paramref name="right"/> parameters are not equal; otherwise, false.</returns>
+        public static bool operator !=(Expression left, Expression right)
+        {
+            return !(left == right);
+        }
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents the current <see cref="ExpressionEngine.Expression"/> instance.
@@ -186,6 +253,57 @@ namespace ExpressionEngine
             return Text;
         }
 
+        /// <summary>
+        /// Gets a value indicating whether access to the <see cref="ExpressionEngine.Expression"/> is synchronized (thread safe).
+        /// </summary>
+	    public virtual bool IsSynchronized
+	    {
+            get { return false; }
+	    }
+
+        /// <summary>
+        /// Gets an object that can be used to synchronize access to a <see cref="ExpressionEngine.Expression"/> instance.
+        /// </summary>
+        public virtual object SyncRoot
+        {
+            get
+            {
+                if (_syncRoot == null)
+                {
+                    Interlocked.CompareExchange(ref _syncRoot, new object(), null);
+                }
+                return _syncRoot;
+            }
+        }
+
+	    private string NormalizedText
+	    {
+	        get
+	        {
+	            if (_normalizedText == null)
+	            {
+	                _normalizedText = NormalizeText(Text);
+	            }
+	            return _normalizedText;
+	        }
+	    }
+
+        private static string NormalizeText(string value)
+        {
+            var normalized = new StringBuilder(value.Length);
+            for (var i = 0; i < value.Length; i++)
+            {
+                var c = value[i];
+                if (!Scanner.IsWhiteSpace(c))
+                {
+                    normalized.Append(c);
+                }
+            }
+            return normalized.ToString();
+        }
+
+        private object _syncRoot;
+	    private string _normalizedText;
 		private readonly string _text;
 		private readonly double _value;
 
@@ -266,38 +384,57 @@ namespace ExpressionEngine
 
             public SynchronizedMutableExpression(MutableExpression expression)
             {
-                _innerExpression = expression;
+                _expression = expression;
+                _root = expression.SyncRoot;
+            }
+
+            public override bool IsSynchronized
+            {
+                get { return true; }
+            }
+
+            public override object SyncRoot
+            {
+                get { return _root; }
+            }
+
+            public override bool Equals(Expression value)
+            {
+                lock (_root)
+                {
+                    return _expression.Equals(value);
+                }
             }
 
             public override double Value
             {
                 get
                 {
-                    lock (_this)
+                    lock (_root)
                     {
-                        return _innerExpression.Value;
+                        return _expression.Value;
                     }
                 }
             }
 
             public override void DefineVariable(string name, double value)
             {
-                lock (_this)
+                lock (_root)
                 {
-                    _innerExpression.DefineVariable(name, value);
+                    _expression.DefineVariable(name, value);
                 }
             }
 
             public override void DefineFunction(string name, Func<double[], double> body)
             {
-                lock (_this)
+                lock (_root)
                 {
-                    _innerExpression.DefineFunction(name, body);
+                    _expression.DefineFunction(name, body);
                 }
             }
 
-            private readonly MutableExpression _innerExpression;
-            private readonly object _this = new object();
+            private object _root;
+            private readonly MutableExpression _expression;
         }
     }
 }

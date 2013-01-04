@@ -35,7 +35,7 @@ using System.Text;
 
 namespace ExpressionEngine
 {
-    enum NumberFormats
+    enum NumberFormats : byte
     {
         Integer,
         Decimal
@@ -78,7 +78,7 @@ namespace ExpressionEngine
                 // '(', ')', '+', '-', '*', '/', '^', '%', ','
                 token = ScanPunctuator();
             }
-            else if (IsIdentifierStartChar(_c)) //(char.IsLetter((char) _c))
+            else if (IsIdentifierStartChar(_c))
             {
                 // [_|a|A-z|Z][_|a|A-z|Z|0-9]
                 token = ScanIdentifier();
@@ -209,7 +209,7 @@ namespace ExpressionEngine
                    c == ',';
         }
 
-        private static bool IsWhiteSpace(int c)
+        public static bool IsWhiteSpace(int c)
         {
             return c == 0x09 || c == 0x0B || c == 0x0C || c == 0x20 || c == 0xA0 ||
                 c == 0x1680 || c == 0x180E || (c >= 8192 && c <= 8202) || c == 0x202F ||
