@@ -1,5 +1,11 @@
 2013-01-04      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
+  * Derived of Expression hidden from public interface
+      (both mutable that synchronized).
+  * Version incremented to 1.0.3.11 beta.
+
+2013-01-04      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
   * Created synchronized wrapper for mutable expressions.
   * Fixed some issues.
   * Version incremented to 1.0.3.9 beta.

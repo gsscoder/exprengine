@@ -13,8 +13,6 @@ namespace ExpressionEngine.Tests
         {
             var expr = Expression.Create("1 + (fun(y) / 4) * (x - 1)");
             expr.Should().Not.Be.OfType<Expression>();
-            // A statement like the following should never appear in your code
-            expr.Should().Be.OfType<MutableExpression>();
         }
 
         [Test]
@@ -51,8 +49,6 @@ namespace ExpressionEngine.Tests
             var mutable = Expression.Create("1 + 2 * (3 / 4) - c");
             mutable.Should().Not.Be.OfType<Expression>();
             var synchronized = Expression.Synchronized(mutable);
-            // Also a statement like the following should not appear in your code.
-            synchronized.Should().Be.OfType<SynchronizedMutableExpression>();
             synchronized.DefineVariable("c", 299792458D);
             synchronized.Value.Should().Equal(-299792455.5D);
         }
