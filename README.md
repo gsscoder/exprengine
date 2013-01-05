@@ -1,10 +1,11 @@
-Expression Engine Library 1.0.3.15 Beta.
+Expression Engine Library 1.0.3.21 Beta.
 ===
 This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and uses an AST-evaluation algorithm. You can use built-in or user-defined [functions and variables](https://github.com/gsscoder/exprengine/blob/master/src/ExpressionEngine.Tests/MutableExpressionFixture.cs).
 It was written primarily for fun and and as programming exercise; anyway if you anyone find it useful, please send feature requests or issues.
 
 News:
 ---
+  - Added cache for immutable expressions.
   - Provided implementation for comparisons (Equals, ==, !=).
   - Created synchronized wrapper for mutable expressions.
   - Number parsing refactored in Core.Scanner class.

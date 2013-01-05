@@ -27,6 +27,8 @@
 //
 #endregion
 #region Using Directives
+using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using Should.Fluent;
 #endregion
@@ -36,6 +38,34 @@ namespace ExpressionEngine.Tests
     [TestFixture]
     public sealed class ExpressionFixture
     {
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ExpressionWithNullTextThrowsException()
+        {
+            Expression.Create(null);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ExpressionWithNullTextThrowsException_2()
+        {
+            Expression.Create(null, variables: null);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ExpressionWithNullTextThrowsException_3()
+        {
+            Expression.Create(null, functions: null);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ExpressionWithNullTextThrowsException_4()
+        {
+            Expression.Create(null, null, null);
+        }
+
         [Test]
         public void ExpressionWithoutUserDefinedNamesIsImmutable()
         {
@@ -262,6 +292,18 @@ namespace ExpressionEngine.Tests
         public void Variable_Function()
         {
             Expression.Create("10 - (pi * atan(10)) - -e").Value.Should().Equal(8.0965979343737935D);
+        }
+
+        [Test]
+        public void CachingExpression()
+        {
+            var expr = Expression.Create(".123 + .345");
+            expr.IsValueCacheRetrieved.Should().Be.False();
+            Expression.Create("1 + 2 + 3"); // anather expression...
+            expr.IsValueCacheRetrieved.Should().Be.False();
+            expr = null;
+            var expr2 = Expression.Create(".123+.345"); // same as first, but with no spaces
+            expr2.IsValueCacheRetrieved.Should().Be.True();
         }
 
 		#region Expected Exceptions

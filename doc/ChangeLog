@@ -1,3 +1,9 @@
+2013-01-05      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * Kernel class refactored as singleton.
+  * Added cache for immutable expressions.
+  * Version incremented to 1.0.3.21 beta.
+
 2013-01-04      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * Provided implementation for comparisons (Equals, ==, !=).

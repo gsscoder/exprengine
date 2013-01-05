@@ -35,9 +35,22 @@ using System.IO;
 
 namespace ExpressionEngine.Core
 {
-	static class Kernel
+	sealed class Kernel
 	{
-		public static Model.Ast ParseString(string value)
+        private Kernel() {}
+
+        static Kernel() {}
+
+        public static Kernel Instance { get { return Singleton; } }
+
+        public IBuiltInService BuiltIn = new BuiltInService();
+
+        public ValueCache<double> Cache = new ValueCache<double>();
+
+        /// <summary>
+        /// Convenience method for building an AST from a string, used internally.
+        /// </summary>
+		public Model.Ast ParseString(string value)
 		{
 			using (var scanner = new Scanner(new StringReader(value)))
 			{
@@ -46,8 +59,20 @@ namespace ExpressionEngine.Core
 		}
 
         #region BuiltIns
-        internal abstract class BuiltIn
+        internal interface IBuiltInService
         {
+            double ExecuteBuiltInFunction(string name, double[] args);
+
+            double GetBuiltInVariable(string name);
+
+            bool IsBuiltInFunction(string name);
+
+            bool IsBuiltInVariable(string name);
+        }
+
+        private sealed class BuiltInService : IBuiltInService
+        {
+            #region ParameterInfo support struct
             private struct ParameterInfo
             {
                 private ParameterInfo(byte min, byte max)
@@ -74,10 +99,11 @@ namespace ExpressionEngine.Core
                 private readonly byte _min;
                 private readonly byte _max;
             }
+            #endregion
 
-            public static double Function(string name, double[] args)
+            public double ExecuteBuiltInFunction(string name, double[] args)
             {
-                var param = FuncsLookup[name];
+                var param = _funcsLookup[name];
                 if (!param.Match(args.Length))
                 {
                     throw new ExpressionException(string.Format(CultureInfo.InvariantCulture, "Function '{0}' requires only {1}.", name, param.ToString()));
@@ -102,22 +128,22 @@ namespace ExpressionEngine.Core
                 throw new InvalidOperationException(); // Unreachable code
             }
 
-            public static double Variable(string name)
+            public double GetBuiltInVariable(string name)
             {
-                return VarsLookup[name];
+                return _varsLookup[name];
             }
             
-            public static bool IsBuiltInFunction(string name)
+            public bool IsBuiltInFunction(string name)
             {
-                return FuncsLookup.ContainsKey(name);
+                return _funcsLookup.ContainsKey(name);
             }
 
-            public static bool IsBuiltInVariable(string name)
+            public bool IsBuiltInVariable(string name)
             {
-                return VarsLookup.ContainsKey(name);
+                return _varsLookup.ContainsKey(name);
             }
 
-            private static readonly Dictionary<string, ParameterInfo> FuncsLookup = new Dictionary<string, ParameterInfo>()
+            private readonly Dictionary<string, ParameterInfo> _funcsLookup = new Dictionary<string, ParameterInfo>()
 	            {
                     {"log", ParameterInfo.OneTwoParameter()},
                     {"abs", ParameterInfo.OneParameter()},
@@ -132,20 +158,23 @@ namespace ExpressionEngine.Core
                     {"tan", ParameterInfo.OneParameter()},
                     {"tanh", ParameterInfo.OneParameter()}
 	            };
-            private static readonly Dictionary<string, double> VarsLookup = new Dictionary<string, double>()
+            private readonly Dictionary<string, double> _varsLookup = new Dictionary<string, double>()
                 {
                     {"e", Math.E},
                     {"pi", Math.PI}
                 };
         }
         #endregion
-    }
+
+	    private static readonly Kernel Singleton = new Kernel();
+	}
+
 	#region Version
     public static class ThisLibrary
     {
         public const string Name = "ExpressionEngine";
         public const string ProductName = "Expression Engine Library";
-        public const string Version = "1.0.3.15";
+        public const string Version = "1.0.3.21";
         public const string ReleaseType = "beta";
     }
 	#endregion

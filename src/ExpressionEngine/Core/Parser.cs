@@ -159,7 +159,7 @@ namespace ExpressionEngine
             {
                 // variable
                 var varExpr = new Model.VariableExpression() { Name = _current.Text };
-                if (!Kernel.BuiltIn.IsBuiltInVariable(varExpr.Name)) { _userVariables++; }
+                if (!Kernel.Instance.BuiltIn.IsBuiltInVariable(varExpr.Name)) { _userVariables++; }
                 if (_scanner.PeekToken() != null)
                 {
 					Expect(MiddleGroupIdentifier);
@@ -172,7 +172,7 @@ namespace ExpressionEngine
             }
 
             var expr = new Model.FunctionExpression() { Name = _current.Text };
-            if (!Kernel.BuiltIn.IsBuiltInFunction(expr.Name)) { _userFunctions++; }
+            if (!Kernel.Instance.BuiltIn.IsBuiltInFunction(expr.Name)) { _userFunctions++; }
             Expect(TokenType.OpenBracket);
             while (!_scanner.IsEof())
             {

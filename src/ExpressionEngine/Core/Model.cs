@@ -33,6 +33,12 @@ using ExpressionEngine.Core;
 
 namespace ExpressionEngine.Model
 {
+    /*
+     *  All abstract syntax tree nodes uses public fields instead of properties for two reasons:
+     *   - Model.* types are part of private library interface not accessible to user code.
+     *   - Field access is faster and those fields are primarly accessed inside loops.
+     */
+
     sealed class Ast
     {
         private Ast() {}

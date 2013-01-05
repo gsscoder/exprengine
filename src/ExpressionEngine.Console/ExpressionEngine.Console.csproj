@@ -35,6 +35,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\ExpressionEngine\Core\Cache.cs">
+      <Link>ExpressionEngine\Core\Cache.cs</Link>
+    </Compile>
     <Compile Include="..\ExpressionEngine\Core\Model.cs">
       <Link>ExpressionEngine\Core\Model.cs</Link>
     </Compile>

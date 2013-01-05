@@ -125,9 +125,9 @@ namespace ExpressionEngine.Core
 					argsList.Add(_result);
 				});
 				var args = argsList.ToArray();
-			    if (Kernel.BuiltIn.IsBuiltInFunction(name))
+			    if (Kernel.Instance.BuiltIn.IsBuiltInFunction(name))
 			    {
-			        _result = Kernel.BuiltIn.Function(expression.Name, args);
+			        _result = Kernel.Instance.BuiltIn.ExecuteBuiltInFunction(expression.Name, args);
 			    }
 			    else
 			    {
@@ -175,9 +175,9 @@ namespace ExpressionEngine.Core
             public override void VisitVariable(Model.VariableExpression expression)
             {
                 var name = expression.Name;
-                if (Kernel.BuiltIn.IsBuiltInVariable(name))
+                if (Kernel.Instance.BuiltIn.IsBuiltInVariable(name))
                 {
-                    _result = Kernel.BuiltIn.Variable(name);
+                    _result = Kernel.Instance.BuiltIn.GetBuiltInVariable(name);
                 }
                 else
                 {

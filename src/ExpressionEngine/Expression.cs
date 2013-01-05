@@ -44,15 +44,21 @@ namespace ExpressionEngine
         protected Expression() {}
 
         protected Expression(string text)
+            : this(text, double.NaN, false)
         {
-            _value = double.NaN;
         }
 
 		protected Expression(string text, double value)
+            : this(text, value, false)
 		{
-			_text = text;
-			_value = value;
 		}
+
+        protected Expression(string text, double value, bool isValueCacheRetrieved)
+        {
+            _text = text;
+            _value = value;
+            _isValueCacheRetrieved = isValueCacheRetrieved;
+        }
 
 		/// <summary>
 		/// Creates an <see cref="ExpressionEngine.Expression"/> instance with infix notation string.
@@ -61,6 +67,8 @@ namespace ExpressionEngine
         /// <returns>A <see cref="ExpressionEngine.Expression"/> instance or appropriate mutable derived type.</returns>
 		public static Expression Create(string text)
 		{
+            if (string.IsNullOrEmpty(text)) { throw new ArgumentNullException("text", "Expression text can't be null."); }
+
 		    return Create(text, null, null);
 		}
 
@@ -74,6 +82,8 @@ namespace ExpressionEngine
         /// <returns>A <see cref="ExpressionEngine.Expression"/> instance or appropriate mutable derived type.</returns>
         public static Expression Create(string text, IDictionary<string, double> variables)
         {
+            if (string.IsNullOrEmpty(text)) { throw new ArgumentNullException("text", "Expression text can't be null."); }
+
             return Create(text, variables, null);
         }
 
@@ -87,6 +97,8 @@ namespace ExpressionEngine
         /// <returns>A <see cref="ExpressionEngine.Expression"/> instance or appropriate mutable derived type.</returns>
         public static Expression Create(string text, IDictionary<string, Func<double[], double>> functions)
         {
+            if (string.IsNullOrEmpty(text)) { throw new ArgumentNullException("text", "Expression text can't be null."); }
+
             return Create(text, null, functions);
         }
 
@@ -103,17 +115,26 @@ namespace ExpressionEngine
         public static Expression Create(string text, IDictionary<string, double> variables,
             IDictionary<string, Func<double[], double>> functions)
         {
-            var tree = Kernel.ParseString(text);
+            var tree = Kernel.Instance.ParseString(text);
             if (!tree.HasUserDefinedNames)
             {
                 if (variables != null || functions != null)
                 {
                     throw new ExpressionException("Functions or variables supplied for an immutable expression.");
                 }
-                // No user defined names? Expression can be immutable.
-                var visitor = ExpressionVisitor.Create(null, null);
-                tree.Root.Accept(visitor);
-                return new Expression(text, (double)visitor.Result);
+                // No user defined names? Expression is immutable.
+                var cache = Kernel.Instance.Cache;
+                var normalizedText = Expression.NormalizeText(text);
+                // Searching a pre-calculated value .
+                if (!cache.Contains(normalizedText))
+                {
+                    var visitor = ExpressionVisitor.Create(null, null);
+                    tree.Root.Accept(visitor);
+                    var value = (double) visitor.Result;
+                    cache.Add(normalizedText, value);
+                    return new Expression(text, value);
+                }
+                return new Expression(text, cache[normalizedText], true);
             }
             // We can create a mutable expression.
             return new MutableExpression(text, variables, functions);
@@ -276,6 +297,14 @@ namespace ExpressionEngine
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the value of the <see cref="ExpressionEngine.Expression"/> is retrieved from cache.
+        /// </summary>
+	    public virtual bool IsValueCacheRetrieved
+	    {
+            get { return _isValueCacheRetrieved; }
+	    }
+
 	    private string NormalizedText
 	    {
 	        get
@@ -303,6 +332,7 @@ namespace ExpressionEngine
         }
 
         private object _syncRoot;
+	    private readonly bool _isValueCacheRetrieved;
 	    private string _normalizedText;
 		private readonly string _text;
 		private readonly double _value;
@@ -323,7 +353,7 @@ namespace ExpressionEngine
                     new Dictionary<string, double>(variables);
                 _functions = functions == null ? new Dictionary<string, Func<double[], double>>() :
                     new Dictionary<string, Func<double[], double>>(functions);
-                _tree = Kernel.ParseString(text);
+                _tree = Kernel.Instance.ParseString(text);
             }
 
             public override double Value
@@ -339,7 +369,7 @@ namespace ExpressionEngine
 
             public override void DefineVariable(string name, double value)
             {
-                if (Kernel.BuiltIn.IsBuiltInVariable(name))
+                if (Kernel.Instance.BuiltIn.IsBuiltInVariable(name))
                 {
                     throw new ExpressionException("Can't (re)define a built-in variable.");
                 }
@@ -355,7 +385,7 @@ namespace ExpressionEngine
 
             public override void DefineFunction(string name, Func<double[], double> body)
             {
-                if (Kernel.BuiltIn.IsBuiltInFunction(name))
+                if (Kernel.Instance.BuiltIn.IsBuiltInFunction(name))
                 {
                     throw new ExpressionException("Can't (re)define a built-in function.");
                 }
@@ -396,6 +426,17 @@ namespace ExpressionEngine
             public override object SyncRoot
             {
                 get { return _root; }
+            }
+
+            public override bool IsValueCacheRetrieved
+            {
+                get
+                {
+                    lock (_root)
+                    {
+                        return _expression.IsValueCacheRetrieved;
+                    }
+                }
             }
 
             public override bool Equals(Expression value)
