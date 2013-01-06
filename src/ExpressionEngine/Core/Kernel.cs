@@ -174,7 +174,7 @@ namespace ExpressionEngine.Core
     {
         public const string Name = "ExpressionEngine";
         public const string ProductName = "Expression Engine Library";
-        public const string Version = "1.0.3.21";
+        public const string Version = "1.0.3.23";
         public const string ReleaseType = "beta";
     }
 	#endregion

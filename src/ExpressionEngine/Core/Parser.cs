@@ -40,12 +40,12 @@ namespace ExpressionEngine
     {
         private Parser() {}
 
-		private static readonly TokenType[] InitialGroup = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret};
-		private static readonly TokenType[] InitialGroupWithComma = {TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier, TokenType.Caret};
-		private static readonly TokenType[] MiddleGroupAdditiveExponent = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.CloseBracket, TokenType.Identifier};
-		private static readonly TokenType[] MiddleGroupMultiplicative = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.OpenBracket, TokenType.Identifier};
-		private static readonly TokenType[] MiddleGroupIdentifier = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.Star, TokenType.Slash, TokenType.Caret, TokenType.CloseBracket, TokenType.Comma};
-		private static readonly TokenType[] MiddleGroupUnary = {TokenType.Literal, TokenType.OpenBracket, TokenType.Identifier};
+		private static readonly TokenType[] InitialGroup = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.Identifier, TokenType.Caret};
+		private static readonly TokenType[] InitialGroupWithComma = {TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.Identifier, TokenType.Caret};
+		private static readonly TokenType[] MiddleGroupAdditiveExponent = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.RightParenthesis, TokenType.Identifier};
+		private static readonly TokenType[] MiddleGroupMultiplicative = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.Identifier};
+		private static readonly TokenType[] MiddleGroupIdentifier = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.Star, TokenType.Slash, TokenType.Caret, TokenType.RightParenthesis, TokenType.Comma};
+		private static readonly TokenType[] MiddleGroupUnary = {TokenType.Literal, TokenType.LeftParenthesis, TokenType.Identifier};
 
         public Parser(Scanner scanner)
         {
@@ -173,7 +173,7 @@ namespace ExpressionEngine
 
             var expr = new Model.FunctionExpression() { Name = _current.Text };
             if (!Kernel.Instance.BuiltIn.IsBuiltInFunction(expr.Name)) { _userFunctions++; }
-            Expect(TokenType.OpenBracket);
+            Expect(TokenType.LeftParenthesis);
             while (!_scanner.IsEof())
             {
                 Consume();
@@ -251,10 +251,10 @@ namespace ExpressionEngine
 				b.Append("'");
 				switch (t)
 				{
-					case TokenType.OpenBracket:
+					case TokenType.LeftParenthesis:
 						b.Append("(");
 						break;
-					case TokenType.CloseBracket:
+					case TokenType.RightParenthesis:
 						b.Append(")");
 						break;
 					case TokenType.Plus:

@@ -43,21 +43,21 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Scanner(new StringReader("((10 + 1 - (3 - .234)) * 300)  /  10.1"));
 
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.OpenBracket, "(");
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.OpenBracket, "(");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.LeftParenthesis, "(");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.LeftParenthesis, "(");
             scanner.NextToken().ShouldLiteralEqual("10");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
             scanner.NextToken().ShouldLiteralEqual("1");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.OpenBracket, "(");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.LeftParenthesis, "(");
             scanner.NextToken().ShouldLiteralEqual("3");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
             scanner.NextToken().ShouldLiteralEqual(".234");
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.CloseBracket, ")");
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.CloseBracket, ")");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.RightParenthesis, ")");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.RightParenthesis, ")");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Star, "*");
             scanner.NextToken().ShouldLiteralEqual("300");
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.CloseBracket, ")");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.RightParenthesis, ")");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Slash, "/");
             scanner.NextToken().ShouldLiteralEqual("10.1");
             scanner.NextToken().Should().Be.Null();
@@ -216,13 +216,13 @@ namespace ExpressionEngine.Tests
 			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
             scanner.NextToken().ShouldLiteralEqual("9.99");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Star, "*");
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.OpenBracket, "(");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.LeftParenthesis, "(");
 			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
             scanner.NextToken().ShouldLiteralEqual(".123");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
 			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
             scanner.NextToken().ShouldLiteralEqual("2");
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.CloseBracket, ")");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.RightParenthesis, ")");
 
             scanner.NextToken().Should().Be.Null();
         }
@@ -238,18 +238,18 @@ namespace ExpressionEngine.Tests
 			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
             scanner.NextToken().ShouldLiteralEqual(".99");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Star, "*");
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.OpenBracket, "(");
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.OpenBracket, "(");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.LeftParenthesis, "(");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.LeftParenthesis, "(");
 			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
             scanner.NextToken().ShouldLiteralEqual(".123");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
 			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
             scanner.NextToken().ShouldLiteralEqual("2.1");
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.CloseBracket, ")");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.RightParenthesis, ")");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
 			scanner.NextToken().ShouldPunctuatorEqual(TokenType.Minus, "-");
             scanner.NextToken().ShouldLiteralEqual("333");
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.CloseBracket, ")");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.RightParenthesis, ")");
 
             scanner.NextToken().Should().Be.Null();
         }
@@ -262,11 +262,11 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().ShouldLiteralEqual("3");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Plus, "+");
             scanner.NextToken().ShouldIdentifierEqual("pow");
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.OpenBracket, "(");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.LeftParenthesis, "(");
             scanner.NextToken().ShouldLiteralEqual("10");
             scanner.NextToken().ShouldPunctuatorEqual(TokenType.Comma, ",");
             scanner.NextToken().ShouldLiteralEqual("2");
-            scanner.NextToken().ShouldPunctuatorEqual(TokenType.CloseBracket, ")");
+            scanner.NextToken().ShouldPunctuatorEqual(TokenType.RightParenthesis, ")");
 
             scanner.NextToken().Should().Be.Null();
         }

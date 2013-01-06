@@ -35,15 +35,15 @@ namespace ExpressionEngine
 {
     enum TokenType : byte
     {
-        Plus,           /*  +  */
-        Minus,          /*  -  */
-        Star,           /*  *  */
-        Slash,          /*  /  */
-        Percent,        /*  %  */
-        OpenBracket,    /*  (  */
-        CloseBracket,   /*  )  */
-        Comma,          /*  ,  */
-        Caret,          /*  ^  */
+        Plus,           	/*  +  */
+        Minus,          	/*  -  */
+        Star,           	/*  *  */
+        Slash,          	/*  /  */
+        Percent,        	/*  %  */
+        LeftParenthesis,    /*  (  */
+        RightParenthesis,   /*  )  */
+        Comma,          	/*  ,  */
+        Caret,          	/*  ^  */
         Literal,
         Identifier
     }
@@ -102,12 +102,12 @@ namespace ExpressionEngine
 
         public bool IsOpenBracket()
         {
-            return Type == TokenType.OpenBracket;
+            return Type == TokenType.LeftParenthesis;
         }
 
         public bool IsCloseBracket()
         {
-            return Type == TokenType.CloseBracket;
+            return Type == TokenType.RightParenthesis;
         }
 
         public bool IsComma()
@@ -156,10 +156,10 @@ namespace ExpressionEngine
                     token.Type = TokenType.Percent;
                     break;
                 case "(":
-                    token.Type = TokenType.OpenBracket;
+                    token.Type = TokenType.LeftParenthesis;
                     break;
                 case ")":
-                    token.Type = TokenType.CloseBracket;
+                    token.Type = TokenType.RightParenthesis;
                     break;
                 case ",":
                     token.Type = TokenType.Comma;
