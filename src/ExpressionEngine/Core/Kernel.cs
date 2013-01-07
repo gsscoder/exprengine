@@ -35,8 +35,16 @@ using System.IO;
 
 namespace ExpressionEngine.Core
 {
-	sealed class Kernel
-	{
+    enum PrimitiveType : byte
+    {
+        //Bool,       // bool     -> map to System.Boolean 
+        Integer,    // int      -> map to System.Long
+        Real        // real     -> map to System.Double
+        //String      // string   -> map to System.String
+    }
+
+    sealed class Kernel
+    {
         private Kernel() {}
 
         static Kernel() {}
@@ -45,25 +53,27 @@ namespace ExpressionEngine.Core
 
         public IBuiltInService BuiltIn = new BuiltInService();
 
-        public ValueCache<double> Cache = new ValueCache<double>();
+        public ITypeService Primitives = new TypeService();
+
+        public ICache<object> Cache = new ObjectCache<object>();
 
         /// <summary>
         /// Convenience method for building an AST from a string, used internally.
         /// </summary>
-		public Model.Ast ParseString(string value)
-		{
-			using (var scanner = new Scanner(new StringReader(value)))
-			{
-				return new Parser(scanner).Parse();
-			}
-		}
+        public Model.Ast ParseString(string value)
+        {
+            using (var scanner = new Scanner(new StringReader(value)))
+            {
+                return new Parser(scanner).Parse();
+            }
+        }
 
         #region BuiltIns
         internal interface IBuiltInService
         {
-            double ExecuteBuiltInFunction(string name, double[] args);
+            object ExecuteBuiltInFunction(string name, object[] args);
 
-            double GetBuiltInVariable(string name);
+            object GetBuiltInVariable(string name);
 
             bool IsBuiltInFunction(string name);
 
@@ -101,34 +111,35 @@ namespace ExpressionEngine.Core
             }
             #endregion
 
-            public double ExecuteBuiltInFunction(string name, double[] args)
+            public object ExecuteBuiltInFunction(string name, object[] args)
             {
                 var param = _funcsLookup[name];
                 if (!param.Match(args.Length))
                 {
                     throw new ExpressionException(string.Format(CultureInfo.InvariantCulture, "Function '{0}' requires only {1}.", name, param.ToString()));
                 }
+                var typed = Array.ConvertAll(args, Kernel.Instance.Primitives.ToReal);
                 if (string.CompareOrdinal("log", name) == 0)
                 {
-                    if (args.Length == 1) { return Math.Log(args[0]); }
-                    else if (args.Length == 2) { return Math.Log(args[0], args[1]); }
+                    if (args.Length == 1) { return Math.Log(typed[0]); }
+                    else if (args.Length == 2) { return Math.Log(typed[0], typed[1]); }
                 }
-                if (string.CompareOrdinal("abs", name) == 0) { return Math.Abs(args[0]); }
-                if (string.CompareOrdinal("asin", name) == 0) { return Math.Asin(args[0]); }
-                if (string.CompareOrdinal("sin", name) == 0) { return Math.Sin(args[0]); }
-                if (string.CompareOrdinal("sinh", name) == 0) { return Math.Sinh(args[0]); }
-                if (string.CompareOrdinal("acos", name) == 0) { return Math.Acos(args[0]); }
-                if (string.CompareOrdinal("cos", name) == 0) { return Math.Cos(args[0]); }
-                if (string.CompareOrdinal("cosh", name) == 0) { return Math.Cosh(args[0]); }
-                if (string.CompareOrdinal("sqrt", name) == 0) { return Math.Sqrt(args[0]); }
-                if (string.CompareOrdinal("atan", name) == 0) { return Math.Atan(args[0]); }
-                if (string.CompareOrdinal("tan", name) == 0) { return Math.Tan(args[0]); }
-                if (string.CompareOrdinal("tanh", name) == 0) { return Math.Tanh(args[0]); }
+                if (string.CompareOrdinal("abs", name) == 0) { return Math.Abs(typed[0]); }
+                if (string.CompareOrdinal("asin", name) == 0) { return Math.Asin(typed[0]); }
+                if (string.CompareOrdinal("sin", name) == 0) { return Math.Sin(typed[0]); }
+                if (string.CompareOrdinal("sinh", name) == 0) { return Math.Sinh(typed[0]); }
+                if (string.CompareOrdinal("acos", name) == 0) { return Math.Acos(typed[0]); }
+                if (string.CompareOrdinal("cos", name) == 0) { return Math.Cos(typed[0]); }
+                if (string.CompareOrdinal("cosh", name) == 0) { return Math.Cosh(typed[0]); }
+                if (string.CompareOrdinal("sqrt", name) == 0) { return Math.Sqrt(typed[0]); }
+                if (string.CompareOrdinal("atan", name) == 0) { return Math.Atan(typed[0]); }
+                if (string.CompareOrdinal("tan", name) == 0) { return Math.Tan(typed[0]); }
+                if (string.CompareOrdinal("tanh", name) == 0) { return Math.Tanh(typed[0]); }
 
                 throw new InvalidOperationException(); // Unreachable code
             }
 
-            public double GetBuiltInVariable(string name)
+            public object GetBuiltInVariable(string name)
             {
                 return _varsLookup[name];
             }
@@ -144,7 +155,7 @@ namespace ExpressionEngine.Core
             }
 
             private readonly Dictionary<string, ParameterInfo> _funcsLookup = new Dictionary<string, ParameterInfo>()
-	            {
+                {
                     {"log", ParameterInfo.OneTwoParameter()},
                     {"abs", ParameterInfo.OneParameter()},
                     {"asin", ParameterInfo.OneParameter()},
@@ -157,7 +168,7 @@ namespace ExpressionEngine.Core
                     {"atan", ParameterInfo.OneParameter()},
                     {"tan", ParameterInfo.OneParameter()},
                     {"tanh", ParameterInfo.OneParameter()}
-	            };
+                };
             private readonly Dictionary<string, double> _varsLookup = new Dictionary<string, double>()
                 {
                     {"e", Math.E},
@@ -166,16 +177,54 @@ namespace ExpressionEngine.Core
         }
         #endregion
 
-	    private static readonly Kernel Singleton = new Kernel();
-	}
+        #region Primitive Types
+        internal interface ITypeService
+        {
+            PrimitiveType ToPrimitiveType(Type type);
 
-	#region Version
+            double ToReal(object value);
+        }
+
+        private sealed class TypeService : ITypeService
+        {
+            public PrimitiveType ToPrimitiveType(Type type)
+            {
+                if (type == typeof(long))
+                {
+                    return PrimitiveType.Integer;
+                }
+                if (type == typeof(double))
+                {
+                    return PrimitiveType.Real;
+                }
+                throw new InvalidOperationException("Type not yet supported.");
+            }
+
+            public double ToReal(object value)
+            {
+                if (value is long)
+                {
+                    return (double) (long) value;
+                }
+                if (value is double)
+                {
+                    return (double) value;
+                }
+                throw new ExpressionException(string.Format("Can't convert object of type '{0}' to real.", value.GetType()));
+            }
+        }
+        #endregion
+
+        private static readonly Kernel Singleton = new Kernel();
+    }
+
+    #region Version
     public static class ThisLibrary
     {
         public const string Name = "ExpressionEngine";
         public const string ProductName = "Expression Engine Library";
-        public const string Version = "1.0.3.23";
+        public const string Version = "1.0.4.1";
         public const string ReleaseType = "beta";
     }
-	#endregion
+    #endregion
 }

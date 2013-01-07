@@ -34,143 +34,143 @@ using System.Globalization;
 
 namespace ExpressionEngine.Core
 {
-	abstract class ExpressionVisitor
-	{
+    abstract class ExpressionVisitor
+    {
         private ExpressionVisitor() {}
 
-        protected ExpressionVisitor(IDictionary<string, double> variables, IDictionary<string, Func<double[], double>> functions)
+        protected ExpressionVisitor(IDictionary<string, object> variables, IDictionary<string, Func<object[], object>> functions)
         {
             InitializeVariables(variables);
             InitializeFunctions(functions);
         }
 
-		public abstract void VisitLiteral(Model.LiteralExpression expression);
+        public abstract void VisitLiteral(Model.LiteralExpression expression);
 
-		public abstract void VisitUnary(Model.UnaryExpression expression);
+        public abstract void VisitUnary(Model.UnaryExpression expression);
 
-		public abstract void VisitFunction(Model.FunctionExpression expression);
+        public abstract void VisitFunction(Model.FunctionExpression expression);
 
-		public abstract void VisitBinary(Model.BinaryExpression expression);
+        public abstract void VisitBinary(Model.BinaryExpression expression);
 
-	    public abstract void VisitVariable(Model.VariableExpression expression);
+        public abstract void VisitVariable(Model.VariableExpression expression);
 
-        // Result is an object rather than a dobule for support the compiler-visitor.
-		public abstract object Result { get; }
+        public abstract object Result { get; }
 
-        protected void InitializeVariables(IDictionary<string, double> variables)
+        protected void InitializeVariables(IDictionary<string, object> variables)
         {
             if (variables == null || variables.Count == 0)
             {
-                UserDefinedVariables = new Dictionary<string, double>();
+                UserDefinedVariables = new Dictionary<string, object>();
                 return;
             }
-            UserDefinedVariables = new Dictionary<string, double>(variables);
+            UserDefinedVariables = new Dictionary<string, object>(variables);
         }
 
-        protected void InitializeFunctions(IDictionary<string, Func<double[], double>> functions)
+        protected void InitializeFunctions(IDictionary<string, Func<object[], object>> functions)
         {
             if (functions == null || functions.Count == 0)
             {
-                UserDefinedFunctions = new Dictionary<string, Func<double[], double>>();
+                UserDefinedFunctions = new Dictionary<string, Func<object[], object>>();
                 return;
             }
-            UserDefinedFunctions = new Dictionary<string, Func<double[], double>>(functions);
+            UserDefinedFunctions = new Dictionary<string, Func<object[], object>>(functions);
         }
 
-        protected IDictionary<string, double> UserDefinedVariables { get; private set; }
+        protected IDictionary<string, object> UserDefinedVariables { get; private set; }
 
-        protected IDictionary<string, Func<double[], double>> UserDefinedFunctions { get; private set; } 
+        protected IDictionary<string, Func<object[], object>> UserDefinedFunctions { get; private set; } 
 
-        public static ExpressionVisitor Create(IDictionary<string, double> variables, IDictionary<string, Func<double[], double>> functions)
+        public static ExpressionVisitor Create(IDictionary<string, object> variables, IDictionary<string, Func<object[], object>> functions)
         {
             return new EvaluatingExpressionVisitor(variables, functions);
         }
 
-		public class EvaluatingExpressionVisitor : ExpressionVisitor
-		{
+        public class EvaluatingExpressionVisitor : ExpressionVisitor
+        {
             private EvaluatingExpressionVisitor() {}
 
-            public EvaluatingExpressionVisitor(IDictionary<string, double> variables,
-                                               IDictionary<string, Func<double[], double>> functions) : base(variables, functions)
+            public EvaluatingExpressionVisitor(IDictionary<string, object> variables,
+                                               IDictionary<string, Func<object[], object>> functions) : base(variables, functions)
             {
                 
             }
 
-			public override void VisitLiteral(Model.LiteralExpression expression)
-			{
-				_result = expression.Value;
-			}
+            public override void VisitLiteral(Model.LiteralExpression expression)
+            {
+                _result = expression.Value;
+            }
 
-			public override void VisitUnary(Model.UnaryExpression expression)
-			{
-				expression.Value.Accept(this);
-				switch (expression.Operator)
-				{
-					case Model.OperatorType.UnaryPlus:
-						break;
-					case Model.OperatorType.UnaryMinus:
-						_result = _result * -1;
-						break;
-					default:
-						throw new ExpressionException("Invalid unary operator type.");
-				}
-			}
-
-			public override void VisitFunction(Model.FunctionExpression expression)
-			{
-			    var name = expression.Name;
-				var argsList = new List<double>(expression.Arguments.Count);
-				expression.Arguments.ForEach(arg => {
-					arg.Accept(this);
-					argsList.Add(_result);
-				});
-				var args = argsList.ToArray();
-			    if (Kernel.Instance.BuiltIn.IsBuiltInFunction(name))
-			    {
-			        _result = Kernel.Instance.BuiltIn.ExecuteBuiltInFunction(expression.Name, args);
-			    }
-			    else
-			    {
-			        _result = UserDefinedFunctions[name](args);
-			    }
-			}
-
-			public override void VisitBinary(Model.BinaryExpression expression)
-			{
-				Func<double> left = () => {
-					expression.Left.Accept(this);
-					var leftValue = _result;
-					return leftValue;
-				};
-				Func<double> right = () => {
-					expression.Right.Accept(this);
-					var rightValue = _result;
-					return rightValue;
-				};
-	            switch (expression.Operator)
-	            {
-	                case Model.OperatorType.Add:
-	                    _result = left() + right();
-						break;
-	                case Model.OperatorType.Subtract:
-	                    _result = left() - right();
-						break;
-	                case Model.OperatorType.Multiply:
-	                    _result = left() * right();
-						break;
-	                case Model.OperatorType.Divide:
-						_result = left() / right();
-						break;
-                    case Model.OperatorType.Modulo:
-	                    _result = left() % right();
+            public override void VisitUnary(Model.UnaryExpression expression)
+            {
+                expression.Value.Accept(this);
+                switch (expression.Operator)
+                {
+                    case Model.OperatorType.UnaryPlus:
                         break;
-	                case Model.OperatorType.Exponent:
-	                    _result =  Math.Pow(left(), right());
-						break;
-					default:
-						throw new ExpressionException("Invalid binary operator type.");
-				}
-			}
+                    case Model.OperatorType.UnaryMinus:
+                        _result = Kernel.Instance.Primitives.ToReal(_result) * -1;
+                        break;
+                    default:
+                        throw new ExpressionException("Invalid unary operator type.");
+                }
+            }
+
+            public override void VisitFunction(Model.FunctionExpression expression)
+            {
+                var name = expression.Name;
+                var argsList = new List<object>(expression.Arguments.Count);
+                expression.Arguments.ForEach(arg => {
+                    arg.Accept(this);
+                    argsList.Add(_result);
+                });
+                var args = argsList.ToArray();
+                if (Kernel.Instance.BuiltIn.IsBuiltInFunction(name))
+                {
+                    _result = Kernel.Instance.BuiltIn.ExecuteBuiltInFunction(expression.Name, args);
+                }
+                else
+                {
+                    _result = UserDefinedFunctions[name](args);
+                }
+            }
+
+            public override void VisitBinary(Model.BinaryExpression expression)
+            {
+                Func<object> left = () => {
+                    expression.Left.Accept(this);
+                    var leftValue = _result;
+                    return leftValue;
+                };
+                Func<object> right = () => {
+                    expression.Right.Accept(this);
+                    var rightValue = _result;
+                    return rightValue;
+                };
+                var primitives = Kernel.Instance.Primitives;
+                switch (expression.Operator)
+                {
+                    case Model.OperatorType.Add:
+                        _result = primitives.ToReal(left()) + primitives.ToReal(right());
+                        break;
+                    case Model.OperatorType.Subtract:
+                        _result = primitives.ToReal(left()) - primitives.ToReal(right());
+                        break;
+                    case Model.OperatorType.Multiply:
+                        _result = primitives.ToReal(left()) * primitives.ToReal(right());
+                        break;
+                    case Model.OperatorType.Divide:
+                        _result = primitives.ToReal(left()) / primitives.ToReal(right());
+                        break;
+                    case Model.OperatorType.Modulo:
+                        _result = primitives.ToReal(left()) % primitives.ToReal(right());
+                        break;
+                    case Model.OperatorType.Exponent:
+                        _result =  Math.Pow(primitives.ToReal(left()), primitives.ToReal(right()));
+                        break;
+                    default:
+                        throw new ExpressionException("Invalid binary operator type.");
+                }
+            }
 
             public override void VisitVariable(Model.VariableExpression expression)
             {
@@ -191,7 +191,7 @@ namespace ExpressionEngine.Core
 
             public override object Result { get { return _result; } }
 
-			private double _result;
-		}
-	}
+            private object _result;
+        }
+    }
 }

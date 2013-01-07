@@ -18,16 +18,16 @@ namespace ExpressionEngine.Tests
         [Test]
         public void UserDefinedNames()
         {
-            var vars = new Dictionary<string, double>
+            var vars = new Dictionary<string, object>
                 {
                     {"G", 6.67428},
                     {"earth_mass", Expression.Create("5.97219 * 10^24").Value}, // 5.97219E+24 kg
                     {"lunar_mass", Expression.Create("7.34767309 * 10^22").Value}, // 7.34767309E+22 kg
                     {"perigee_dist", 356700000D} // moon-earth distance at perigee in m
                 };
-            var funcs = new Dictionary<string, Func<double[], double>>
+            var funcs = new Dictionary<string, Func<object[], object>>
                 {
-                    {"calc_force", (double[] args) => (args[0] * args[1]) / Math.Pow(args[2], 2)}
+                    {"calc_force", (object[] args) => ((double) args[0] * (double) args[1]) / Math.Pow((double) args[2], 2)}
                 };
             Expression.Create("G * calc_force(earth_mass, lunar_mass, perigee_dist)", vars, funcs).Value.Should().Equal(2.3018745174107073E+31D);
         }

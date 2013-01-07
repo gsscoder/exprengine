@@ -28,24 +28,15 @@
 #endregion
 #region Using Directives
 using System;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using ExpressionEngine.Core;
+using ExpressionEngine.Core.Model;
 #endregion
 
-namespace ExpressionEngine
+namespace ExpressionEngine.Core
 {
     sealed class Parser : IDisposable
     {
         private Parser() {}
-
-		private static readonly TokenType[] InitialGroup = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.Identifier, TokenType.Caret};
-		private static readonly TokenType[] InitialGroupWithComma = {TokenType.Comma, TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.Identifier, TokenType.Caret};
-		private static readonly TokenType[] MiddleGroupAdditiveExponent = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.RightParenthesis, TokenType.Identifier};
-		private static readonly TokenType[] MiddleGroupMultiplicative = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.Identifier};
-		private static readonly TokenType[] MiddleGroupIdentifier = {TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.Star, TokenType.Slash, TokenType.Caret, TokenType.RightParenthesis, TokenType.Comma};
-		private static readonly TokenType[] MiddleGroupUnary = {TokenType.Literal, TokenType.LeftParenthesis, TokenType.Identifier};
 
         public Parser(Scanner scanner)
         {
@@ -82,11 +73,11 @@ namespace ExpressionEngine
         {
             if (!insideFunc)
             {
-				Expect(InitialGroup);
+                Expect(InitialGroup);
             }
             else
             {
-				Ensure(InitialGroupWithComma);
+                Ensure(InitialGroupWithComma);
             }
             Model.Expression expr = ParseAdditiveBinary();
             return expr;
@@ -95,14 +86,14 @@ namespace ExpressionEngine
         private Model.Expression ParseAdditiveBinary()
         {
             Model.Expression expr = ParseMultiplicativeBinary();
-            while (!_scanner.IsEof() && (_current.IsPlus() || _current.IsMinus()))
+            while (!_scanner.IsEof() && (_current == PunctuatorToken.Plus || _current == PunctuatorToken.Minus))
             {
                 var binaryAddSub = new Model.BinaryExpression
                     {
-                        Operator = _current.GetAdditiveOperator(),
+                        Operator = ((PunctuatorToken)_current).ToOperatorType(),
                         Left = expr
                     };
-				Expect(MiddleGroupAdditiveExponent);
+                Expect(MiddleGroupAdditiveExponent);
                 binaryAddSub.Right = ParseMultiplicativeBinary();
                 expr = binaryAddSub;
             }
@@ -112,14 +103,15 @@ namespace ExpressionEngine
         private Model.Expression ParseMultiplicativeBinary()
         {
             Model.Expression expr = ParseExponentBinary();
-            while (!_scanner.IsEof() && (_current.IsStar() || _current.IsSlash() || _current.IsPercent()))
+            while (!_scanner.IsEof() && (_current == PunctuatorToken.Multiply ||
+                _current == PunctuatorToken.Divide || _current == PunctuatorToken.Modulo))
             {
                 var binaryMulDiv = new Model.BinaryExpression
                     {
-                        Operator = _current.GetMultiplicativeOperator(),
+                        Operator = ((PunctuatorToken)_current).ToOperatorType(),
                         Left = expr
                     };
-				Expect(MiddleGroupMultiplicative);
+                Expect(MiddleGroupMultiplicative);
                 binaryMulDiv.Right = ParseExponentBinary();
                 expr = binaryMulDiv;
             }
@@ -129,14 +121,14 @@ namespace ExpressionEngine
         private Model.Expression ParseExponentBinary()
         {
             Model.Expression expr = ParseIdentifier();
-            while (!_scanner.IsEof() && _current.IsCaret())
+            while (!_scanner.IsEof() && _current == PunctuatorToken.Exponent)
             {
                 var binaryExp = new Model.BinaryExpression
                     {
                         Operator = Model.OperatorType.Exponent,
                         Left = expr
                     };
-				Expect(MiddleGroupAdditiveExponent);
+                Expect(MiddleGroupAdditiveExponent);
                 binaryExp.Right = ParseIdentifier();
                 expr = binaryExp;
             }
@@ -150,19 +142,20 @@ namespace ExpressionEngine
                 throw new ExpressionException(_scanner.ColumnNumber, "Expected function or expression.");
             }
 
-            if (!_current.IsIdentifier())
+            if (!(_current is IdentifierToken))
             {
                 return ParseUnary();
             }
 
-            if (_scanner.PeekToken() == null || (_scanner.PeekToken() != null && !_scanner.PeekToken().IsOpenBracket()))
+            if (_scanner.PeekToken() == null || (_scanner.PeekToken() != null &&
+                _scanner.PeekToken() != PunctuatorToken.LeftParenthesis))
             {
                 // variable
-                var varExpr = new Model.VariableExpression() { Name = _current.Text };
+                var varExpr = new Model.VariableExpression(_current.Text);
                 if (!Kernel.Instance.BuiltIn.IsBuiltInVariable(varExpr.Name)) { _userVariables++; }
                 if (_scanner.PeekToken() != null)
                 {
-					Expect(MiddleGroupIdentifier);
+                    Expect(MiddleGroupIdentifier);
                 }
                 else
                 {
@@ -171,9 +164,9 @@ namespace ExpressionEngine
                 return varExpr;
             }
 
-            var expr = new Model.FunctionExpression() { Name = _current.Text };
+            var expr = new Model.FunctionExpression(_current.Text);
             if (!Kernel.Instance.BuiltIn.IsBuiltInFunction(expr.Name)) { _userFunctions++; }
-            Expect(TokenType.LeftParenthesis);
+            Expect(PunctuatorToken.LeftParenthesis);
             while (!_scanner.IsEof())
             {
                 Consume();
@@ -182,11 +175,11 @@ namespace ExpressionEngine
                 {
                     break;
                 }
-                if (_current.IsComma())
+                if (_current == PunctuatorToken.Comma)
                 {
                     continue;
                 }
-                else if (_current.IsCloseBracket())
+                else if (_current == PunctuatorToken.RightParenthesis)
                 {
                     Consume();
                     break;
@@ -206,32 +199,31 @@ namespace ExpressionEngine
                 throw new ExpressionException(_scanner.ColumnNumber, "Expected unary operator, literal or open bracket.");    
             }
 
-            var unary = new Model.UnaryExpression();
-            if (_current.IsMinus())
+            var unary = new UnaryExpression();
+            if (_current == PunctuatorToken.Minus)
             {
-               	unary.Operator = Model.OperatorType.UnaryMinus;
-				Expect(MiddleGroupUnary);
+                unary.Operator = OperatorType.UnaryMinus;
+                Expect(MiddleGroupUnary);
             }
-            else if (_current.IsPlus())
+            else if (_current == PunctuatorToken.Plus)
             {
-                unary.Operator = Model.OperatorType.UnaryPlus;
-				Expect(MiddleGroupUnary);
+                unary.Operator = OperatorType.UnaryPlus;
+                Expect(MiddleGroupUnary);
             }
 
-            if (_current.IsLiteral())
+            if (_current is LiteralToken)
             {
-                //unary.Value = new Model.LiteralExpression(Convert.ToDouble(_current.Text, CultureInfo.InvariantCulture));
-                unary.Value = new Model.LiteralExpression(_current.Value);
-                if (_scanner.PeekToken() != null && _scanner.PeekToken().IsLiteral())
+                unary.Value = new Model.LiteralExpression(((LiteralToken)_current).Value);
+                if (_scanner.PeekToken() != null && _scanner.PeekToken() is LiteralToken)
                 {
                     throw new ExpressionException(_scanner.ColumnNumber, "Expected expression.");
                 }
             }
-            else if (_current.IsOpenBracket())
+            else if (_current == PunctuatorToken.LeftParenthesis)
             {
                 unary.Value = ParseExpression();
             }
-            else if (_current.IsIdentifier())
+            else if (_current is IdentifierToken)
             {
                 unary.Value = ParseIdentifier();
             }
@@ -243,125 +235,84 @@ namespace ExpressionEngine
             return unary;
         }
 
-		private string TokenTypeArrayToString(TokenType[] types)
-		{
-			var b = new StringBuilder(6 * types.Length);
-			foreach (TokenType t in types)
-			{
-				b.Append("'");
-				switch (t)
-				{
-					case TokenType.LeftParenthesis:
-						b.Append("(");
-						break;
-					case TokenType.RightParenthesis:
-						b.Append(")");
-						break;
-					case TokenType.Plus:
-						b.Append("+");
-						break;
-					case TokenType.Minus:
-						b.Append("-");
-						break;
-					case TokenType.Star:
-						b.Append("*");
-						break;
-					case TokenType.Slash:
-						b.Append("/");
-						break;
-                    case TokenType.Caret:
-				        b.Append("^");
-                        break;
-                    case TokenType.Comma:
-				        b.Append(",");
-                        break;
-					case TokenType.Literal:
-						b.Append("NUMBER");
-						break;
-                    case TokenType.Identifier:
-				        b.Append("IDENT");
-                        break;
-				}
-				b.Append("'");
-				b.Append(", ");
-			}
-			return b.ToString(0, b.Length - 2);
-		}
-
-		#region Token Stream Controllers
-		private void Ensure(TokenType[] types)
+        #region Token Stream Controllers
+        private void Ensure(Token[] tokens, bool identifierAllowed = true)
         {
             if (_current == null)
             {
                 throw new ExpressionException(_scanner.ColumnNumber,
-                    string.Format("Unexpected end of input, but found token(s): {0}.", TokenTypeArrayToString(types)));
+                    string.Format("Unexpected end of input, instead of token(s): {0}{1}.", identifierAllowed ? "'IDENT', " : "", Token.StringOf(tokens)));
             }
-            if (!types.Contains(_current.Type))
+            if (!(_current is LiteralToken || (identifierAllowed && _current is IdentifierToken )
+                || tokens.Contains(_current)))
             {
                 throw new ExpressionException(_scanner.ColumnNumber,
-                    string.Format("Syntax error, expected token(s) {0}; but found '{1}'.", TokenTypeArrayToString(types), _current.Type));
+                    string.Format("Syntax error, expected token(s) 'LITERAL', 'IDENT', {0}; but found '{1}'.", Token.StringOf(tokens), _current.Text));
             }
         }
 
-		private void Expect(TokenType[] types)
-		{
-			var next = _scanner.PeekToken();
+        private void Expect(Token[] tokens, bool identifierAllowed = true)
+        {
+            var next = _scanner.PeekToken();
             if (next == null)
             {
                 throw new ExpressionException(_scanner.ColumnNumber,
-                    string.Format("Unexpected end of input, instead of token(s): {0}.", TokenTypeArrayToString(types)));
+                    string.Format("Unexpected end of input, instead of token(s): 'LITERAL', {0}{1}.", identifierAllowed ? "'IDENT', " : "" ,Token.StringOf(tokens)));
             }
-			if (types.Contains(next.Type))
-			{
-				Consume();
-			}
-			else
-			{
-				throw new ExpressionException(_scanner.ColumnNumber,
-					string.Format("Syntax error, expected token(s) {0}; but found '{1}'.", TokenTypeArrayToString(types), next.Type));
-			}
-		}
+            if (next is LiteralToken || (identifierAllowed && next is IdentifierToken ) ||
+                tokens.Contains(next))
+            {
+                Consume();
+            }
+            else
+            {
+                throw new ExpressionException(_scanner.ColumnNumber,
+                    string.Format("Syntax error, expected token(s) 'LITERAL', {0}{1}; but found '{2}'.", identifierAllowed ? "'IDENT', " : "", Token.StringOf(tokens), next.Text));
+            }
+        }
 
-		private void Expect(TokenType type)
-		{
-			var next = _scanner.PeekToken();
+        private void Expect(Token token)
+        {
+            var next = _scanner.PeekToken();
             if (next == null)
             {
                 throw new ExpressionException(_scanner.ColumnNumber,
-                    string.Format("Unexpected end of input, instead of token(s): '{0}'.", type.ToString()));
+                    string.Format("Unexpected end of input, instead of token(s): 'LITERAL', '{0}'.", token.Text));
             }
-			if (type == next.Type)
-			{
-				Consume();
-			}
-			else
-			{
-				throw new ExpressionException(_scanner.ColumnNumber,
-					string.Format("Syntax error, expected token(s) '{0}'; but found '{1}'.", type.ToString(), next.Type));
-			}
-		}
+            if (token is LiteralToken || token == next)
+            {
+                Consume();
+            }
+            else
+            {
+                throw new ExpressionException(_scanner.ColumnNumber,
+                    string.Format("Syntax error, expected token(s) 'LITERAL', '{0}'; but found '{1}'.", token.Text, next.Text));
+            }
+        }
 
         private void Consume()
         {
             _current = _scanner.NextToken();
-            if (_current != null)
-            {
-                if (_current.IsOpenBracket())
-                {
-                    _brackets++;
-                }
-                else if (_current.IsCloseBracket())
-                {
-                    _brackets--;
-                }
-            }
+            if (_current == null) { return; }
+
+            if (_current == PunctuatorToken.LeftParenthesis) { _brackets++; }
+            else if (_current == PunctuatorToken.RightParenthesis) { _brackets--; }
         }
-		#endregion
+        #endregion
 
         ~Parser()
-		{
-			Dispose(false);
-		}
+        {
+            Dispose(false);
+        }
+
+        #region Token Groups
+        private static readonly Token[] InitialGroup = { PunctuatorToken.Plus, PunctuatorToken.Minus, PunctuatorToken.LeftParenthesis, PunctuatorToken.Exponent }; // + literal, ident
+        private static readonly Token[] InitialGroupWithComma = { PunctuatorToken.Comma, PunctuatorToken.Plus, PunctuatorToken.Minus, PunctuatorToken.LeftParenthesis, PunctuatorToken.Exponent }; // + literal, ident
+        private static readonly Token[] MiddleGroupAdditiveExponent = { PunctuatorToken.Plus, PunctuatorToken.Minus, PunctuatorToken.LeftParenthesis, PunctuatorToken.RightParenthesis }; // + literal, ident
+        private static readonly Token[] MiddleGroupMultiplicative = { PunctuatorToken.Plus, PunctuatorToken.Minus, PunctuatorToken.LeftParenthesis }; // + literal, ident
+        private static readonly Token[] MiddleGroupIdentifier = { PunctuatorToken.Plus, PunctuatorToken.Minus, PunctuatorToken.Multiply, PunctuatorToken.Divide, PunctuatorToken.Exponent, PunctuatorToken.RightParenthesis, PunctuatorToken.Comma }; // + literal
+        private static readonly Token[] MiddleGroupUnary = { PunctuatorToken.LeftParenthesis }; // + literal, ident
+        #endregion
 
         private int _userVariables;
         private int _userFunctions;

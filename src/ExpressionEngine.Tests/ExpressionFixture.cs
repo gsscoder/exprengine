@@ -162,7 +162,7 @@ namespace ExpressionEngine.Tests
             Expression.Create("cos(999) % .3").Value.Should().Equal(0.099649852980826459D);
         }
 
-		[Test]
+        [Test]
         public void SmallExprWithFunction_Unary()
         {
             Expression.Create("-sqrt(100)").Value.Should().Equal(-10D);
@@ -306,12 +306,12 @@ namespace ExpressionEngine.Tests
             expr2.IsValueCacheRetrieved.Should().Be.True();
         }
 
-		#region Expected Exceptions
+        #region Expected Exceptions
         [Test]
-        [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Unexpected end of input, instead of token(s): 'NUMBER', '+', '-', '(', 'IDENT', '^'.")]
+        [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Unexpected end of input, instead of token(s): 'LITERAL', 'IDENT', '+', '-', '(', '^'.")]
         public void IncompleteExpressioThrowsException()
         {
-        	Expression.Create("3 + 1 - (");
+            Expression.Create("3 + 1 - (");
         }
 
         [Test]
@@ -325,15 +325,15 @@ namespace ExpressionEngine.Tests
         [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Syntax error, odd number of brackets.")]
         public void MissingBrackethrowsException()
         {
-        	Expression.Create("3 + (1 -");
+            Expression.Create("3 + (1 -");
         }
 
         [Test]
         [ExpectedException(typeof(ExpressionException), ExpectedMessage = "Syntax error, odd number of brackets.")]
         public void MissingBrackethrowsException_2()
         {
-        	Expression.Create("3 + 3 / (1");
+            Expression.Create("3 + 3 / (1");
         }
-		#endregion
+        #endregion
     }
 }

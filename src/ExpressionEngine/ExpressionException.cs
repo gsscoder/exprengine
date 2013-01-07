@@ -33,9 +33,9 @@ using System.Runtime.Serialization;
 
 namespace ExpressionEngine
 {
-	/// <summary>
-	/// The exception that is thrown when a <see cref="ExpressionEngine.Expression"/> can't be evaluated.
-	/// </summary>
+    /// <summary>
+    /// The exception that is thrown when a <see cref="ExpressionEngine.Expression"/> can't be evaluated.
+    /// </summary>
     [Serializable]
     public sealed class ExpressionException : Exception
     {

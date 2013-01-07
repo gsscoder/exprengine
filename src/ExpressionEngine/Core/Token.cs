@@ -28,190 +28,144 @@
 #endregion
 #region Using Directives
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.Text;
+
 #endregion
 
-namespace ExpressionEngine
+namespace ExpressionEngine.Core
 {
-    enum TokenType : byte
+    abstract class Token
     {
-        Plus,           	/*  +  */
-        Minus,          	/*  -  */
-        Star,           	/*  *  */
-        Slash,          	/*  /  */
-        Percent,        	/*  %  */
-        LeftParenthesis,    /*  (  */
-        RightParenthesis,   /*  )  */
-        Comma,          	/*  ,  */
-        Caret,          	/*  ^  */
-        Literal,
-        Identifier
+        protected Token() {}
+
+        protected Token(string text)
+        {
+            _text = text;
+        }
+
+        public static string StringOf(Token token)
+        {
+            return token == null ? "end of input" : string.Format("'{0}'", token.Text);
+        }
+
+        public static string StringOf(Token[] tokens)
+        {
+            var builder = new StringBuilder(4 * tokens.Length);
+            foreach (var token in tokens)
+            {
+                builder.Append("'");
+                builder.Append(token.Text);
+                builder.Append("', ");
+            }
+            return builder.ToString(0, builder.Length - 2);
+        }
+
+        public virtual string Text
+        {
+            get { return _text; }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} [{1}]", this.Text, this.GetType().Name);
+        }
+
+        private readonly string _text;
     }
 
-    sealed class Token
+    sealed class PunctuatorToken : Token
     {
-        private Token(string text)
+        private PunctuatorToken(string text)
+            : base(text)
         {
-            Text = text;
         }
 
-        private Token(string text, TokenType type)
+        public static Token ValueOf(string text)
         {
-            Text = text;
-            Type = type;
+            PunctuatorToken token;
+            return Lookup.TryGetValue(text, out token) ? token : null;
         }
 
-        private Token(string text, double value)
+        public Model.OperatorType ToOperatorType()
         {
-            Type = TokenType.Literal;
-            Text = text;
-            Value = value;
-        }
-
-        public string Text;
-
-        public double Value = double.NaN;
-
-        public TokenType Type;
-
-        public bool IsPlus()
-        {
-            return Type == TokenType.Plus;
-        }
-
-        public bool IsMinus()
-        {
-            return Type == TokenType.Minus;
-        }
-
-        public bool IsStar()
-        {
-            return Type == TokenType.Star;
-        }
-
-        public bool IsSlash()
-        {
-            return Type == TokenType.Slash;
-        }
-
-        public bool IsOperator()
-        {
-            return Type == TokenType.Plus || Type == TokenType.Minus ||
-                   Type == TokenType.Star || Type == TokenType.Slash;
-        }
-
-        public bool IsOpenBracket()
-        {
-            return Type == TokenType.LeftParenthesis;
-        }
-
-        public bool IsCloseBracket()
-        {
-            return Type == TokenType.RightParenthesis;
-        }
-
-        public bool IsComma()
-        {
-            return Type == TokenType.Comma;
-        }
-
-        public bool IsLiteral()
-        {
-            return Type == TokenType.Literal;
-        }
-
-        public bool IsIdentifier()
-        {
-            return Type == TokenType.Identifier;
-        }
-
-        public bool IsCaret()
-        {
-            return Type == TokenType.Caret;
-        }
-
-        public bool IsPercent()
-        {
-            return Type == TokenType.Percent;
-        }
-
-        public static Token Punctuator(int @char)
-        {
-            var token = new Token(new string((char) @char, 1));
-            switch (token.Text)
+            if (this == PunctuatorToken.Plus)
             {
-                case "+":
-                    token.Type = TokenType.Plus;
-                    break;
-                case "-":
-                    token.Type = TokenType.Minus;
-                    break;
-                case "*":
-                    token.Type = TokenType.Star;
-                    break;
-                case "/":
-                    token.Type = TokenType.Slash;
-                    break;
-                case "%":
-                    token.Type = TokenType.Percent;
-                    break;
-                case "(":
-                    token.Type = TokenType.LeftParenthesis;
-                    break;
-                case ")":
-                    token.Type = TokenType.RightParenthesis;
-                    break;
-                case ",":
-                    token.Type = TokenType.Comma;
-                    break;
-                case "^":
-                    token.Type = TokenType.Caret;
-                    break;
-                default:
-                    throw new ExpressionException("Invalid token.");
+                return Model.OperatorType.Add;
             }
-            return token;
-        }
-
-        public double ToDouble()
-        {
-            return Convert.ToDouble(Text, CultureInfo.InvariantCulture);
-        }
-
-        public Model.OperatorType GetAdditiveOperator()
-        {
-            switch (Type)
+            if (this == PunctuatorToken.Minus)
             {
-                case TokenType.Plus:
-                    return Model.OperatorType.Add;
-                case TokenType.Minus:
-                    return Model.OperatorType.Subtract;
+                return Model.OperatorType.Subtract;
             }
-            throw new ExpressionException("Expected additive (+, -) binary operator.");
-        }
-
-        public Model.OperatorType GetMultiplicativeOperator()
-        {
-            switch (Type)
+            if (this == PunctuatorToken.Multiply)
             {
-                case TokenType.Star:
-                    return Model.OperatorType.Multiply;
-                case TokenType.Slash:
-                    return Model.OperatorType.Divide;
-                case TokenType.Percent:
-                    return Model.OperatorType.Modulo;
+                return Model.OperatorType.Multiply;
             }
-            throw new ExpressionException("Expected multiplicative (*, /, %) binary operator.");
+            if (this == PunctuatorToken.Divide)
+            {
+                return Model.OperatorType.Divide;
+            }
+            if (this == PunctuatorToken.Modulo)
+            {
+                return Model.OperatorType.Modulo;
+            }
+            throw new ExpressionException("Unexpected punctuator.");
         }
 
-        public static Token Literal(string text, double value)
+        public static readonly PunctuatorToken LeftParenthesis = new PunctuatorToken("(");
+        public static readonly PunctuatorToken RightParenthesis = new PunctuatorToken(")");
+        public static readonly PunctuatorToken Comma = new PunctuatorToken(",");
+        public static readonly PunctuatorToken Plus = new PunctuatorToken("+");
+        public static readonly PunctuatorToken Minus = new PunctuatorToken("-");
+        public static readonly PunctuatorToken Multiply = new PunctuatorToken("*");
+        public static readonly PunctuatorToken Divide = new PunctuatorToken("/");
+        public static readonly PunctuatorToken Modulo = new PunctuatorToken("%");
+        public static readonly PunctuatorToken Exponent = new PunctuatorToken("^");
+
+        private static readonly Dictionary<string, PunctuatorToken> Lookup = new Dictionary<string, PunctuatorToken>
+            {
+                {"(", LeftParenthesis},
+                {")", RightParenthesis},
+                {",", Comma},
+                {"+", Plus},
+                {"-", Minus},
+                {"*", Multiply},
+                {"/", Divide},
+                {"%", Modulo},
+                {"^", Exponent}
+            };
+    }
+
+    sealed class LiteralToken : Token
+    {
+        public LiteralToken(object value)
         {
-            return new Token(text, value);
+            _value = value;
         }
 
-        public static Token Identifier(string text)
+        public override string Text
         {
-            return new Token(text, TokenType.Identifier);
+            get
+            {
+                return _value.ToString();
+            }
+        }
+
+        public object Value
+        {
+            get { return _value; }
+        }
+
+        private readonly object _value;
+    }
+
+    sealed class IdentifierToken : Token
+    {
+        public IdentifierToken(string text)
+            : base(text)
+        {
         }
     }
 }

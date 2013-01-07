@@ -33,14 +33,14 @@ using System.IO;
 using System.Text;
 #endregion
 
-namespace ExpressionEngine
+namespace ExpressionEngine.Core
 {
-    enum NumberFormats : byte
-    {
-        Integer,
-        Decimal
-        // hex and more in future..
-    }
+    //enum NumberFormats : byte
+    //{
+    //    Integer,
+    //    Decimal
+    //    // hex and more in future..
+    //}
 
     sealed class Scanner : IDisposable
     {
@@ -125,21 +125,21 @@ namespace ExpressionEngine
             return _next == null;
         }
 
-		public void Dispose()
+        public void Dispose()
         {
-			Dispose(true);
+            Dispose(true);
 
-			GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
 
-		private void Dispose(bool disposing)
-		{
-			if (!_disposed)
-			{
-				_reader.Dispose();
-				_disposed = true;
-			}	
-		}
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                _reader.Dispose();
+                _disposed = true;
+            }	
+        }
 
         private void Advance()
         {
@@ -150,7 +150,7 @@ namespace ExpressionEngine
         #region Specialized Readers
         private Token ScanPunctuator()
         {
-            return Token.Punctuator(_c);
+            return PunctuatorToken.ValueOf(new string((char) _c, 1));
         }
 
         private Token ScanLiteral()
@@ -169,7 +169,7 @@ namespace ExpressionEngine
                 Advance();
             }
             var text = number.ToString();
-            return Token.Literal(text, ParseNumber(text, hasDot ? NumberFormats.Decimal : NumberFormats.Integer));
+            return new LiteralToken(ParseNumber(text, hasDot));
         }
 
         private Token ScanIdentifier()
@@ -185,7 +185,7 @@ namespace ExpressionEngine
                 identText.Append((char) c);
                 Advance();
             }
-            return Token.Identifier(identText.ToString());
+            return new IdentifierToken(identText.ToString());
         }
 
         private void SkipWhiteSpace()
@@ -246,23 +246,22 @@ namespace ExpressionEngine
         }
         #endregion
 
-        private static double ParseNumber(string text, NumberFormats numberFormat)
+        private static object ParseNumber(string text, bool @decimal)//NumberFormats numberFormat)
         {
-            if (numberFormat == NumberFormats.Integer)
+            if (@decimal)
             {
-                return (double) int.Parse(text, NumberStyles.None);
-
+                return double.Parse(text, NumberStyles.AllowDecimalPoint, NumberFormatInfo);    
             }
-            return double.Parse(text, NumberStyles.AllowDecimalPoint, NumberFormatInfo);
+            return long.Parse(text, NumberStyles.None);
         }
 
-		~Scanner()
-		{
-			Dispose(false);
-		}
+        ~Scanner()
+        {
+            Dispose(false);
+        }
 
         private static readonly NumberFormatInfo NumberFormatInfo = CultureInfo.InvariantCulture.NumberFormat;
-		private bool _disposed;
+        private bool _disposed;
         private readonly TextReader _reader;
         private int _c;
         private Token _current;

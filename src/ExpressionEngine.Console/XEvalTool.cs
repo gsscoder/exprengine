@@ -133,7 +133,7 @@ namespace ExpressionEngine
             if (se.Length == 0) { return false; }
             try
             {
-				var result = Expression.Create(se).Value;
+                var result = Expression.Create(se).Value;
                 Console.WriteLine(result);
                 return true;
             }

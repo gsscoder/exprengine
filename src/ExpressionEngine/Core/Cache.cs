@@ -46,53 +46,81 @@ namespace ExpressionEngine.Core
     //    }
     //}
 
-    //interface ICache<TValue>
-    //{
-    //    TValue this[string key] { set; get; }
-    //}
+    interface ICache<TValue>
+    {
+        TValue this[string key] { set; get; }
 
-    //sealed class ObjectCache<TValue> : ICache<TValue>
-    //    where TValue : class 
-    //{
-    //    public ObjectCache()
-    //    {
-    //        _cache = new Dictionary<string, WeakReference<TValue>>();
-    //    }
+        void Add(string key, TValue value);
 
-    //    public TValue this[string key]
-    //    {
-    //        get
-    //        {
-    //            if (_cache.ContainsKey(key))
-    //            {
-    //                throw new ArgumentNullException("key");
-    //            }
-    //            return _cache[key].Target;
-    //        }
-    //        set
-    //        {
-    //            if (value == null)
-    //            {
-    //                throw new ArgumentNullException("value");
-    //            }
-    //            if (_cache.ContainsKey(key))
-    //            {
-    //                _cache[key] = new WeakReference<TValue>(value);
-    //            }
-    //            else
-    //            {
-    //                _cache.Add(key, new WeakReference<TValue>(value));
-    //            }
-    //        }
-    //    }
+        bool Contains(string key);
+    }
 
-    //    private readonly Dictionary<string, WeakReference<TValue>> _cache;
-    //}
-
-    sealed class ValueCache<TValue> //: ICache<TValue>
+    sealed class ValueCache<TValue> : ICache<TValue>
        where TValue : struct
     {
         public ValueCache()
+        {
+            _cache = new Dictionary<string, TValue>(32, StringComparer.Ordinal);
+        }
+
+        public TValue this[string key]
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(key))
+                {
+                    throw new ArgumentNullException("key");
+                }
+                if (!_cache.ContainsKey(key))
+                {
+                    throw new ArgumentException("key");
+                }
+                return _cache[key];
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(key))
+                {
+                    throw new ArgumentNullException("key");
+                }
+                if (!_cache.ContainsKey(key))
+                {
+                    throw new ArgumentException("key");
+                }
+                _cache[key] = value;
+            }
+        }
+
+        public void Add(string key, TValue value)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException("key");
+            }
+            if (_cache.ContainsKey(key))
+            {
+                throw new ArgumentException("key");
+            }
+            _cache.Add(key, value);
+        }
+
+        public bool Contains(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException("key");
+            }
+            return _cache.ContainsKey(key);
+        }
+
+        private readonly Dictionary<string, TValue> _cache;
+    }
+
+
+    sealed class ObjectCache<TValue> : ICache<TValue>
+        where TValue : class 
+    {
+        public ObjectCache()
         {
             _cache = new Dictionary<string, TValue>(32, StringComparer.Ordinal);
         }

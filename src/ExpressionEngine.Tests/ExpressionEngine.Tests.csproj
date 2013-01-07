@@ -45,13 +45,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CacheFixture.cs" />
-    <Compile Include="ComparisonFixture.cs" />
-    <Compile Include="ExpressionFixture.cs" />
-    <Compile Include="MutableExpressionFixture.cs" />
+    <Compile Include="CacheFixture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ComparisonFixture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExpressionFixture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MutableExpressionFixture.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScannerFixture.cs" />
-    <Compile Include="TokenUtil.cs" />
     <Compile Include="Properties\ThisAssembly.cs" />
   </ItemGroup>
   <ItemGroup>

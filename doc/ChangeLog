@@ -1,3 +1,14 @@
+2013-01-07      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * Heavy internal refactoring (with the main purpose of enhance expression type-system
+      and open doors to non-numeric computations).
+  * AST design was enhanced toward maintenability (and for a possible public exposure to
+      increase library uses).
+  * NOTE: in this moment the library is again very subject to change; a message like
+      this will be placed here to notify that public interface is stabilized again.
+  * Enforced consisted TAB (\t) to 4 spaces in all source files.
+  * Version incremented to 1.0.4.1 beta
+
 2013-01-06      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * Started some internal refactoring.

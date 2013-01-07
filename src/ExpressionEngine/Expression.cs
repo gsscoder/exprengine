@@ -36,51 +36,51 @@ using ExpressionEngine.Core;
 
 namespace ExpressionEngine
 {
-	/// <summary>
-	/// Represents mathematical immutable expression. Its result is stored in the <see cref="Value"/> property.
-	/// </summary>
+    /// <summary>
+    /// Represents mathematical immutable expression. Its result is stored in the <see cref="Value"/> property.
+    /// </summary>
     public class Expression
     {
         protected Expression() {}
 
         protected Expression(string text)
-            : this(text, double.NaN, false)
+            : this(text, null, false)
         {
         }
 
-		protected Expression(string text, double value)
+        protected Expression(string text, object value)
             : this(text, value, false)
-		{
-		}
+        {
+        }
 
-        protected Expression(string text, double value, bool isValueCacheRetrieved)
+        protected Expression(string text, object value, bool isValueCacheRetrieved)
         {
             _text = text;
             _value = value;
             _isValueCacheRetrieved = isValueCacheRetrieved;
         }
 
-		/// <summary>
-		/// Creates an <see cref="ExpressionEngine.Expression"/> instance with infix notation string.
-		/// </summary>
-		/// <param name='text'>Infix notation string to be evaluated.</param>
+        /// <summary>
+        /// Creates an <see cref="ExpressionEngine.Expression"/> instance with infix notation string.
+        /// </summary>
+        /// <param name='text'>A <see cref="System.String"/> of the expression to evaluate.</param>
         /// <returns>A <see cref="ExpressionEngine.Expression"/> instance or appropriate mutable derived type.</returns>
-		public static Expression Create(string text)
-		{
+        public static Expression Create(string text)
+        {
             if (string.IsNullOrEmpty(text)) { throw new ArgumentNullException("text", "Expression text can't be null."); }
 
-		    return Create(text, null, null);
-		}
+            return Create(text, null, null);
+        }
 
         /// <summary>
         /// Creates an <see cref="ExpressionEngine.Expression"/> instance with infix notation string,
         /// with user defined variables.
         /// </summary> 
-        /// <param name="text">Infix notation string to be evaluated.</param>
+        /// <param name="text">A <see cref="System.String"/> of the expression to evaluate.</param>
         /// <param name="variables">A generic dictionary of <see cref="System.String"/> keys as variable names
         /// and <see cref="System.Double"/> for values.</param>
         /// <returns>A <see cref="ExpressionEngine.Expression"/> instance or appropriate mutable derived type.</returns>
-        public static Expression Create(string text, IDictionary<string, double> variables)
+        public static Expression Create(string text, IDictionary<string, object> variables)
         {
             if (string.IsNullOrEmpty(text)) { throw new ArgumentNullException("text", "Expression text can't be null."); }
 
@@ -91,11 +91,11 @@ namespace ExpressionEngine
         /// Creates an <see cref="ExpressionEngine.Expression"/> instance with infix notation string,
         /// with user defined functions.
         /// </summary> 
-        /// <param name="text">Infix notation string to be evaluated.</param>
+        /// <param name="text">A <see cref="System.String"/> of the expression to evaluate.</param>
         /// <param name="functions">A generic dictionary of <see cref="System.String"/> keys as function names
         /// and lambda expressions for function bodies.</param>
         /// <returns>A <see cref="ExpressionEngine.Expression"/> instance or appropriate mutable derived type.</returns>
-        public static Expression Create(string text, IDictionary<string, Func<double[], double>> functions)
+        public static Expression Create(string text, IDictionary<string, Func<object[], object>> functions)
         {
             if (string.IsNullOrEmpty(text)) { throw new ArgumentNullException("text", "Expression text can't be null."); }
 
@@ -106,14 +106,14 @@ namespace ExpressionEngine
         /// Creates an <see cref="ExpressionEngine.Expression"/> instance with infix notation string,
         /// with user defined variables and functions.
         /// </summary> 
-        /// <param name="text">Infix notation string to be evaluated.</param>
+        /// <param name="text">A <see cref="System.String"/> of the expression to evaluate.</param>
         /// <param name="variables">A generic dictionary of <see cref="System.String"/> keys as variable names
-        /// and <see cref="System.Double"/> for values.</param>
+        /// and <see cref="System.Object"/> for values.</param>
         /// <param name="functions">A generic dictionary of <see cref="System.String"/> keys as function names
         /// and lambda expressions for function bodies.</param>
         /// <returns>A <see cref="ExpressionEngine.Expression"/> instance or appropriate mutable derived type.</returns>
-        public static Expression Create(string text, IDictionary<string, double> variables,
-            IDictionary<string, Func<double[], double>> functions)
+        public static Expression Create(string text, IDictionary<string, object> variables,
+            IDictionary<string, Func<object[], object>> functions)
         {
             var tree = Kernel.Instance.ParseString(text);
             if (!tree.HasUserDefinedNames)
@@ -130,7 +130,7 @@ namespace ExpressionEngine
                 {
                     var visitor = ExpressionVisitor.Create(null, null);
                     tree.Root.Accept(visitor);
-                    var value = (double) visitor.Result;
+                    var value = visitor.Result;
                     cache.Add(normalizedText, value);
                     return new Expression(text, value);
                 }
@@ -155,17 +155,17 @@ namespace ExpressionEngine
             return new SynchronizedMutableExpression(synchronized);
         }
 
-		/// <summary>
-		/// Gets the <see cref="System.String"/> with the mathematical expression of the current instance.
-		/// </summary>
-		/// <value>A <see cref="System.String"/> with the mathematical expression.</value>
-		public string Text { get { return _text; } }
+        /// <summary>
+        /// Gets the <see cref="System.String"/> with the mathematical expression of the current instance.
+        /// </summary>
+        /// <value>A <see cref="System.String"/> with the mathematical expression.</value>
+        public string Text { get { return _text; } }
 
         /// <summary>
-        /// Evaluates the mathematical expression as a <see cref="System.Double"/>.
+        /// Evaluates the mathematical expression as a numeric type returned as <see cref="System.Object"/>.
         /// </summary>
         /// <value>The <see cref="System.Double"/> of the expression.</value>
-		public virtual double Value { get { return _value; } } // Here will be placed a caching subsystem
+        public virtual object Value { get { return _value; } }
 
         /// <summary>
         /// Provides a way to define o change a variable value using its name. Calling this method when the
@@ -173,7 +173,7 @@ namespace ExpressionEngine
         /// </summary>
         /// <param name="name">A <see cref="System.String"/> name of the variable to create or change.</param>
         /// <param name="value">A <see cref="System.Double"/> of the value.</param>
-        public virtual void DefineVariable(string name, double value)
+        public virtual void DefineVariable(string name, object value)
         {
             throw new ExpressionException("Immutable exceptions do not support variables.");
         }
@@ -185,20 +185,20 @@ namespace ExpressionEngine
         /// <param name="name">A <see cref="System.String"/> name of the function to create or change.</param>
         /// <param name="body">A lambda expression that accepts an array of <see cref="System.Double"/> and
         /// returns a <see cref="System.Double"/> scalar.</param>
-        public virtual void DefineFunction(string name, Func<double[], double> body)
+        public virtual void DefineFunction(string name, Func<object[], object> body)
         {
             throw new ExpressionException("Immutable exceptions do not support functions.");
         }
 
-		/// <summary>
-		/// Serves as a hash function for a <see cref="ExpressionEngine.Expression"/> object.
-		/// </summary>
-		/// <returns>A hash code for this instance that is suitable for use in hashing algorithms and
-		/// data structures such as a hash table.</returns>
-		public override int GetHashCode()
-		{
+        /// <summary>
+        /// Serves as a hash function for a <see cref="ExpressionEngine.Expression"/> object.
+        /// </summary>
+        /// <returns>A hash code for this instance that is suitable for use in hashing algorithms and
+        /// data structures such as a hash table.</returns>
+        public override int GetHashCode()
+        {
             return NormalizedText.GetHashCode() ^ _value.GetHashCode();
-		}
+        }
 
         /// <summary>
         /// Returns a value that indicates whether the current instance and a specified expression are equal.
@@ -277,10 +277,10 @@ namespace ExpressionEngine
         /// <summary>
         /// Gets a value indicating whether access to the <see cref="ExpressionEngine.Expression"/> is synchronized (thread safe).
         /// </summary>
-	    public virtual bool IsSynchronized
-	    {
+        public virtual bool IsSynchronized
+        {
             get { return false; }
-	    }
+        }
 
         /// <summary>
         /// Gets an object that can be used to synchronize access to a <see cref="ExpressionEngine.Expression"/> instance.
@@ -300,22 +300,22 @@ namespace ExpressionEngine
         /// <summary>
         /// Gets a value indicating whether the value of the <see cref="ExpressionEngine.Expression"/> is retrieved from cache.
         /// </summary>
-	    public virtual bool IsValueCacheRetrieved
-	    {
+        public virtual bool IsValueCacheRetrieved
+        {
             get { return _isValueCacheRetrieved; }
-	    }
+        }
 
-	    private string NormalizedText
-	    {
-	        get
-	        {
-	            if (_normalizedText == null)
-	            {
-	                _normalizedText = NormalizeText(Text);
-	            }
-	            return _normalizedText;
-	        }
-	    }
+        private string NormalizedText
+        {
+            get
+            {
+                if (_normalizedText == null)
+                {
+                    _normalizedText = NormalizeText(Text);
+                }
+                return _normalizedText;
+            }
+        }
 
         private static string NormalizeText(string value)
         {
@@ -332,10 +332,10 @@ namespace ExpressionEngine
         }
 
         private object _syncRoot;
-	    private readonly bool _isValueCacheRetrieved;
-	    private string _normalizedText;
-		private readonly string _text;
-		private readonly double _value;
+        private readonly bool _isValueCacheRetrieved;
+        private string _normalizedText;
+        private readonly string _text;
+        private readonly object _value;
 
         /// <summary>
         /// Represents mathematical mutable expression. Its result is calculated when the <see cref="Value"/> property is read.
@@ -345,29 +345,28 @@ namespace ExpressionEngine
         {
             private MutableExpression() : base() { }
 
-            public MutableExpression(string text, IDictionary<string, double> variables,
-                IDictionary<string, Func<double[], double>> functions)
+            public MutableExpression(string text, IDictionary<string, object> variables,
+                IDictionary<string, Func<object[], object>> functions)
                 : base(text)
             {
-                _variables = variables == null ? new Dictionary<string, double>() :
-                    new Dictionary<string, double>(variables);
-                _functions = functions == null ? new Dictionary<string, Func<double[], double>>() :
-                    new Dictionary<string, Func<double[], double>>(functions);
+                _variables = variables == null ? new Dictionary<string, object>() :
+                    new Dictionary<string, object>(variables);
+                _functions = functions == null ? new Dictionary<string, Func<object[], object>>() :
+                    new Dictionary<string, Func<object[], object>>(functions);
                 _tree = Kernel.Instance.ParseString(text);
             }
 
-            public override double Value
+            public override object Value
             {
                 get
                 {
-                    // Here will be placed a caching subsystem
                     var visitor = ExpressionVisitor.Create(_variables, _functions);
                     _tree.Root.Accept(visitor);
-                    return (double)visitor.Result;
+                    return visitor.Result;
                 }
             }
 
-            public override void DefineVariable(string name, double value)
+            public override void DefineVariable(string name, object value)
             {
                 if (Kernel.Instance.BuiltIn.IsBuiltInVariable(name))
                 {
@@ -383,7 +382,7 @@ namespace ExpressionEngine
                 }
             }
 
-            public override void DefineFunction(string name, Func<double[], double> body)
+            public override void DefineFunction(string name, Func<object[], object> body)
             {
                 if (Kernel.Instance.BuiltIn.IsBuiltInFunction(name))
                 {
@@ -399,9 +398,9 @@ namespace ExpressionEngine
                 }
             }
 
-            private readonly Model.Ast _tree;
-            private readonly IDictionary<string, double> _variables;
-            private readonly IDictionary<string, Func<double[], double>> _functions;
+            private readonly ExpressionEngine.Core.Model.Ast _tree;
+            private readonly IDictionary<string, object> _variables;
+            private readonly IDictionary<string, Func<object[], object>> _functions;
         }
 
         /// <summary>
@@ -447,7 +446,7 @@ namespace ExpressionEngine
                 }
             }
 
-            public override double Value
+            public override object Value
             {
                 get
                 {
@@ -458,7 +457,7 @@ namespace ExpressionEngine
                 }
             }
 
-            public override void DefineVariable(string name, double value)
+            public override void DefineVariable(string name, object value)
             {
                 lock (_root)
                 {
@@ -466,7 +465,7 @@ namespace ExpressionEngine
                 }
             }
 
-            public override void DefineFunction(string name, Func<double[], double> body)
+            public override void DefineFunction(string name, Func<object[], object> body)
             {
                 lock (_root)
                 {

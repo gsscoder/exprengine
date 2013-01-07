@@ -31,14 +31,8 @@ using System.Collections.Generic;
 using ExpressionEngine.Core;
 #endregion
 
-namespace ExpressionEngine.Model
+namespace ExpressionEngine.Core.Model
 {
-    /*
-     *  All abstract syntax tree nodes uses public fields instead of properties for two reasons:
-     *   - Model.* types are part of private library interface not accessible to user code.
-     *   - Field access is faster and those fields are primarly accessed inside loops.
-     */
-
     sealed class Ast
     {
         private Ast() {}
@@ -74,6 +68,12 @@ namespace ExpressionEngine.Model
 
     abstract class Expression
     {
+        protected Expression()
+        {
+        }
+
+        public abstract PrimitiveType ResultType { get; }
+
         public abstract void Accept(ExpressionVisitor visitor);
     }
 
@@ -81,12 +81,17 @@ namespace ExpressionEngine.Model
     {
         private LiteralExpression() { }
 
-        public LiteralExpression(double value)
+        public LiteralExpression(object value)
         {
             Value = value;
         }
 
-        public double Value;
+        public object Value { get; private set; } // defined object to open to non-number computations
+
+        public override PrimitiveType ResultType
+        {
+            get { return Kernel.Instance.Primitives.ToPrimitiveType(Value.GetType()); }
+        }
 
         public override void Accept(ExpressionVisitor visitor)
         {
@@ -94,11 +99,33 @@ namespace ExpressionEngine.Model
         }
     }
 
-    sealed class UnaryExpression : Expression
+    abstract class OperatorExpression : Expression
     {
-        public OperatorType Operator;
+        protected OperatorExpression()
+        {
+        }
 
-        public Model.Expression Value;
+        //protected OperatorExpression(OperatorType @operator)
+        //{
+        //    Operator = @operator;
+        //}
+
+        public OperatorType Operator { get; set; }
+    }
+
+    sealed class UnaryExpression : OperatorExpression
+    {
+        //public UnaryExpression(OperatorType @operator)
+        //    : base(@operator)
+        //{
+        //}
+
+        public Model.Expression Value { get; set; }
+
+        public override PrimitiveType ResultType
+        {
+            get { return Value.ResultType; }
+        }
 
         public override void Accept(ExpressionVisitor visitor)
         {
@@ -106,13 +133,28 @@ namespace ExpressionEngine.Model
         }
     }
 
-    sealed class BinaryExpression : Expression
+    sealed class BinaryExpression : OperatorExpression
     {
-        public OperatorType Operator;
+        //public BinaryExpression(OperatorType @operator)
+        //    : base(@operator)
+        //{
+        //}
 
-        public Model.Expression Left;
+        public Model.Expression Left { get; set; }
 
-        public Model.Expression Right;
+        public Model.Expression Right { get; set; }
+
+        public override PrimitiveType ResultType
+        {
+            get
+            {
+                if (Left.ResultType == Right.ResultType)
+                {
+                    return Left.ResultType;
+                }
+                return PrimitiveType.Real;
+            }
+        }
 
         public override void Accept(ExpressionVisitor visitor)
         {
@@ -120,16 +162,25 @@ namespace ExpressionEngine.Model
         }
     }
 
-    sealed class FunctionExpression : Expression
+    abstract class NameExpression : Expression
     {
-        public FunctionExpression()
+        public string Name { get; protected set; }
+    }
+
+    sealed class FunctionExpression : NameExpression
+    {
+        public FunctionExpression(string name)
         {
+            Name = name;
             Arguments = new List<Expression>();
         }
 
-        public string Name;
+        public List<Expression> Arguments { get; private set; }
 
-        public List<Expression> Arguments;
+        public override PrimitiveType ResultType
+        {
+            get { return PrimitiveType.Real; }
+        }
 
         public override void Accept(ExpressionVisitor visitor)
         {
@@ -137,9 +188,17 @@ namespace ExpressionEngine.Model
         }
     }
 
-    class VariableExpression : Expression
+    class VariableExpression : NameExpression
     {
-        public string Name;
+        public VariableExpression(string name)
+        {
+            Name = name;
+        }
+
+        public override PrimitiveType ResultType
+        {
+            get { return PrimitiveType.Real; }
+        }
 
         public override void Accept(ExpressionVisitor visitor)
         {
