@@ -29,16 +29,17 @@
 #region Using Directives
 using System;
 using System.Linq;
-using ExpressionEngine.Core.Model;
+using ExpressionEngine.Internal;
+using Model = ExpressionEngine.Internal.Model;
 #endregion
 
-namespace ExpressionEngine.Core
+namespace ExpressionEngine.Internal
 {
     sealed class Parser : IDisposable
     {
         private Parser() {}
 
-        public Parser(Scanner scanner)
+        public Parser(Lexer scanner)
         {
             _scanner = scanner;
         }
@@ -59,14 +60,14 @@ namespace ExpressionEngine.Core
             }
         }
 
-        public Model.Ast Parse()
+        public Model.SyntaxTree Parse()
         {
             Model.Expression root = ParseExpression();
             if (_brackets != 0)
             {
-                throw new ExpressionException(_scanner.ColumnNumber, "Syntax error, odd number of brackets.");
+                throw new ExpressionException(_scanner.Column, "Syntax error, odd number of brackets.");
             }
-            return new Model.Ast(root, _userVariables, _userFunctions);
+            return new Model.SyntaxTree(root, _userVariables, _userFunctions);
         }
 
         private Model.Expression ParseExpression(bool insideFunc = false)
@@ -139,7 +140,7 @@ namespace ExpressionEngine.Core
         {
             if (_current == null)
             {
-                throw new ExpressionException(_scanner.ColumnNumber, "Expected function or expression.");
+                throw new ExpressionException(_scanner.Column, "Expected function or expression.");
             }
 
             if (!(_current is IdentifierToken))
@@ -186,7 +187,7 @@ namespace ExpressionEngine.Core
                 }
                 else
                 {
-                    throw new ExpressionException(_scanner.ColumnNumber, "Expected comma or close bracket.");
+                    throw new ExpressionException(_scanner.Column, "Expected comma or close bracket.");
                 }
             }
             return expr;
@@ -196,18 +197,18 @@ namespace ExpressionEngine.Core
         {
             if (_current == null)
             {
-                throw new ExpressionException(_scanner.ColumnNumber, "Expected unary operator, literal or open bracket.");    
+                throw new ExpressionException(_scanner.Column, "Expected unary operator, literal or open bracket.");    
             }
 
-            var unary = new UnaryExpression();
+            var unary = new Model.UnaryExpression();
             if (_current == PunctuatorToken.Minus)
             {
-                unary.Operator = OperatorType.UnaryMinus;
+                unary.Operator = Model.OperatorType.UnaryMinus;
                 Expect(MiddleGroupUnary);
             }
             else if (_current == PunctuatorToken.Plus)
             {
-                unary.Operator = OperatorType.UnaryPlus;
+                unary.Operator = Model.OperatorType.UnaryPlus;
                 Expect(MiddleGroupUnary);
             }
 
@@ -216,7 +217,7 @@ namespace ExpressionEngine.Core
                 unary.Value = new Model.LiteralExpression(((LiteralToken)_current).Value);
                 if (_scanner.PeekToken() != null && _scanner.PeekToken() is LiteralToken)
                 {
-                    throw new ExpressionException(_scanner.ColumnNumber, "Expected expression.");
+                    throw new ExpressionException(_scanner.Column, "Expected expression.");
                 }
             }
             else if (_current == PunctuatorToken.LeftParenthesis)
@@ -229,7 +230,7 @@ namespace ExpressionEngine.Core
             }
             else
             {
-                throw new ExpressionException(_scanner.ColumnNumber, "Expected literal or open bracket.");
+                throw new ExpressionException(_scanner.Column, "Expected literal or open bracket.");
             }
             Consume();
             return unary;
@@ -240,13 +241,13 @@ namespace ExpressionEngine.Core
         {
             if (_current == null)
             {
-                throw new ExpressionException(_scanner.ColumnNumber,
+                throw new ExpressionException(_scanner.Column,
                     string.Format("Unexpected end of input, instead of token(s): {0}{1}.", identifierAllowed ? "'IDENT', " : "", Token.StringOf(tokens)));
             }
             if (!(_current is LiteralToken || (identifierAllowed && _current is IdentifierToken )
                 || tokens.Contains(_current)))
             {
-                throw new ExpressionException(_scanner.ColumnNumber,
+                throw new ExpressionException(_scanner.Column,
                     string.Format("Syntax error, expected token(s) 'LITERAL', 'IDENT', {0}; but found '{1}'.", Token.StringOf(tokens), _current.Text));
             }
         }
@@ -256,7 +257,7 @@ namespace ExpressionEngine.Core
             var next = _scanner.PeekToken();
             if (next == null)
             {
-                throw new ExpressionException(_scanner.ColumnNumber,
+                throw new ExpressionException(_scanner.Column,
                     string.Format("Unexpected end of input, instead of token(s): 'LITERAL', {0}{1}.", identifierAllowed ? "'IDENT', " : "" ,Token.StringOf(tokens)));
             }
             if (next is LiteralToken || (identifierAllowed && next is IdentifierToken ) ||
@@ -266,7 +267,7 @@ namespace ExpressionEngine.Core
             }
             else
             {
-                throw new ExpressionException(_scanner.ColumnNumber,
+                throw new ExpressionException(_scanner.Column,
                     string.Format("Syntax error, expected token(s) 'LITERAL', {0}{1}; but found '{2}'.", identifierAllowed ? "'IDENT', " : "", Token.StringOf(tokens), next.Text));
             }
         }
@@ -276,7 +277,7 @@ namespace ExpressionEngine.Core
             var next = _scanner.PeekToken();
             if (next == null)
             {
-                throw new ExpressionException(_scanner.ColumnNumber,
+                throw new ExpressionException(_scanner.Column,
                     string.Format("Unexpected end of input, instead of token(s): 'LITERAL', '{0}'.", token.Text));
             }
             if (token is LiteralToken || token == next)
@@ -285,7 +286,7 @@ namespace ExpressionEngine.Core
             }
             else
             {
-                throw new ExpressionException(_scanner.ColumnNumber,
+                throw new ExpressionException(_scanner.Column,
                     string.Format("Syntax error, expected token(s) 'LITERAL', '{0}'; but found '{1}'.", token.Text, next.Text));
             }
         }
@@ -319,6 +320,6 @@ namespace ExpressionEngine.Core
         private bool _disposed;
         private int _brackets;
         private Token _current;
-        private readonly Scanner _scanner;
+        private readonly Lexer _scanner;
     }
 }

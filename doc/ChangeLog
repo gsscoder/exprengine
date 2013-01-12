@@ -1,3 +1,12 @@
+2013-01-12      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * Again, heavy refactoring:
+      - Scanner type -> renamed Lexer and refactored.
+      - Ast type -> renamed SyntaxTree.
+      - Scanner decoupled from TextReader via new Text type.
+  * Each type now lives in its own file.
+  * Version incremented to 1.0.4.9 beta
+
 2013-01-07      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * Heavy internal refactoring (with the main purpose of enhance expression type-system

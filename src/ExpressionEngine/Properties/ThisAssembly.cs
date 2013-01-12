@@ -29,8 +29,8 @@
 
 static class ThisAssembly
 {
-    internal const string Title = ExpressionEngine.Core.ThisLibrary.Name + ".dll";
+    internal const string Title = ExpressionEngine.ThisLibrary.Name + ".dll";
     internal const string Copyright = "Copyright (C) 2012 Giacomo Stelluti Scala";
-    internal const string Version = ExpressionEngine.Core.ThisLibrary.Version;
-    internal const string InformationalVersion = ExpressionEngine.Core.ThisLibrary.Version;
+    internal const string Version = ExpressionEngine.ThisLibrary.Version;
+    internal const string InformationalVersion = ExpressionEngine.ThisLibrary.Version;
 }

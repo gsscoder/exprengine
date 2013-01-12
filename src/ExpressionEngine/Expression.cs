@@ -31,7 +31,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using ExpressionEngine.Core;
+using Model = ExpressionEngine.Internal.Model;
+using ExpressionEngine.Internal;
+
 #endregion
 
 namespace ExpressionEngine
@@ -323,7 +325,7 @@ namespace ExpressionEngine
             for (var i = 0; i < value.Length; i++)
             {
                 var c = value[i];
-                if (!Scanner.IsWhiteSpace(c))
+                if (!Lexer.IsWhiteSpace(c))
                 {
                     normalized.Append(c);
                 }
@@ -398,7 +400,7 @@ namespace ExpressionEngine
                 }
             }
 
-            private readonly ExpressionEngine.Core.Model.Ast _tree;
+            private readonly Model.SyntaxTree _tree;
             private readonly IDictionary<string, object> _variables;
             private readonly IDictionary<string, Func<object[], object>> _functions;
         }

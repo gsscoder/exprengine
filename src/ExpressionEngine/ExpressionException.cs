@@ -75,6 +75,6 @@ namespace ExpressionEngine
             set { Data[DataColumnNumber] = value; }
         }
 
-        private const string DataColumnNumber = "ColumnNumber";
+        private const string DataColumnNumber = "Column";
     }
 }

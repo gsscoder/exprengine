@@ -29,19 +29,20 @@
 #region Using Directives
 using System;
 using System.IO;
-using NUnit.Framework;
+using UnitTest = NUnit.Framework;
 using Should.Fluent;
-using ExpressionEngine.Core;
+using ExpressionEngine.Internal;
 #endregion
 
 namespace ExpressionEngine.Tests
 {
+    [UnitTest.TestFixture]
     public class ScannerFixture
     {
-        [Test]
+        [UnitTest.Test]
         public void Expr()
         {
-            var scanner = new Scanner(new StringReader("((10 + 1 - (3 - .234)) * 300)  /  10.1"));
+            var scanner = new Lexer(Text.OfString("((10 + 1 - (3 - .234)) * 300)  /  10.1"));
 
             scanner.NextToken().Should().Be.SameAs(PunctuatorToken.LeftParenthesis);
             scanner.NextToken().Should().Be.SameAs(PunctuatorToken.LeftParenthesis);
@@ -63,10 +64,10 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
-        [Test]
+        [UnitTest.Test]
         public void SmallExprUsingPeek()
         {
-            var scanner = new Scanner(new StringReader("1 + 3"));
+            var scanner = new Lexer(Text.OfString("1 + 3"));
 
             ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(1L);
             ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1L);
@@ -81,10 +82,10 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
-        [Test]
+        [UnitTest.Test]
         public void SmallExprWithModulo()
         {
-            var scanner = new Scanner(new StringReader("10 % 2"));
+            var scanner = new Lexer(Text.OfString("10 % 2"));
 
             ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(10L);
             ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10L);
@@ -99,10 +100,10 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
-        [Test]
+        [UnitTest.Test]
         public void SingleNumberExpr()
         {
-            var scanner = new Scanner(new StringReader("123"));
+            var scanner = new Lexer(Text.OfString("123"));
 
             ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(123L);
             ((LiteralToken)scanner.NextToken()).Value.Should().Equal(123L);
@@ -111,10 +112,10 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
-        [Test]
+        [UnitTest.Test]
         public void SingleDecimalNumberExpr()
         {
-            var scanner = new Scanner(new StringReader(".123"));
+            var scanner = new Lexer(Text.OfString(".123"));
 
             ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(.123D);
             ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.123D);
@@ -123,10 +124,10 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
-        [Test]
+        [UnitTest.Test]
         public void SinglePositiveNumberExpr()
         {
-            var scanner = new Scanner(new StringReader("+123"));
+            var scanner = new Lexer(Text.OfString("+123"));
 
             scanner.PeekToken().Should().Be.SameAs(PunctuatorToken.Plus);
             scanner.NextToken().Should().Be.SameAs(PunctuatorToken.Plus);
@@ -138,10 +139,10 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
-        [Test]
+        [UnitTest.Test]
         public void SinglePositiveDecimalNumberExpr()
         {
-            var scanner = new Scanner(new StringReader("+.123"));
+            var scanner = new Lexer(Text.OfString("+.123"));
 
             scanner.PeekToken().Should().Be.SameAs(PunctuatorToken.Plus);
             scanner.NextToken().Should().Be.SameAs(PunctuatorToken.Plus);
@@ -153,10 +154,10 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
-        [Test]
+        [UnitTest.Test]
         public void SingleNegativeNumberExpr()
         {
-            var scanner = new Scanner(new StringReader("-123"));
+            var scanner = new Lexer(Text.OfString("-123"));
 
             scanner.PeekToken().Should().Be.SameAs(PunctuatorToken.Minus);
             scanner.NextToken().Should().Be.SameAs(PunctuatorToken.Minus);
@@ -165,10 +166,10 @@ namespace ExpressionEngine.Tests
             ((LiteralToken)scanner.NextToken()).Value.Should().Equal(123L);
         }
 
-        [Test]
+        [UnitTest.Test]
         public void SingleNegativeDecimalNumberExpr()
         {
-            var scanner = new Scanner(new StringReader("-.123"));
+            var scanner = new Lexer(Text.OfString("-.123"));
 
             scanner.PeekToken().Should().Be.SameAs(PunctuatorToken.Minus);
             scanner.NextToken().Should().Be.SameAs(PunctuatorToken.Minus);
@@ -177,37 +178,37 @@ namespace ExpressionEngine.Tests
             ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.123D);
         }
 
-        [Test]
-        public void NextTokenIncrementsPosition()
-        {
-            var scanner = new Scanner(new StringReader(".3 / 9.99"));
-            scanner.Position.Should().Equal(0);
+        //[UnitTest.Test]
+        //public void NextTokenIncrementsPosition()
+        //{
+        //    var scanner = new Lexer(Text.OfString(".3 / 9.99"));
+        //    scanner.Position.Should().Equal(0);
 
-            ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(.3D);
-            scanner.Position.Should().Equal(0);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.3D);
-            scanner.Position.Should().Equal(1);
+        //    ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(.3D);
+        //    scanner.Position.Should().Equal(0);
+        //    ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.3D);
+        //    scanner.Position.Should().Equal(1);
 
-            scanner.PeekToken().Should().Be.SameAs(PunctuatorToken.Divide);
-            scanner.Position.Should().Equal(1);
-            scanner.NextToken().Should().Be.SameAs(PunctuatorToken.Divide);
-            scanner.Position.Should().Equal(2);
+        //    scanner.PeekToken().Should().Be.SameAs(PunctuatorToken.Divide);
+        //    scanner.Position.Should().Equal(1);
+        //    scanner.NextToken().Should().Be.SameAs(PunctuatorToken.Divide);
+        //    scanner.Position.Should().Equal(2);
 
-            ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(9.99D);
-            scanner.Position.Should().Equal(2);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(9.99D);
-            scanner.Position.Should().Equal(3);
+        //    ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(9.99D);
+        //    scanner.Position.Should().Equal(2);
+        //    ((LiteralToken)scanner.NextToken()).Value.Should().Equal(9.99D);
+        //    scanner.Position.Should().Equal(3);
 
-            scanner.PeekToken().Should().Be.Null();
-            scanner.Position.Should().Equal(3);
-            scanner.NextToken().Should().Be.Null();
-            scanner.Position.Should().Equal(-1);
-        }
+        //    scanner.PeekToken().Should().Be.Null();
+        //    scanner.Position.Should().Equal(3);
+        //    scanner.NextToken().Should().Be.Null();
+        //    scanner.Position.Should().Equal(-1);
+        //}
 
-        [Test]
+        [UnitTest.Test]
         public void NegativePositiveDecimalBracket()
         {
-            var scanner = new Scanner(new StringReader(".2 / +9.99 * (-.123 + -2)"));
+            var scanner = new Lexer(Text.OfString(".2 / +9.99 * (-.123 + -2)"));
 
             ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.2D);
             scanner.NextToken().Should().Be.SameAs(PunctuatorToken.Divide);
@@ -225,10 +226,10 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
-        [Test]
+        [UnitTest.Test]
         public void NegativePositiveDecimalBracket_2()
         {
-            var scanner = new Scanner(new StringReader("-.23 + +.99 * ((-.123 + -2.1)--333)"));
+            var scanner = new Lexer(Text.OfString("-.23 + +.99 * ((-.123 + -2.1)--333)"));
 
             scanner.NextToken().Should().Be.SameAs(PunctuatorToken.Minus);
             ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.23D);
@@ -252,10 +253,10 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
-        [Test]
+        [UnitTest.Test]
         public void SmallExprWithFunction()
         {
-            var scanner = new Scanner(new StringReader("3 + pow(10, 2)"));
+            var scanner = new Lexer(Text.OfString("3 + pow(10, 2)"));
 
             ((LiteralToken)scanner.NextToken()).Value.Should().Equal(3L);
             scanner.NextToken().Should().Be.SameAs(PunctuatorToken.Plus);
@@ -269,10 +270,10 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
-        [Test]
+        [UnitTest.Test]
         public void Caret()
         {
-            var scanner = new Scanner(new StringReader("10^2"));
+            var scanner = new Lexer(Text.OfString("10^2"));
 
             ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10L);
             scanner.NextToken().Should().Be.SameAs(PunctuatorToken.Exponent);
@@ -281,20 +282,20 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
-        [Test]
+        [UnitTest.Test]
         public void Underscore()
         {
-            var scanner = new Scanner(new StringReader("var_name"));
+            var scanner = new Lexer(Text.OfString("var_name"));
 
             ((IdentifierToken)scanner.NextToken()).Text.Should().Equal("var_name");
         }
 
         #region Expected Exceptions
-        [Test]
-        [ExpectedException(typeof(ExpressionException), ExpectedMessage="Line terminator is not allowed.")]
+        [UnitTest.Test]
+        [UnitTest.ExpectedException(typeof(ExpressionException), ExpectedMessage = "Line terminator is not allowed.")]
         public void LineEndingThrowsException()
         {
-            new Scanner(new StringReader(string.Concat(new string(' ', 10), Environment.NewLine)));
+            new Lexer(Text.OfString(string.Concat(new string(' ', 10), Environment.NewLine)));
         }
         #endregion
     }

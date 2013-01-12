@@ -166,7 +166,7 @@ namespace ExpressionEngine
         {
             Console.WriteLine(_heading.ToString());
             Console.WriteLine(ThisAssembly.Copyright);
-            Console.WriteLine("Embeds {0}, Version {1} {2}.", Core.ThisLibrary.ProductName, Core.ThisLibrary.Version, Core.ThisLibrary.ReleaseType);
+            Console.WriteLine("Embeds {0}, Version {1} {2}.", ThisLibrary.ProductName, ThisLibrary.Version, ThisLibrary.ReleaseType);
         }
 
         private string FormatException(string expression, ExpressionException e)

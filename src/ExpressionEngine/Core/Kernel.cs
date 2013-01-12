@@ -30,19 +30,10 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 #endregion
 
-namespace ExpressionEngine.Core
+namespace ExpressionEngine.Internal
 {
-    enum PrimitiveType : byte
-    {
-        //Bool,       // bool     -> map to System.Boolean 
-        Integer,    // int      -> map to System.Long
-        Real        // real     -> map to System.Double
-        //String      // string   -> map to System.String
-    }
-
     sealed class Kernel
     {
         private Kernel() {}
@@ -60,9 +51,9 @@ namespace ExpressionEngine.Core
         /// <summary>
         /// Convenience method for building an AST from a string, used internally.
         /// </summary>
-        public Model.Ast ParseString(string value)
+        public Model.SyntaxTree ParseString(string value)
         {
-            using (var scanner = new Scanner(new StringReader(value)))
+            using (var scanner = new Lexer(Text.OfString(value)))
             {
                 return new Parser(scanner).Parse();
             }
@@ -219,12 +210,5 @@ namespace ExpressionEngine.Core
     }
 
     #region Version
-    public static class ThisLibrary
-    {
-        public const string Name = "ExpressionEngine";
-        public const string ProductName = "Expression Engine Library";
-        public const string Version = "1.0.4.1";
-        public const string ReleaseType = "beta";
-    }
     #endregion
 }

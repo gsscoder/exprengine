@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 //
-// Expression Engine Library: AssemblyInfo.cs
+// Expression Engine Library: WeakReference.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -28,27 +28,50 @@
 #endregion
 #region Using Directives
 using System;
-using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
 #endregion
 
-[assembly: AssemblyTitle(ThisAssembly.Title)]
-[assembly: AssemblyProduct(ExpressionEngine.ThisLibrary.ProductName)]
-[assembly: AssemblyDescription(ThisAssembly.Title)]
-[assembly: AssemblyCopyright(ThisAssembly.Copyright)]
-[assembly: AssemblyVersion(ThisAssembly.Version)]
-[assembly: AssemblyInformationalVersion(ThisAssembly.InformationalVersion)]
-[assembly: NeutralResourcesLanguage("en-US")]
-[assembly: AssemblyCulture("")]
-[assembly: InternalsVisibleTo(ExpressionEngine.ThisLibrary.Name + ".Tests")]
-#if DEBUG
-[assembly: AssemblyConfiguration("Debug")]
-#else
-[assembly: AssemblyConfiguration("Release")]
-#endif
-[assembly: ComVisible(false)]
-[assembly: CLSCompliant(true)]
-//[assembly: AssemblyCompany("")]
-//[assembly: AssemblyTrademark("")]
+namespace ExpressionEngine.Internal
+{
+    [Serializable]
+    class WeakReference<T> : WeakReference
+        where T : class
+    {
+        public WeakReference(T target)
+            : base(target)
+        {
+        }
+
+        public WeakReference(T target, bool trackResurrection)
+            : base(target, trackResurrection)
+        {
+        }
+
+        protected WeakReference(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+
+        public new T Target
+        {
+            get { return (T)base.Target; }
+            set { base.Target = value; }
+        }
+
+        public static implicit operator WeakReference<T>(T target)
+        {
+            if (target == null)
+            {
+                throw new ArgumentNullException("target");
+            }
+            return new WeakReference<T>(target);
+        }
+
+        public static implicit operator T(WeakReference<T> reference)
+        {
+            return reference != null ? reference.Target : null;
+        }
+    }
+}

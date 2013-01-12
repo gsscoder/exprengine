@@ -1,54 +1,54 @@
 ﻿using System;
-using NUnit.Framework;
+using UnitTest = NUnit.Framework;
 using Should.Fluent;
-using ExpressionEngine.Core;
+using ExpressionEngine.Internal;
 
 namespace ExpressionEngine.Tests
 {
-    [TestFixture]
+    [UnitTest.TestFixture]
     public sealed class CacheFixture
     {
-        [SetUp]
+        [UnitTest.SetUp]
         public void CreateInstance()
         {
             _cache = new ValueCache<double>();
         }
 
-        [TearDown]
+        [UnitTest.TearDown]
         public void DestroyInstance()
         {
             _cache = null;
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
+        [UnitTest.Test]
+        [UnitTest.ExpectedException(typeof(ArgumentException))]
         public void UpdateNonExistentItemThrowsException()
         {
             _cache["(1 + 2)"] = 3D;
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [UnitTest.Test]
+        [UnitTest.ExpectedException(typeof(ArgumentNullException))]
         public void UpdateUsingNullKeyThrowsException()
         {
             _cache[null] = .333D;
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
+        [UnitTest.Test]
+        [UnitTest.ExpectedException(typeof(ArgumentException))]
         public void ReadNonExistentItemThrowsException()
         {
             var value = _cache["(1 + 2)"];
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [UnitTest.Test]
+        [UnitTest.ExpectedException(typeof(ArgumentNullException))]
         public void ReadUsingNullKeyThrowsException()
         {
             var value = _cache[null];
         }
 
-        [Test]
+        [UnitTest.Test]
         public void AddNewItem()
         {
             _cache.Contains("1+2+3").Should().Be.False();
@@ -56,7 +56,7 @@ namespace ExpressionEngine.Tests
             _cache.Contains("1+2+3").Should().Be.True();
         }
 
-        [Test]
+        [UnitTest.Test]
         public void UpdateExistingItem()
         {
             _cache.Contains("1+2+3+myfunc(x)").Should().Be.False();

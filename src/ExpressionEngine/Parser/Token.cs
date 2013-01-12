@@ -1,6 +1,6 @@
 ﻿#region License
 //
-// Expression Engine Library: TokenUtil.cs
+// Expression Engine Library: Token.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -27,30 +27,51 @@
 //
 #endregion
 #region Using Directives
-using Should.Fluent;
-using ExpressionEngine.Core;
+using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Text;
+
 #endregion
 
-namespace ExpressionEngine.Tests
+namespace ExpressionEngine.Internal
 {
-    static class TokenUtil
+    abstract class Token
     {
-        public static void ShouldPunctuatorEqual(this Token token, TokenType type, string text)
+        protected Token() {}
+
+        protected Token(string text)
         {
-            token.Type.Should().Equal(type);
-            token.Text.Should().Equal(text);
+            _text = text;
         }
 
-        public static void ShouldLiteralEqual(this Token token, string text)
+        public static string StringOf(Token token)
         {
-            token.Type.Should().Equal(TokenType.Literal);
-            token.Text.Should().Equal(text);
+            return token == null ? "end of input" : string.Format("'{0}'", token.Text);
         }
 
-        public static void ShouldIdentifierEqual(this Token token, string text)
+        public static string StringOf(Token[] tokens)
         {
-            token.Type.Should().Equal(TokenType.Identifier);
-            token.Text.Should().Equal(text);
+            var builder = new StringBuilder(4 * tokens.Length);
+            foreach (var token in tokens)
+            {
+                builder.Append("'");
+                builder.Append(token.Text);
+                builder.Append("', ");
+            }
+            return builder.ToString(0, builder.Length - 2);
         }
+
+        public virtual string Text
+        {
+            get { return _text; }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} [{1}]", this.Text, this.GetType().Name);
+        }
+
+        private readonly string _text;
     }
 }

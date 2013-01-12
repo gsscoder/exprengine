@@ -32,7 +32,7 @@ class _ThisAssembly
     internal const string Name = "ExpressionEngine.Tests";
     internal const string Title = Name + ".dll";
     internal const string Copyright = "Copyright (C) 2012 Giacomo Stelluti Scala";
-	internal const string Version = ExpressionEngine.Core.ThisLibrary.Version;
-	internal const string ReleaseType = ExpressionEngine.Core.ThisLibrary.ReleaseType;
+	internal const string Version = ExpressionEngine.ThisLibrary.Version;
+	internal const string ReleaseType = ExpressionEngine.ThisLibrary.ReleaseType;
     internal const string InformationalVersion = "1.0";
 }

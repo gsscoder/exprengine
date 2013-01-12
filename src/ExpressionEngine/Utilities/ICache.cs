@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 //
-// Expression Engine Library: AssemblyInfo.cs
+// Expression Engine Library: ICache.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -26,29 +26,15 @@
 // THE SOFTWARE.
 //
 #endregion
-#region Using Directives
-using System;
-using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-#endregion
 
-[assembly: AssemblyTitle(ThisAssembly.Title)]
-[assembly: AssemblyProduct(ExpressionEngine.ThisLibrary.ProductName)]
-[assembly: AssemblyDescription(ThisAssembly.Title)]
-[assembly: AssemblyCopyright(ThisAssembly.Copyright)]
-[assembly: AssemblyVersion(ThisAssembly.Version)]
-[assembly: AssemblyInformationalVersion(ThisAssembly.InformationalVersion)]
-[assembly: NeutralResourcesLanguage("en-US")]
-[assembly: AssemblyCulture("")]
-[assembly: InternalsVisibleTo(ExpressionEngine.ThisLibrary.Name + ".Tests")]
-#if DEBUG
-[assembly: AssemblyConfiguration("Debug")]
-#else
-[assembly: AssemblyConfiguration("Release")]
-#endif
-[assembly: ComVisible(false)]
-[assembly: CLSCompliant(true)]
-//[assembly: AssemblyCompany("")]
-//[assembly: AssemblyTrademark("")]
+namespace ExpressionEngine.Internal
+{
+    interface ICache<TValue>
+    {
+        TValue this[string key] { set; get; }
+
+        void Add(string key, TValue value);
+
+        bool Contains(string key);
+    }
+}

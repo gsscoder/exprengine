@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 //
-// Expression Engine Library: AssemblyInfo.cs
+// Expression Engine Library: Expressions.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -27,28 +27,29 @@
 //
 #endregion
 #region Using Directives
-using System;
-using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+
 #endregion
 
-[assembly: AssemblyTitle(ThisAssembly.Title)]
-[assembly: AssemblyProduct(ExpressionEngine.ThisLibrary.ProductName)]
-[assembly: AssemblyDescription(ThisAssembly.Title)]
-[assembly: AssemblyCopyright(ThisAssembly.Copyright)]
-[assembly: AssemblyVersion(ThisAssembly.Version)]
-[assembly: AssemblyInformationalVersion(ThisAssembly.InformationalVersion)]
-[assembly: NeutralResourcesLanguage("en-US")]
-[assembly: AssemblyCulture("")]
-[assembly: InternalsVisibleTo(ExpressionEngine.ThisLibrary.Name + ".Tests")]
-#if DEBUG
-[assembly: AssemblyConfiguration("Debug")]
-#else
-[assembly: AssemblyConfiguration("Release")]
-#endif
-[assembly: ComVisible(false)]
-[assembly: CLSCompliant(true)]
-//[assembly: AssemblyCompany("")]
-//[assembly: AssemblyTrademark("")]
+namespace ExpressionEngine.Internal.Model
+{
+    sealed class SyntaxTree
+    {
+        private SyntaxTree() {}
+
+        public SyntaxTree(Expression root, int userVariables, int userFunctions)
+        {
+            Root = root;
+            HasUserDefinedVariables = userVariables > 0;
+            HasUserDefinedFunctions = userFunctions > 0;
+            HasUserDefinedNames = HasUserDefinedVariables || HasUserDefinedFunctions;
+        }
+
+        public Expression Root { get; private set; }
+
+        public bool HasUserDefinedNames { get; private set; }
+
+        public bool HasUserDefinedVariables { get; private set; }
+
+        public bool HasUserDefinedFunctions { get; private set; }
+    }
+}
