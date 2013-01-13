@@ -29,6 +29,7 @@
 #region Using Directives
 using System;
 using System.Linq;
+using ExpressionEngine.Core;
 using ExpressionEngine.Internal;
 using Model = ExpressionEngine.Internal.Model;
 #endregion
@@ -60,14 +61,14 @@ namespace ExpressionEngine.Internal
             }
         }
 
-        public Model.SyntaxTree Parse()
+        public SyntaxTree Parse()
         {
             Model.Expression root = ParseExpression();
             if (_brackets != 0)
             {
                 throw new ExpressionException(_scanner.Column, "Syntax error, odd number of brackets.");
             }
-            return new Model.SyntaxTree(root, _userVariables, _userFunctions);
+            return new SyntaxTree(root, _userVariables, _userFunctions);
         }
 
         private Model.Expression ParseExpression(bool insideFunc = false)
@@ -153,7 +154,7 @@ namespace ExpressionEngine.Internal
             {
                 // variable
                 var varExpr = new Model.VariableExpression(_current.Text);
-                if (!Kernel.Instance.BuiltIn.IsBuiltInVariable(varExpr.Name)) { _userVariables++; }
+                if (!BuiltInService.IsBuiltInVariable(varExpr.Name)) { _userVariables++; }
                 if (_scanner.PeekToken() != null)
                 {
                     Expect(MiddleGroupIdentifier);
@@ -166,7 +167,7 @@ namespace ExpressionEngine.Internal
             }
 
             var expr = new Model.FunctionExpression(_current.Text);
-            if (!Kernel.Instance.BuiltIn.IsBuiltInFunction(expr.Name)) { _userFunctions++; }
+            if (!BuiltInService.IsBuiltInFunction(expr.Name)) { _userFunctions++; }
             Expect(PunctuatorToken.LeftParenthesis);
             while (!_scanner.IsEof())
             {

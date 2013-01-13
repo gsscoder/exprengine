@@ -48,16 +48,16 @@ namespace ExpressionEngine.Internal
 
         public ICache<object> Cache = new ObjectCache<object>();
 
-        /// <summary>
-        /// Convenience method for building an AST from a string, used internally.
-        /// </summary>
-        public Model.SyntaxTree ParseString(string value)
-        {
-            using (var scanner = new Lexer(Text.OfString(value)))
-            {
-                return new Parser(scanner).Parse();
-            }
-        }
+        ///// <summary>
+        ///// Convenience method for building an AST from a string, used internally.
+        ///// </summary>
+        //public Model.SyntaxTree ParseString(string value)
+        //{
+        //    using (var scanner = new Lexer(Text.OfString(value)))
+        //    {
+        //        return new Parser(scanner).Parse();
+        //    }
+        //}
 
         #region BuiltIns
         internal interface IBuiltInService
@@ -208,7 +208,4 @@ namespace ExpressionEngine.Internal
 
         private static readonly Kernel Singleton = new Kernel();
     }
-
-    #region Version
-    #endregion
 }

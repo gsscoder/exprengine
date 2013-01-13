@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using ExpressionEngine.Core;
 using Model = ExpressionEngine.Internal.Model;
 using ExpressionEngine.Internal;
 
@@ -117,7 +118,7 @@ namespace ExpressionEngine
         public static Expression Create(string text, IDictionary<string, object> variables,
             IDictionary<string, Func<object[], object>> functions)
         {
-            var tree = Kernel.Instance.ParseString(text);
+            var tree = SyntaxTree.ParseString(text);
             if (!tree.HasUserDefinedNames)
             {
                 if (variables != null || functions != null)
@@ -125,18 +126,17 @@ namespace ExpressionEngine
                     throw new ExpressionException("Functions or variables supplied for an immutable expression.");
                 }
                 // No user defined names? Expression is immutable.
-                var cache = Kernel.Instance.Cache;
                 var normalizedText = Expression.NormalizeText(text);
                 // Searching a pre-calculated value .
-                if (!cache.Contains(normalizedText))
+                if (!ObjectCache.Instance.Contains(normalizedText))
                 {
                     var visitor = ExpressionVisitor.Create(null, null);
                     tree.Root.Accept(visitor);
                     var value = visitor.Result;
-                    cache.Add(normalizedText, value);
+                    ObjectCache.Instance.Add(normalizedText, value);
                     return new Expression(text, value);
                 }
-                return new Expression(text, cache[normalizedText], true);
+                return new Expression(text, ObjectCache.Instance[normalizedText], true);
             }
             // We can create a mutable expression.
             return new MutableExpression(text, variables, functions);
@@ -192,80 +192,80 @@ namespace ExpressionEngine
             throw new ExpressionException("Immutable exceptions do not support functions.");
         }
 
-        /// <summary>
-        /// Serves as a hash function for a <see cref="ExpressionEngine.Expression"/> object.
-        /// </summary>
-        /// <returns>A hash code for this instance that is suitable for use in hashing algorithms and
-        /// data structures such as a hash table.</returns>
-        public override int GetHashCode()
-        {
-            return NormalizedText.GetHashCode() ^ _value.GetHashCode();
-        }
+        ///// <summary>
+        ///// Serves as a hash function for a <see cref="ExpressionEngine.Expression"/> object.
+        ///// </summary>
+        ///// <returns>A hash code for this instance that is suitable for use in hashing algorithms and
+        ///// data structures such as a hash table.</returns>
+        //public override int GetHashCode()
+        //{
+        //    return NormalizedText.GetHashCode() ^ _value.GetHashCode();
+        //}
 
-        /// <summary>
-        /// Returns a value that indicates whether the current instance and a specified expression are equal.
-        /// </summary>
-        /// <param name="value">true if this expression and <paramref name="value"/> are equal; otherwise, false.</param>
-        /// <returns>The expression to compare.</returns>
-        public virtual bool Equals(Expression value)
-        {
-            if ((object) value == null)
-            {
-                return false;
-            }
-            return NormalizedText == value.NormalizedText && Value.Equals(value.Value);
-        }
+        ///// <summary>
+        ///// Returns a value that indicates whether the current instance and a specified expression are equal.
+        ///// </summary>
+        ///// <param name="value">true if this expression and <paramref name="value"/> are equal; otherwise, false.</param>
+        ///// <returns>The expression to compare.</returns>
+        //public virtual bool Equals(Expression value)
+        //{
+        //    if ((object) value == null)
+        //    {
+        //        return false;
+        //    }
+        //    return NormalizedText == value.NormalizedText && Value.Equals(value.Value);
+        //}
 
-        /// <summary>
-        /// Returns a value that indicates whether the current instance and a specified object have the same value.
-        /// </summary>
-        /// <param name="obj">true if the <paramref name="obj"/> parameter is a <see cref="ExpressionEngine.Expression"/> object or
-        /// a type capable of implicit conversion to a <see cref="ExpressionEngine.Expression"/> object, and its value is equal to
-        /// the current <see cref="ExpressionEngine.Expression"/> object; otherwise, false.</param>
-        /// <returns>The object to compare.</returns>
-        public override bool Equals(object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-            var typed = obj as Expression;
-            if (typed == null)
-            {
-                return false;
-            }
-            return NormalizedText == typed.NormalizedText && Value.Equals(typed.Value);
-        }
+        ///// <summary>
+        ///// Returns a value that indicates whether the current instance and a specified object have the same value.
+        ///// </summary>
+        ///// <param name="obj">true if the <paramref name="obj"/> parameter is a <see cref="ExpressionEngine.Expression"/> object or
+        ///// a type capable of implicit conversion to a <see cref="ExpressionEngine.Expression"/> object, and its value is equal to
+        ///// the current <see cref="ExpressionEngine.Expression"/> object; otherwise, false.</param>
+        ///// <returns>The object to compare.</returns>
+        //public override bool Equals(object obj)
+        //{
+        //    if (obj == null)
+        //    {
+        //        return false;
+        //    }
+        //    var typed = obj as Expression;
+        //    if (typed == null)
+        //    {
+        //        return false;
+        //    }
+        //    return NormalizedText == typed.NormalizedText && Value.Equals(typed.Value);
+        //}
 
-        /// <summary>
-        /// Returns a value that indicates whether two expressions are equal.
-        /// </summary>
-        /// <param name="left">The first expression number to compare.</param>
-        /// <param name="right">The second expression number to compare.</param>
-        /// <returns>true if the <paramref name="left"/> and <paramref name="right"/> parameters are equal; otherwise, false.</returns>
-        public static bool operator ==(Expression left, Expression right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            if (((object)left == null) || ((object)right == null))
-            {
-                return false;
-            }
-            return left.NormalizedText == right.NormalizedText && left.Value.Equals(right.Value);
-        }
+        ///// <summary>
+        ///// Returns a value that indicates whether two expressions are equal.
+        ///// </summary>
+        ///// <param name="left">The first expression number to compare.</param>
+        ///// <param name="right">The second expression number to compare.</param>
+        ///// <returns>true if the <paramref name="left"/> and <paramref name="right"/> parameters are equal; otherwise, false.</returns>
+        //public static bool operator ==(Expression left, Expression right)
+        //{
+        //    if (ReferenceEquals(left, right))
+        //    {
+        //        return true;
+        //    }
+        //    if (((object)left == null) || ((object)right == null))
+        //    {
+        //        return false;
+        //    }
+        //    return left.NormalizedText == right.NormalizedText && left.Value.Equals(right.Value);
+        //}
 
-        /// <summary>
-        /// Returns a value that indicates whether two expressions are not equal.
-        /// </summary>
-        /// <param name="left">The first expression number to compare.</param>
-        /// <param name="right">The second expression number to compare.</param>
-        /// <returns>true if the <paramref name="left"/> and <paramref name="right"/> parameters are not equal; otherwise, false.</returns>
-        public static bool operator !=(Expression left, Expression right)
-        {
-            return !(left == right);
-        }
+        ///// <summary>
+        ///// Returns a value that indicates whether two expressions are not equal.
+        ///// </summary>
+        ///// <param name="left">The first expression number to compare.</param>
+        ///// <param name="right">The second expression number to compare.</param>
+        ///// <returns>true if the <paramref name="left"/> and <paramref name="right"/> parameters are not equal; otherwise, false.</returns>
+        //public static bool operator !=(Expression left, Expression right)
+        //{
+        //    return !(left == right);
+        //}
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents the current <see cref="ExpressionEngine.Expression"/> instance.
@@ -355,7 +355,7 @@ namespace ExpressionEngine
                     new Dictionary<string, object>(variables);
                 _functions = functions == null ? new Dictionary<string, Func<object[], object>>() :
                     new Dictionary<string, Func<object[], object>>(functions);
-                _tree = Kernel.Instance.ParseString(text);
+                _tree = SyntaxTree.ParseString(text);
             }
 
             public override object Value
@@ -370,7 +370,7 @@ namespace ExpressionEngine
 
             public override void DefineVariable(string name, object value)
             {
-                if (Kernel.Instance.BuiltIn.IsBuiltInVariable(name))
+                if (BuiltInService.IsBuiltInVariable(name))
                 {
                     throw new ExpressionException("Can't (re)define a built-in variable.");
                 }
@@ -386,7 +386,7 @@ namespace ExpressionEngine
 
             public override void DefineFunction(string name, Func<object[], object> body)
             {
-                if (Kernel.Instance.BuiltIn.IsBuiltInFunction(name))
+                if (BuiltInService.IsBuiltInFunction(name))
                 {
                     throw new ExpressionException("Can't (re)define a built-in function.");
                 }
@@ -400,7 +400,7 @@ namespace ExpressionEngine
                 }
             }
 
-            private readonly Model.SyntaxTree _tree;
+            private readonly SyntaxTree _tree;
             private readonly IDictionary<string, object> _variables;
             private readonly IDictionary<string, Func<object[], object>> _functions;
         }
@@ -440,13 +440,13 @@ namespace ExpressionEngine
                 }
             }
 
-            public override bool Equals(Expression value)
-            {
-                lock (_root)
-                {
-                    return _expression.Equals(value);
-                }
-            }
+            //public override bool Equals(Expression value)
+            //{
+            //    lock (_root)
+            //    {
+            //        return _expression.Equals(value);
+            //    }
+            //}
 
             public override object Value
             {

@@ -35,87 +35,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\ExpressionEngine\Core\EvaluatingExpressionVisitor.cs">
-      <Link>ExpressionEngine\Core\EvaluatingExpressionVisitor.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Core\ExpressionVisitor.cs">
-      <Link>ExpressionEngine\Core\ExpressionVisitor.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Core\Kernel.cs">
-      <Link>ExpressionEngine\Core\Kernel.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Core\PrimitiveType.cs">
-      <Link>ExpressionEngine\Core\PrimitiveType.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Expression.cs">
-      <Link>ExpressionEngine\Expression.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\ExpressionException.cs">
-      <Link>ExpressionEngine\ExpressionException.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Model\BinaryExpression.cs">
-      <Link>ExpressionEngine\Model\BinaryExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Model\Expression.cs">
-      <Link>ExpressionEngine\Model\Expression.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Model\FunctionExpression.cs">
-      <Link>ExpressionEngine\Model\FunctionExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Model\LiteralExpression.cs">
-      <Link>ExpressionEngine\Model\LiteralExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Model\NameExpression.cs">
-      <Link>ExpressionEngine\Model\NameExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Model\OperatorExpression.cs">
-      <Link>ExpressionEngine\Model\OperatorExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Model\OperatorType.cs">
-      <Link>ExpressionEngine\Model\OperatorType.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Model\UnaryExpression.cs">
-      <Link>ExpressionEngine\Model\UnaryExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Model\VariableExpression.cs">
-      <Link>ExpressionEngine\Model\VariableExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Parser\IdentifierToken.cs">
-      <Link>ExpressionEngine\Parser\IdentifierToken.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Parser\Lexer.cs">
-      <Link>ExpressionEngine\Parser\Lexer.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Parser\LiteralToken.cs">
-      <Link>ExpressionEngine\Parser\LiteralToken.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Parser\Parser.cs">
-      <Link>ExpressionEngine\Parser\Parser.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Parser\PunctuatorToken.cs">
-      <Link>ExpressionEngine\Parser\PunctuatorToken.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Parser\SyntaxTree.cs">
-      <Link>ExpressionEngine\Parser\SyntaxTree.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Parser\Text.cs">
-      <Link>ExpressionEngine\Parser\Text.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Parser\Token.cs">
-      <Link>ExpressionEngine\Parser\Token.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Properties\ThisLibrary.cs">
-      <Link>ExpressionEngine\ThisLibrary.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Utilities\ICache.cs">
-      <Link>ExpressionEngine\Utility\ICache.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Utilities\ObjectCache.cs">
-      <Link>ExpressionEngine\Utility\ObjectCache.cs</Link>
-    </Compile>
-    <Compile Include="..\ExpressionEngine\Utilities\ValueCache.cs">
-      <Link>ExpressionEngine\Utility\ValueCache.cs</Link>
-    </Compile>
     <Compile Include="CommandLine\CommandLine.cs" />
     <Compile Include="CommandLine\CommandLineText.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -124,5 +43,10 @@
     <Compile Include="XEvalTool.cs" />
     <Compile Include="XEvalTool.Options.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ExpressionEngine\ExpressionEngine.csproj">
+      <Project>{241a5dbc-bb66-4e65-beda-98b1db83d2eb}</Project>
+      <Name>ExpressionEngine</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

@@ -69,7 +69,7 @@ namespace ExpressionEngine
             ColumnNumber = -1;
         }
 
-        internal int ColumnNumber
+        public int ColumnNumber
         {
             get { return (int) Data[DataColumnNumber];  }
             set { Data[DataColumnNumber] = value; }

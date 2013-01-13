@@ -1,3 +1,10 @@
+2013-01-13      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * Refactoring goes on:
+      - Removed equality implementation of Expression type.
+      - Moving toward a new design.
+  * Version incremented to 1.0.4.11 beta
+
 2013-01-12      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * Again, heavy refactoring:

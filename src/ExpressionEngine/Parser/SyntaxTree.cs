@@ -27,16 +27,16 @@
 //
 #endregion
 #region Using Directives
-
+using Model = ExpressionEngine.Internal.Model;
 #endregion
 
-namespace ExpressionEngine.Internal.Model
+namespace ExpressionEngine.Internal
 {
     sealed class SyntaxTree
     {
         private SyntaxTree() {}
 
-        public SyntaxTree(Expression root, int userVariables, int userFunctions)
+        internal SyntaxTree(Model.Expression root, int userVariables, int userFunctions)
         {
             Root = root;
             HasUserDefinedVariables = userVariables > 0;
@@ -44,7 +44,18 @@ namespace ExpressionEngine.Internal.Model
             HasUserDefinedNames = HasUserDefinedVariables || HasUserDefinedFunctions;
         }
 
-        public Expression Root { get; private set; }
+        /// <summary>
+        /// Convenience method for building an AST from a string, used internally.
+        /// </summary>
+        public static SyntaxTree ParseString(string value)
+        {
+            using (var scanner = new Lexer(Text.OfString(value)))
+            {
+                return new Parser(scanner).Parse();
+            }
+        }
+
+        public Model.Expression Root { get; private set; }
 
         public bool HasUserDefinedNames { get; private set; }
 

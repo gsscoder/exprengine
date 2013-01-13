@@ -39,8 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\BuiltInService.cs" />
     <Compile Include="Core\EvaluatingExpressionVisitor.cs" />
-    <Compile Include="Utilities\ICache.cs" />
+    <Compile Include="Core\TypeService.cs" />
     <Compile Include="Core\PrimitiveType.cs" />
     <Compile Include="Parser\Text.cs">
       <SubType>Code</SubType>
@@ -52,7 +53,6 @@
     <Compile Include="Model\LiteralExpression.cs" />
     <Compile Include="Parser\SyntaxTree.cs" />
     <Compile Include="Utilities\ObjectCache.cs" />
-    <Compile Include="Utilities\ValueCache.cs" />
     <Compile Include="Model\NameExpression.cs" />
     <Compile Include="Model\OperatorExpression.cs" />
     <Compile Include="Model\OperatorType.cs" />
@@ -67,7 +67,6 @@
     <Compile Include="Parser\PunctuatorToken.cs" />
     <Compile Include="Parser\Token.cs" />
     <Compile Include="Expression.cs" />
-    <Compile Include="Core\Kernel.cs" />
     <Compile Include="ExpressionException.cs" />
     <Compile Include="Core\ExpressionVisitor.cs" />
   </ItemGroup>

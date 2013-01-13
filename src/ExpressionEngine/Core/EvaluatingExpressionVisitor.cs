@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using ExpressionEngine.Core;
 using Model = ExpressionEngine.Internal.Model;
 
 namespace ExpressionEngine.Internal
@@ -29,7 +30,7 @@ namespace ExpressionEngine.Internal
                 case Model.OperatorType.UnaryPlus:
                     break;
                 case Model.OperatorType.UnaryMinus:
-                    _result = Kernel.Instance.Primitives.ToReal(_result) * -1;
+                    _result = TypeService.ToReal(_result) * -1;
                     break;
                 default:
                     throw new ExpressionException("Invalid unary operator type.");
@@ -46,9 +47,9 @@ namespace ExpressionEngine.Internal
                 argsList.Add(_result);
             });
             var args = argsList.ToArray();
-            if (Kernel.Instance.BuiltIn.IsBuiltInFunction(name))
+            if (BuiltInService.IsBuiltInFunction(name))
             {
-                _result = Kernel.Instance.BuiltIn.ExecuteBuiltInFunction(expression.Name, args);
+                _result = BuiltInService.ExecuteBuiltInFunction(expression.Name, args);
             }
             else
             {
@@ -70,26 +71,25 @@ namespace ExpressionEngine.Internal
                 var rightValue = _result;
                 return rightValue;
             };
-            var primitives = Kernel.Instance.Primitives;
             switch (expression.Operator)
             {
                 case Model.OperatorType.Add:
-                    _result = primitives.ToReal(left()) + primitives.ToReal(right());
+                    _result = TypeService.ToReal(left()) + TypeService.ToReal(right());
                     break;
                 case Model.OperatorType.Subtract:
-                    _result = primitives.ToReal(left()) - primitives.ToReal(right());
+                    _result = TypeService.ToReal(left()) - TypeService.ToReal(right());
                     break;
                 case Model.OperatorType.Multiply:
-                    _result = primitives.ToReal(left()) * primitives.ToReal(right());
+                    _result = TypeService.ToReal(left()) * TypeService.ToReal(right());
                     break;
                 case Model.OperatorType.Divide:
-                    _result = primitives.ToReal(left()) / primitives.ToReal(right());
+                    _result = TypeService.ToReal(left()) / TypeService.ToReal(right());
                     break;
                 case Model.OperatorType.Modulo:
-                    _result = primitives.ToReal(left()) % primitives.ToReal(right());
+                    _result = TypeService.ToReal(left()) % TypeService.ToReal(right());
                     break;
                 case Model.OperatorType.Exponent:
-                    _result = Math.Pow(primitives.ToReal(left()), primitives.ToReal(right()));
+                    _result = Math.Pow(TypeService.ToReal(left()), TypeService.ToReal(right()));
                     break;
                 default:
                     throw new ExpressionException("Invalid binary operator type.");
@@ -99,9 +99,9 @@ namespace ExpressionEngine.Internal
         public override void VisitVariable(Model.VariableExpression expression)
         {
             var name = expression.Name;
-            if (Kernel.Instance.BuiltIn.IsBuiltInVariable(name))
+            if (BuiltInService.IsBuiltInVariable(name))
             {
-                _result = Kernel.Instance.BuiltIn.GetBuiltInVariable(name);
+                _result = BuiltInService.GetBuiltInVariable(name);
             }
             else
             {

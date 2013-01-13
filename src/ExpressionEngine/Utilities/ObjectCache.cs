@@ -33,15 +33,20 @@ using System.Collections.Generic;
 
 namespace ExpressionEngine.Internal
 {
-    sealed class ObjectCache<TValue> : ICache<TValue>
-        where TValue : class 
+    sealed class ObjectCache
     {
         public ObjectCache()
         {
-            _cache = new Dictionary<string, TValue>(32, StringComparer.Ordinal);
+            _cache = new Dictionary<string, object>(32, StringComparer.Ordinal);
         }
 
-        public TValue this[string key]
+        static ObjectCache() { }
+
+        public static ObjectCache Instance { get { return Singleton; } }
+
+        private static readonly ObjectCache Singleton = new ObjectCache();
+
+        public object this[string key]
         {
             get
             {
@@ -69,7 +74,7 @@ namespace ExpressionEngine.Internal
             }
         }
 
-        public void Add(string key, TValue value)
+        public void Add(string key, object value)
         {
             if (string.IsNullOrEmpty(key))
             {
@@ -91,6 +96,6 @@ namespace ExpressionEngine.Internal
             return _cache.ContainsKey(key);
         }
 
-        private readonly Dictionary<string, TValue> _cache;
+        private readonly Dictionary<string, object> _cache;
     }
 }

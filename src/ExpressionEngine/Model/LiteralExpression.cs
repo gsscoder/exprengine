@@ -1,5 +1,7 @@
 
 
+using ExpressionEngine.Core;
+
 namespace ExpressionEngine.Internal.Model
 {
     sealed class LiteralExpression : Expression
@@ -15,7 +17,7 @@ namespace ExpressionEngine.Internal.Model
 
         public override PrimitiveType ResultType
         {
-            get { return Kernel.Instance.Primitives.ToPrimitiveType(Value.GetType()); }
+            get { return TypeService.ToPrimitiveType(Value.GetType()); }
         }
 
         public override void Accept(ExpressionVisitor visitor)
