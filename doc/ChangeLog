@@ -1,5 +1,11 @@
 2013-01-15      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
+  * Minor change in Parser class.
+  * BNF grammar added (see doc/Evaluator.grm).
+  * Version incremented to 1.0.5.3 beta
+
+2013-01-15      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
   * Refactoring goes on:
       - Removed Expression type, placed again ExpressionEvaluator (with different design).
       - Parser compares token using an enum instead of instance type.

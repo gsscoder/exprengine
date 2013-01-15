@@ -66,7 +66,7 @@ namespace ExpressionEngine.Internal
             {
                 throw new EvaluatorException(_scanner.Column, "Syntax error, odd number of brackets.");
             }
-            return new SyntaxTree(root); //, _userVariables, _userFunctions);
+            return new SyntaxTree(root);
         }
 
         private Expression ParseExpression(bool insideFunc = false)
@@ -142,7 +142,7 @@ namespace ExpressionEngine.Internal
                 throw new EvaluatorException(_scanner.Column, "Expected function or expression.");
             }
 
-            if (!(_current.Type == TokenType.Identifier))
+            if (_current.Type != TokenType.Identifier)
             {
                 return ParseUnary();
             }
@@ -152,7 +152,6 @@ namespace ExpressionEngine.Internal
             {
                 // variable
                 var varExpr = new VariableExpression(_current.Text);
-                //if (!BuiltInService.IsBuiltInVariable(varExpr.Name)) { _userVariables++; }
                 if (_scanner.PeekToken() != null)
                 {
                     Expect(MiddleGroupIdentifier);
@@ -165,7 +164,6 @@ namespace ExpressionEngine.Internal
             }
 
             var expr = new FunctionCallExpression(_current.Text);
-            //if (!BuiltInService.IsBuiltInFunction(expr.Name)) { _userFunctions++; }
             Expect(TokenType.LeftParenthesis);
             while (!_scanner.IsEof())
             {
@@ -314,8 +312,6 @@ namespace ExpressionEngine.Internal
         private static readonly TokenType[] MiddleGroupUnary = { TokenType.Literal, TokenType.LeftParenthesis }; // + ident
         #endregion
 
-        //private int _userVariables;
-        //private int _userFunctions;
         private bool _disposed;
         private int _brackets;
         private Token _current;

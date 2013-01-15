@@ -1,0 +1,28 @@
+"Name"     = 'Expression Engine Evaluator'
+"Author"   = 'Giacomo Stelluti Scala'
+"Version"  = '1.0.5.1'
+"About"    = 'Expression evaluator for .NET'
+
+"Start Symbol" = <Expression>
+
+Number = {Digit}+ | {Digit}*'.'{Digit}+      
+                
+<Expression>   ::= <Additive Exp> '^' <Additive Exp>
+               |   <Additive Exp>
+
+<Additive Exp> ::= <Additive Exp> '+' <Multipl Exp> 
+               |   <Additive Exp> '-' <Multipl Exp> 
+               |   <Multipl Exp> 
+
+<Multipl Exp>  ::= <Multipl Exp> '*' <Unary Exp> 
+               |   <Multipl Exp> '/' <Unary Exp> 
+               |   <Multipl Exp> '%' <Unary Exp>
+               |   <Unary Exp> 
+
+<Unary Exp>    ::= '+' <Value>
+               |   '-' <Value> 
+               |       <Value> 
+
+<Value>        ::= Number
+               |   '(' <Expression> ')'
+
