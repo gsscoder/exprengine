@@ -1,6 +1,6 @@
 #region License
 //
-// Expression Engine Library: LiteralExpression.cs
+// Expression Engine Library: Visitor.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -26,15 +26,39 @@
 // THE SOFTWARE.
 //
 #endregion
+#region Using Directives
+using ExpressionEngine.Internal.Model;
+using ExpressionEngine.Primitives;
+#endregion
 
-namespace ExpressionEngine.Internal.Model
+namespace ExpressionEngine.Internal
 {
-    abstract class OperatorExpression : Expression
+    abstract class Visitor
     {
-        protected OperatorExpression()
+        private Visitor() {}
+
+        protected Visitor(Scope globalScope)
         {
+            GlobalScope = globalScope;
         }
 
-        public OperatorType Operator { get; set; }
+        public abstract void Visit(LiteralExpression expression);
+
+        public abstract void Visit(UnaryExpression expression);
+
+        public abstract void Visit(FunctionCallExpression callExpression);
+
+        public abstract void Visit(BinaryExpression expression);
+
+        public abstract void Visit(VariableExpression expression);
+
+        protected Scope GlobalScope { get; private set; }
+
+        public abstract Instance Result { get; }
+
+        public static Visitor Create(Scope global)
+        {
+            return new EvaluatingVisitor(global);
+        }
     }
 }

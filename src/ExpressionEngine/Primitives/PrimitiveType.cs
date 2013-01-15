@@ -1,6 +1,6 @@
 #region License
 //
-// Expression Engine Library: LiteralExpression.cs
+// Expression Engine Library: PrimitiveType.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -27,14 +27,14 @@
 //
 #endregion
 
-namespace ExpressionEngine.Internal.Model
+namespace ExpressionEngine.Primitives
 {
-    abstract class OperatorExpression : Expression
+    // This enum will be useful when (ASAP) we will support more data types,
+    // first of all bool for comparisons
+    enum PrimitiveType : byte
     {
-        protected OperatorExpression()
-        {
-        }
-
-        public OperatorType Operator { get; set; }
+        //Bool        // map to System.Boolean
+        Number      // map to System.Double
+        //String      // map to System.String
     }
 }

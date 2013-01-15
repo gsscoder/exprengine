@@ -1,6 +1,6 @@
 ﻿#region License
 //
-// Expression Engine Library: ExpressionVisitor.cs
+// Expression Engine Library: Visitor.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)

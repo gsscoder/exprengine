@@ -1,20 +1,11 @@
-Expression Engine Library 1.0.4.11 Beta.
+Expression Engine Library 1.0.5.1 Beta.
 ===
-This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and uses an AST-evaluation algorithm. You can use built-in or user-defined [functions and variables](https://github.com/gsscoder/exprengine/blob/master/src/ExpressionEngine.Tests/MutableExpressionFixture.cs).
-It was written primarily for fun and and as programming exercise; anyway if you anyone find it useful, please send feature requests or issues; but please take not that *this is a work in progress*.
+This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and uses an AST-evaluation algorithm. You can use built-in or add your functions and variables to global scope. It was written primarily for fun and and as programming exercise; anyway if you anyone find it useful, please send feature requests or issues; but please take note that __this is still a work in progress__.
 
 News:
 ---
-  - Moving toward a new design.
-  - Sources splitted, lexer refactored.
-  - Heavy internal refactoring (with the main purpose of enhance expression type-system and open doors to non-numeric computations).
-  - AST design was enhanced toward maintenability (and for a possible public exposure to increase library uses).
-  - Added cache for immutable expressions.
-  - Created synchronized wrapper for mutable expressions.
-  - Public API should have reached its final shape.
-  - Implemented user defined functions and variables.
-  - Parser performance improved.
-  - Public API / internal types refactored (this time should be very close to first beta).
+  - Heavy internal refactoring toward a new design.
+  - Evaluation provided via both instance and static methods.
 
 To build:
 ---
@@ -23,7 +14,13 @@ MonoDevelop or Visual Studio.
 At glance:
 ---
 ```csharp
-var result = Expression.Create("-3 * 0.31 / ((19 + sqrt(1000)) - .7) + 5 * 2 ^ -log(1, pi)").Value;
+var engine = new ExpressionEvaluator()
+  .SetVariable("G", 6.67428D)
+  .SetVariable("earth_mass", ExpressionEvaluator.EvaluateNoContextAs<double>("5.97219 * 10^24")) // 5.97219E+24 kg
+  .SetVariable("lunar_mass", ExpressionEvaluator.EvaluateNoContextAs<double>("7.34767309 * 10^22")) // 7.34767309E+22 kg
+  .SetVariable("perigee_dist", 356700000D) // moon-earth distance at perigee in m
+  .SetFunction("calc_force", (object[] args) => ((double) args[0] * (double) args[1]) / Math.Pow((double) args[2], 2));
+var result = engine.EvaluateAs<double>("G * calc_force(earth_mass, lunar_mass, perigee_dist)"); // 2.3018745174107073E+31
 ```
 
 Resources:

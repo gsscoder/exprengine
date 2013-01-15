@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 //
-// Expression Engine Library: LiteralExpression.cs
+// Expression Engine Library: Scope.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -26,15 +26,35 @@
 // THE SOFTWARE.
 //
 #endregion
+#region Using Directives
+using System.Collections.Generic;
+#endregion
 
-namespace ExpressionEngine.Internal.Model
+namespace ExpressionEngine.Primitives
 {
-    abstract class OperatorExpression : Expression
+    class Scope
     {
-        protected OperatorExpression()
+        public Scope()
         {
+            _dispatch = new Dictionary<string, object>(48);
         }
 
-        public OperatorType Operator { get; set; }
+        public object this[string name]
+        {
+            get
+            {
+                if (_dispatch.ContainsKey(name))
+                {
+                    return _dispatch[name];
+                }
+                return null;
+            }
+            set
+            {
+                _dispatch[name] = value;
+            }
+        }
+
+        private readonly IDictionary<string, object> _dispatch;
     }
 }

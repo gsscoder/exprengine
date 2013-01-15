@@ -133,11 +133,11 @@ namespace ExpressionEngine
             if (se.Length == 0) { return false; }
             try
             {
-                var result = Expression.Create(se).Value;
+                var result = _evaluator.EvaluateAs<double>(se);
                 Console.WriteLine(result);
                 return true;
             }
-            catch (ExpressionException e)
+            catch (EvaluatorException e)
             {
                 Console.WriteLine(FormatException(se, e));
             }
@@ -169,7 +169,7 @@ namespace ExpressionEngine
             Console.WriteLine("Embeds {0}, Version {1} {2}.", ThisLibrary.ProductName, ThisLibrary.Version, ThisLibrary.ReleaseType);
         }
 
-        private string FormatException(string expression, ExpressionException e)
+        private string FormatException(string expression, EvaluatorException e)
         {
             var builder = new StringBuilder((expression.Length + e.Message.Length + 16) * 2);
             if (e.ColumnNumber >= 0)
@@ -192,7 +192,7 @@ namespace ExpressionEngine
         private readonly Options _options = new Options();
         private readonly HeadingInfo _heading = new HeadingInfo(ThisAssembly.Name,
             ThisAssembly.InformationalVersion + " " + ThisAssembly.ReleaseType);
-        //private readonly ExpressionEvaluator _evaluator = new ExpressionEvaluator();
+        private readonly ExpressionEvaluator _evaluator = new ExpressionEvaluator();
         #region Exit Code Constants
         private const int Success = 0;
         private const int Failure = 1;

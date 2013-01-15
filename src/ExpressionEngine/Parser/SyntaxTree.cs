@@ -1,6 +1,6 @@
 ﻿#region License
 //
-// Expression Engine Library: Expressions.cs
+// Expression Engine Library: SyntaxTree.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -27,7 +27,7 @@
 //
 #endregion
 #region Using Directives
-using Model = ExpressionEngine.Internal.Model;
+using ExpressionEngine.Internal.Model;
 #endregion
 
 namespace ExpressionEngine.Internal
@@ -36,12 +36,12 @@ namespace ExpressionEngine.Internal
     {
         private SyntaxTree() {}
 
-        internal SyntaxTree(Model.Expression root, int userVariables, int userFunctions)
+        internal SyntaxTree(Expression root)//, int userVariables, int userFunctions)
         {
             Root = root;
-            HasUserDefinedVariables = userVariables > 0;
-            HasUserDefinedFunctions = userFunctions > 0;
-            HasUserDefinedNames = HasUserDefinedVariables || HasUserDefinedFunctions;
+            //HasUserDefinedVariables = userVariables > 0;
+            //HasUserDefinedFunctions = userFunctions > 0;
+            //HasUserDefinedNames = HasUserDefinedVariables || HasUserDefinedFunctions;
         }
 
         /// <summary>
@@ -55,12 +55,12 @@ namespace ExpressionEngine.Internal
             }
         }
 
-        public Model.Expression Root { get; private set; }
+        public Expression Root { get; private set; }
 
-        public bool HasUserDefinedNames { get; private set; }
+        //public bool HasUserDefinedNames { get; private set; }
 
-        public bool HasUserDefinedVariables { get; private set; }
+        //public bool HasUserDefinedVariables { get; private set; }
 
-        public bool HasUserDefinedFunctions { get; private set; }
+        //public bool HasUserDefinedFunctions { get; private set; }
     }
 }

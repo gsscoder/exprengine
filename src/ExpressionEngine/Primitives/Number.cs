@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 //
-// Expression Engine Library: LiteralExpression.cs
+// Expression Engine Library: Number.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -26,15 +26,48 @@
 // THE SOFTWARE.
 //
 #endregion
+#region Using Directives
+using System.Globalization;
+#endregion
 
-namespace ExpressionEngine.Internal.Model
+namespace ExpressionEngine.Primitives
 {
-    abstract class OperatorExpression : Expression
+    class Number : Instance
     {
-        protected OperatorExpression()
+        public Number(double value)
         {
+            _value = value;
         }
 
-        public OperatorType Operator { get; set; }
+        public override object Value
+        {
+            get { return _value; }
+        }
+
+        //public override string Type
+        //{
+        //    get { return Instance.TypeReal; }
+        //}
+        public override PrimitiveType PrimitiveType
+        {
+            get { return PrimitiveType.Number; }
+        }
+
+        public override double ToNumber()
+        {
+            return _value;
+        }
+
+        public override object ToObject()
+        {
+            return _value;
+        }
+
+        public override string ToString()
+        {
+            return _value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private readonly double _value;
     }
 }

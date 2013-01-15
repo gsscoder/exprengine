@@ -123,14 +123,14 @@ namespace ExpressionEngine
             {
                 if (variables != null || functions != null)
                 {
-                    throw new ExpressionException("Functions or variables supplied for an immutable expression.");
+                    throw new EeException("Functions or variables supplied for an immutable expression.");
                 }
                 // No user defined names? Expression is immutable.
                 var normalizedText = Expression.NormalizeText(text);
                 // Searching a pre-calculated value .
                 if (!ObjectCache.Instance.Contains(normalizedText))
                 {
-                    var visitor = ExpressionVisitor.Create(null, null);
+                    var visitor = Visitor.Create(null, null);
                     tree.Root.Accept(visitor);
                     var value = visitor.Result;
                     ObjectCache.Instance.Add(normalizedText, value);
@@ -152,7 +152,7 @@ namespace ExpressionEngine
             var synchronized = mutableExpression as MutableExpression;
             if (synchronized == null)
             {
-                throw new ExpressionException("Immutable expressions are implicitly thread safe.");
+                throw new EeException("Immutable expressions are implicitly thread safe.");
             }
             return new SynchronizedMutableExpression(synchronized);
         }
@@ -177,7 +177,7 @@ namespace ExpressionEngine
         /// <param name="value">A <see cref="System.Double"/> of the value.</param>
         public virtual void DefineVariable(string name, object value)
         {
-            throw new ExpressionException("Immutable exceptions do not support variables.");
+            throw new EeException("Immutable exceptions do not support variables.");
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace ExpressionEngine
         /// returns a <see cref="System.Double"/> scalar.</param>
         public virtual void DefineFunction(string name, Func<object[], object> body)
         {
-            throw new ExpressionException("Immutable exceptions do not support functions.");
+            throw new EeException("Immutable exceptions do not support functions.");
         }
 
         ///// <summary>
@@ -362,7 +362,7 @@ namespace ExpressionEngine
             {
                 get
                 {
-                    var visitor = ExpressionVisitor.Create(_variables, _functions);
+                    var visitor = Visitor.Create(_variables, _functions);
                     _tree.Root.Accept(visitor);
                     return visitor.Result;
                 }
@@ -372,7 +372,7 @@ namespace ExpressionEngine
             {
                 if (BuiltInService.IsBuiltInVariable(name))
                 {
-                    throw new ExpressionException("Can't (re)define a built-in variable.");
+                    throw new EeException("Can't (re)define a built-in variable.");
                 }
                 if (_variables.ContainsKey(name))
                 {
@@ -388,7 +388,7 @@ namespace ExpressionEngine
             {
                 if (BuiltInService.IsBuiltInFunction(name))
                 {
-                    throw new ExpressionException("Can't (re)define a built-in function.");
+                    throw new EeException("Can't (re)define a built-in function.");
                 }
                 if (_variables.ContainsKey(name))
                 {

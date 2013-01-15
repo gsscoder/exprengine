@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 //
-// Expression Engine Library: PrimitiveType.cs
+// Expression Engine Library: FunctionDefinition.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -26,14 +26,17 @@
 // THE SOFTWARE.
 //
 #endregion
+#region Using Directives
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+#endregion
 
-namespace ExpressionEngine.Internal
+namespace ExpressionEngine.Model
 {
-    enum PrimitiveType : byte
+    class FunctionDefinition
     {
-        //Bool,       // bool     -> map to System.Boolean 
-        Integer,    // int      -> map to System.Long
-        Real        // real     -> map to System.Double
-        //String      // string   -> map to System.String
+        public List<string> ParameterNames { get; set; } 
     }
 }

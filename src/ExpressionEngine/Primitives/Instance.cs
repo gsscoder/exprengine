@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 //
-// Expression Engine Library: LiteralExpression.cs
+// Expression Engine Library: Instance.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -26,15 +26,48 @@
 // THE SOFTWARE.
 //
 #endregion
+#region Using Directives
+using System;
+#endregion
 
-namespace ExpressionEngine.Internal.Model
+namespace ExpressionEngine.Primitives
 {
-    abstract class OperatorExpression : Expression
+    [Serializable]
+    abstract class Instance : IComparable<Instance>
     {
-        protected OperatorExpression()
+        public static Instance[] Empty = new Instance[0];
+
+        //public const string TypeReal = "real";
+        //public const string TypeInteger = "int";
+
+        public abstract object Value { get; }
+
+        //public abstract string Type { get; }
+        public abstract PrimitiveType PrimitiveType  { get; }
+
+        public virtual double ToNumber()
         {
+            return 0D;
         }
 
-        public OperatorType Operator { get; set; }
+        //public virtual long ToInteger()
+        //{
+        //    return (long) ToNumber();
+        //}
+
+        public virtual object ToObject()
+        {
+            return Value;
+        }
+
+        public override int GetHashCode()
+        {
+            return Value != null ? Value.GetHashCode() : base.GetHashCode();
+        }
+
+        public int CompareTo(Instance other)
+        {
+            return ToString().CompareTo(other.ToString());
+        }
     }
 }

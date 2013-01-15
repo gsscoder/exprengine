@@ -45,12 +45,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExpressionFixture.cs">
+    <Compile Include="EvaluatorEngineFixture.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MutableExpressionFixture.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="DefineNamesFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\ThisAssembly.cs" />
     <Compile Include="LexerFixture.cs">

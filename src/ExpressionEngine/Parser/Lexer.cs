@@ -1,6 +1,6 @@
 ﻿#region License
 //
-// Expression Engine Library: Scanner.cs
+// Expression Engine Library: Lexer.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -70,15 +70,15 @@ namespace ExpressionEngine.Internal
             switch (c)
             {
                 // Punctuators
-                case '(': return PunctuatorToken.LeftParenthesis;
-                case ')': return PunctuatorToken.RightParenthesis;
-                case '+': return PunctuatorToken.Plus;
-                case '-': return PunctuatorToken.Minus;
-                case '*': return PunctuatorToken.Multiply;
-                case '/': return PunctuatorToken.Divide;
-                case '^': return PunctuatorToken.Exponent;
-                case '%': return PunctuatorToken.Modulo;
-                case ',': return PunctuatorToken.Comma;
+                case '(': return new PunctuatorToken(TokenType.LeftParenthesis);
+                case ')': return new PunctuatorToken(TokenType.RightParenthesis);
+                case '+': return new PunctuatorToken(TokenType.Plus);
+                case '-': return new PunctuatorToken(TokenType.Minus);
+                case '*': return new PunctuatorToken(TokenType.Multiply);
+                case '/': return new PunctuatorToken(TokenType.Divide);
+                case '^': return new PunctuatorToken(TokenType.Exponent);
+                case '%': return new PunctuatorToken(TokenType.Modulo);
+                case ',': return new PunctuatorToken(TokenType.Comma);
                 // Numeric literals
                 case '0':
                 case '1':
@@ -90,14 +90,13 @@ namespace ExpressionEngine.Internal
                 case '7':
                 case '8':
                 case '9':
-                //ParseNumber: {
                     bool seenDot = (c == '.');
                     _buffer.Length = 0;
                     _buffer.Append(c);
                     while (true) {
                         c = _text.PeekChar();
                         if (c == '.') {
-                            if (seenDot) { throw new ExpressionException(_text.Column, "Bad numeric literal."); }
+                            if (seenDot) { throw new EvaluatorException(_text.Column, "Bad numeric literal."); }
                             seenDot = true;
                         }
                         else if (!IsDigit(c) || c == '\0') {
@@ -108,21 +107,20 @@ namespace ExpressionEngine.Internal
                     }
                     if (seenDot) {
                         return new LiteralToken(double.Parse(_buffer.ToString(), NumberStyles.AllowDecimalPoint, NumberFormatInfo));
-                    } 
-                    return new LiteralToken(long.Parse(_buffer.ToString(), NumberStyles.None));
-                //}
+                    }
+                    return new LiteralToken(double.Parse(_buffer.ToString(), NumberStyles.None));
                 case '.':
                     if (IsDigit(_text.PeekChar()))
                     {
                         goto case '9';
                     }
-                    throw new ExpressionException(_text.Column, "Bad numeric literal.");
+                    throw new EvaluatorException(_text.Column, "Bad numeric literal.");
                 // Line terminators
                 case '\xD':
                 case '\xA':
                 case '\x2028':
                 case '\x2029':
-                    throw new ExpressionException(_text.Column, "Line terminator is not allowed.");
+                    throw new EvaluatorException(_text.Column, "Line terminator is not allowed.");
                 // EOF
                 case '\0':
                     return null;
@@ -141,13 +139,13 @@ namespace ExpressionEngine.Internal
                         }
                         return new IdentifierToken(_buffer.ToString());
                     }
-                    throw new ExpressionException(_text.Column, string.Format(CultureInfo.InvariantCulture, "Unexpected character '{0}'.", c));
+                    throw new EvaluatorException(_text.Column, string.Format(CultureInfo.InvariantCulture, "Unexpected character '{0}'.", c));
             }
         }
 
-        public static bool IsWhiteSpace(char ch)
+        public static bool IsWhiteSpace(char c)
         {
-            switch (ch)
+            switch (c)
             {
                 //// Line separators
                 //case '\xD':
@@ -164,7 +162,7 @@ namespace ExpressionEngine.Internal
 
                 // Unicode
                 default:
-                    return (ch > 127 && char.IsWhiteSpace(ch));
+                    return (c > 127 && char.IsWhiteSpace(c));
             }
         }
 

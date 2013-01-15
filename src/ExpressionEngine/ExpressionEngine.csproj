@@ -39,20 +39,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\BuiltInService.cs" />
-    <Compile Include="Core\EvaluatingExpressionVisitor.cs" />
-    <Compile Include="Core\TypeService.cs" />
-    <Compile Include="Core\PrimitiveType.cs" />
+    <Compile Include="EvaluatingVisitor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\TokenType.cs" />
+    <Compile Include="Primitives\PrimitiveType.cs" />
+    <Compile Include="ExpressionEvaluator.cs" />
     <Compile Include="Parser\Text.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Primitives\BuiltIn.cs" />
+    <Compile Include="Primitives\Function.cs" />
+    <Compile Include="Primitives\Instance.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Primitives\Number.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Primitives\Scope.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\ThisLibrary.cs" />
     <Compile Include="Model\BinaryExpression.cs" />
     <Compile Include="Model\Expression.cs" />
-    <Compile Include="Model\FunctionExpression.cs" />
+    <Compile Include="Model\FunctionCallExpression.cs" />
     <Compile Include="Model\LiteralExpression.cs" />
     <Compile Include="Parser\SyntaxTree.cs" />
-    <Compile Include="Utilities\ObjectCache.cs" />
     <Compile Include="Model\NameExpression.cs" />
     <Compile Include="Model\OperatorExpression.cs" />
     <Compile Include="Model\OperatorType.cs" />
@@ -66,9 +78,8 @@
     <Compile Include="Parser\LiteralToken.cs" />
     <Compile Include="Parser\PunctuatorToken.cs" />
     <Compile Include="Parser\Token.cs" />
-    <Compile Include="Expression.cs" />
-    <Compile Include="ExpressionException.cs" />
-    <Compile Include="Core\ExpressionVisitor.cs" />
+    <Compile Include="EvaluatorException.cs" />
+    <Compile Include="Visitor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
