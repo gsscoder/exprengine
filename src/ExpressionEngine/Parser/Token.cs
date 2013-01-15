@@ -108,8 +108,20 @@ namespace ExpressionEngine.Internal
                     return "/";
                 case TokenType.Modulo:
                     return "%";
-                case TokenType.Exponent:
-                    return "^";
+                //case TokenType.Exponent:
+                //    return "^";
+                case TokenType.Equality:
+                    return "==";
+                case TokenType.Inequality:
+                    return "!=";
+                case TokenType.LessThan:
+                    return "<";
+                case TokenType.GreaterThan:
+                    return ">";
+                case TokenType.LessThanOrEqual:
+                    return "<=";
+                case TokenType.GreaterThanOrEqual:
+                    return ">=";
                 case TokenType.Literal:
                     return "LITERAL";
                 case TokenType.Identifier:

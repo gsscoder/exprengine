@@ -76,9 +76,37 @@ namespace ExpressionEngine.Internal
                 case '-': return new PunctuatorToken(TokenType.Minus);
                 case '*': return new PunctuatorToken(TokenType.Multiply);
                 case '/': return new PunctuatorToken(TokenType.Divide);
-                case '^': return new PunctuatorToken(TokenType.Exponent);
+                //case '^': return new PunctuatorToken(TokenType.Exponent);
                 case '%': return new PunctuatorToken(TokenType.Modulo);
                 case ',': return new PunctuatorToken(TokenType.Comma);
+                case '=':
+                    if (_text.PeekChar() == '=')
+                    {
+                        _text.NextChar();
+                        return new PunctuatorToken(TokenType.Equality);
+                    }
+                    throw new EvaluatorException(_text.Line, "Unexpected token '='.");
+                case '!':
+                    if (_text.PeekChar() == '=')
+                    {
+                        _text.NextChar();
+                        return new PunctuatorToken(TokenType.Inequality);
+                    }
+                    throw new EvaluatorException(_text.Line, "Unexpected token '!'.");
+                case '<':
+                    if (_text.PeekChar() == '=')
+                    {
+                        _text.NextChar();
+                        return new PunctuatorToken(TokenType.LessThanOrEqual);
+                    }
+                    return new PunctuatorToken(TokenType.LessThan);
+                case '>':
+                    if (_text.PeekChar() == '=')
+                    {
+                        _text.NextChar();
+                        return new PunctuatorToken(TokenType.GreaterThanOrEqual);
+                    }
+                    return new PunctuatorToken(TokenType.GreaterThan);
                 // Numeric literals
                 case '0':
                 case '1':
@@ -124,7 +152,7 @@ namespace ExpressionEngine.Internal
                 // EOF
                 case '\0':
                     return null;
-                // Identifier or Invalid token
+                // Identifier, boolean literal or invalid token
                 default:
                     if (IsIdentifierChar(c)) {
                         _buffer.Length = 0;
@@ -137,7 +165,16 @@ namespace ExpressionEngine.Internal
                             _buffer.Append(c);
                             _text.NextChar();
                         }
-                        return new IdentifierToken(_buffer.ToString());
+                        var buf = _buffer.ToString();
+                        if (string.CompareOrdinal(buf, "true") == 0)
+                        {
+                            return new LiteralToken(true);
+                        }
+                        if (string.CompareOrdinal(buf, "false") == 0)
+                        {
+                            return new LiteralToken(false);
+                        }
+                        return new IdentifierToken(buf);
                     }
                     throw new EvaluatorException(_text.Column, string.Format(CultureInfo.InvariantCulture, "Unexpected character '{0}'.", c));
             }

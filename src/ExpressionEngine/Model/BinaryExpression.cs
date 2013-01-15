@@ -27,6 +27,7 @@
 //
 #endregion
 #region Using Directives
+using System;
 using ExpressionEngine.Primitives;
 #endregion
 
@@ -42,11 +43,23 @@ namespace ExpressionEngine.Internal.Model
         {
             get
             {
-                if (Left.ResultType == Right.ResultType)
+                switch (Operator)
                 {
-                    return Left.ResultType;
+                    case OperatorType.Add:
+                    case OperatorType.Subtract:
+                    case OperatorType.Multiply:
+                    case OperatorType.Divide:
+                    case OperatorType.Modulo:
+                        return PrimitiveType.Number;
+                    case OperatorType.Equality:
+                    case OperatorType.Inequality:
+                    case OperatorType.LessThan:
+                    case OperatorType.GreaterThan:
+                    case OperatorType.LessThanOrEqual:
+                    case OperatorType.GreaterThanOrEqual:
+                        return PrimitiveType.Boolean;
                 }
-                return PrimitiveType.Number;
+                throw new InvalidOperationException();
             }
         }
 

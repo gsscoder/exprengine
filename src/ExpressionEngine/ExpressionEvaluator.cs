@@ -45,7 +45,7 @@ namespace ExpressionEngine
         public ExpressionEvaluator()
         {
             _global = new Scope();
-            InitBuiltIn();
+            InitBuiltIn(_global);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace ExpressionEngine
             var tree = SyntaxTree.ParseString(expression);
             var visitor = Visitor.Create(_global);
             tree.Root.Accept(visitor);
-            return visitor.Result.ToObject();
+            return visitor.Result;
         }
 
         /// <summary>
@@ -80,9 +80,11 @@ namespace ExpressionEngine
         public static object EvaluateNoContext(string expression)
         {
             var tree = SyntaxTree.ParseString(expression);
-            var visitor = Visitor.Create(new Scope());
+            var global = new Scope();
+            InitBuiltIn(global);
+            var visitor = Visitor.Create(global);
             tree.Root.Accept(visitor);
-            return visitor.Result.ToObject();
+            return visitor.Result;
         }
 
         /// <summary>
@@ -121,25 +123,26 @@ namespace ExpressionEngine
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name", "Can't define a variable with null or empty name.");
 
-            _global[name] = new Number(variable);
+            _global[name] = variable;
             return this;
         }
 
-        private void InitBuiltIn()
+        private static void InitBuiltIn(Scope scope)
         {
-            _global["log"] = new Function("log", BuiltIn.Instance.Log);
-            _global["asin"] = new Function("asin",  BuiltIn.Instance.Asin);
-            _global["sin"] = new Function("sin",  BuiltIn.Instance.Sin);
-            _global["sinh"] = new Function("sinh",  BuiltIn.Instance.Sinh);
-            _global["acos"] = new Function("acos", BuiltIn.Instance.Acos);
-            _global["cos"] = new Function("cos",  BuiltIn.Instance.Cos);
-            _global["cosh"] = new Function("cosh",  BuiltIn.Instance.Cosh);
-            _global["sqrt"] = new Function("sqrt",  BuiltIn.Instance.Sqrt);
-            _global["atan"] = new Function("atan",  BuiltIn.Instance.Atan);
-            _global["tan"] = new Function("tan",  BuiltIn.Instance.Tan);
-            _global["tanh"] = new Function("tanh",  BuiltIn.Instance.Tanh);
-            _global["e"] = new Number(Math.E);
-            _global["pi"] = new Number(Math.PI);
+            scope["log"] = new Function("log", BuiltIn.Instance.Log);
+            scope["asin"] = new Function("asin",  BuiltIn.Instance.Asin);
+            scope["sin"] = new Function("sin",  BuiltIn.Instance.Sin);
+            scope["sinh"] = new Function("sinh",  BuiltIn.Instance.Sinh);
+            scope["acos"] = new Function("acos", BuiltIn.Instance.Acos);
+            scope["cos"] = new Function("cos",  BuiltIn.Instance.Cos);
+            scope["cosh"] = new Function("cosh",  BuiltIn.Instance.Cosh);
+            scope["sqrt"] = new Function("sqrt",  BuiltIn.Instance.Sqrt);
+            scope["atan"] = new Function("atan",  BuiltIn.Instance.Atan);
+            scope["tan"] = new Function("tan",  BuiltIn.Instance.Tan);
+            scope["tanh"] = new Function("tanh",  BuiltIn.Instance.Tanh);
+            scope["pow"] = new Function("pow", BuiltIn.Instance.Pow);
+            scope["e"] = Math.E;
+            scope["pi"] = Math.PI;
         }
 
         private readonly Scope _global;

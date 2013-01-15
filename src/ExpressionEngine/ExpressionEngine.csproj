@@ -51,15 +51,10 @@
     </Compile>
     <Compile Include="Primitives\BuiltIn.cs" />
     <Compile Include="Primitives\Function.cs" />
-    <Compile Include="Primitives\Instance.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Primitives\Number.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Primitives\Scope.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TypeConverter.cs" />
     <Compile Include="Properties\ThisLibrary.cs" />
     <Compile Include="Model\BinaryExpression.cs" />
     <Compile Include="Model\Expression.cs" />

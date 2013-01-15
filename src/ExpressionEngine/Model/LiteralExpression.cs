@@ -34,20 +34,18 @@ namespace ExpressionEngine.Internal.Model
 {
     sealed class LiteralExpression : Expression
     {
-        private LiteralExpression() { }
+        private LiteralExpression() {}
 
-        public LiteralExpression(Instance value) //object value)
+        public LiteralExpression(object value)
         {
             Value = value;
         }
 
-        //public object Value { get; private set; }
-        public Instance Value { get; private set; }
+        public object Value { get; private set; }
 
         public override PrimitiveType ResultType
         {
-            //get { return TypeService.ToPrimitiveType(Value.GetType()); }
-            get { return Value.PrimitiveType; }
+            get { return TypeConverter.ToPrimitiveType(Value.GetType()); }
         }
 
         public override void Accept(Visitor visitor)

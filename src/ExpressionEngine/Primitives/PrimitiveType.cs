@@ -33,7 +33,7 @@ namespace ExpressionEngine.Primitives
     // first of all bool for comparisons
     enum PrimitiveType : byte
     {
-        //Bool        // map to System.Boolean
+        Boolean,     // map to System.Boolean
         Number      // map to System.Double
         //String      // map to System.String
     }

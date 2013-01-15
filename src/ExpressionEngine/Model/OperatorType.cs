@@ -33,11 +33,19 @@ namespace ExpressionEngine.Internal.Model
     {
         UnaryPlus,
         UnaryMinus,
-        Exponent,
+
+        //Exponent,
         Multiply,
         Divide,
         Modulo,
         Add,
-        Subtract
+        Subtract,
+
+        Equality,
+        Inequality,
+        LessThan,
+        GreaterThan,
+        LessThanOrEqual,
+        GreaterThanOrEqual,
     }
 }

@@ -4,7 +4,7 @@ namespace ExpressionEngine
     {
         public const string Name = "ExpressionEngine";
         public const string ProductName = "Expression Engine Library";
-        public const string Version = "1.0.5.3";
+        public const string Version = "1.0.5.9";
         public const string ReleaseType = "beta";
     }
 }

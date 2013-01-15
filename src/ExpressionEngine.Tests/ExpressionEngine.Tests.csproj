@@ -54,6 +54,7 @@
     <Compile Include="LexerFixture.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="RelationalFixture.cs" />
     <Compile Include="TextFixture.cs" />
   </ItemGroup>
   <ItemGroup>

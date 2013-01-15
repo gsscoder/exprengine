@@ -23,15 +23,6 @@ namespace ExpressionEngine.Internal
             get { return _value; }
         }
 
-        public Instance ToPrimitiveType()
-        {
-            if (_value is double)
-            {
-                return new Number((double) Value);
-            }
-            throw new EvaluatorException("Type not supported.");
-        }
-
         private readonly object _value;
     }
 }

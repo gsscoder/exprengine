@@ -270,17 +270,17 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().Be.Null();
         }
 
-        [UnitTest.Test]
-        public void Caret()
-        {
-            var scanner = new Lexer(Text.OfString("10^2"));
+        //[UnitTest.Test]
+        //public void Caret()
+        //{
+        //    var scanner = new Lexer(Text.OfString("10^2"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Exponent);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(2D);
+        //    ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10D);
+        //    scanner.NextToken().Type.Should().Equal(TokenType.Exponent);
+        //    ((LiteralToken)scanner.NextToken()).Value.Should().Equal(2D);
 
-            scanner.NextToken().Should().Be.Null();
-        }
+        //    scanner.NextToken().Should().Be.Null();
+        //}
 
         [UnitTest.Test]
         public void Underscore()
@@ -288,6 +288,95 @@ namespace ExpressionEngine.Tests
             var scanner = new Lexer(Text.OfString("var_name"));
 
             ((IdentifierToken)scanner.NextToken()).Text.Should().Equal("var_name");
+        }
+
+        [UnitTest.Test]
+        public void Equality()
+        {
+            var scanner = new Lexer(Text.OfString("var1 == 10.3"));
+
+            ((IdentifierToken)scanner.NextToken()).Text.Should().Equal("var1");
+            scanner.NextToken().Type.Should().Equal(TokenType.Equality);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10.3D);
+        }
+
+        [UnitTest.Test]
+        public void Inequality()
+        {
+            var scanner = new Lexer(Text.OfString(".3 != 0.003003"));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.3D);
+            scanner.NextToken().Type.Should().Equal(TokenType.Inequality);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.003003D);
+        }
+
+        [UnitTest.Test]
+        public void LessThan()
+        {
+            var scanner = new Lexer(Text.OfString("10 < (10 * 2.2)"));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10D);
+            scanner.NextToken().Type.Should().Equal(TokenType.LessThan);
+            scanner.NextToken().Type.Should().Equal(TokenType.LeftParenthesis);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10D);
+            scanner.NextToken().Type.Should().Equal(TokenType.Multiply);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(2.2D);
+            scanner.NextToken().Type.Should().Equal(TokenType.RightParenthesis);
+        }
+
+        [UnitTest.Test]
+        public void LessThanOrEqual()
+        {
+            var scanner = new Lexer(Text.OfString(".3 <= .9"));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.3D);
+            scanner.NextToken().Type.Should().Equal(TokenType.LessThanOrEqual);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.9D);
+        }
+
+        [UnitTest.Test]
+        public void GreaterThan()
+        {
+            var scanner = new Lexer(Text.OfString("10 > (10 * 2.2)"));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10D);
+            scanner.NextToken().Type.Should().Equal(TokenType.GreaterThan);
+            scanner.NextToken().Type.Should().Equal(TokenType.LeftParenthesis);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10D);
+            scanner.NextToken().Type.Should().Equal(TokenType.Multiply);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(2.2D);
+            scanner.NextToken().Type.Should().Equal(TokenType.RightParenthesis);
+        }
+
+        [UnitTest.Test]
+        public void GreaterThanOrEqual()
+        {
+            var scanner = new Lexer(Text.OfString("0.1 >= +5.9"));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.1D);
+            scanner.NextToken().Type.Should().Equal(TokenType.GreaterThanOrEqual);
+            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(5.9D);
+        }
+
+        [UnitTest.Test]
+        public void True()
+        {
+            var scanner = new Lexer(Text.OfString("true == 1"));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(true);
+            scanner.NextToken().Type.Should().Equal(TokenType.Equality);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1D);
+        }
+
+        [UnitTest.Test]
+        public void False()
+        {
+            var scanner = new Lexer(Text.OfString("false != .01"));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(false);
+            scanner.NextToken().Type.Should().Equal(TokenType.Inequality);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.01D);
         }
 
         #region Expected Exceptions

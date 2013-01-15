@@ -54,7 +54,7 @@ namespace ExpressionEngine.Internal
 
         protected Scope GlobalScope { get; private set; }
 
-        public abstract Instance Result { get; }
+        public abstract object Result { get; }
 
         public static Visitor Create(Scope global)
         {

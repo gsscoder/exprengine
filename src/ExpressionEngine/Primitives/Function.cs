@@ -36,7 +36,7 @@ namespace ExpressionEngine.Primitives
     {
         private Function() {}
 
-		public Function(string name, Func<object[], object> func)
+        public Function(string name, Func<object[], object> func)
         {
             Name = name;
             Delegate = func;

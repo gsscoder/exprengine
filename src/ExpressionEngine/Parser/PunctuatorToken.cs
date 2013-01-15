@@ -19,25 +19,30 @@ namespace ExpressionEngine.Internal
 
         public OperatorType ToOperatorType()
         {
-            if (Type == TokenType.Plus)
+            switch (Type)
             {
-                return OperatorType.Add;
-            }
-            if (Type == TokenType.Minus)
-            {
-                return OperatorType.Subtract;
-            }
-            if (Type == TokenType.Multiply)
-            {
-                return OperatorType.Multiply;
-            }
-            if (Type == TokenType.Divide)
-            {
-                return OperatorType.Divide;
-            }
-            if (Type == TokenType.Modulo)
-            {
-                return OperatorType.Modulo;
+                case TokenType.Plus:
+                    return OperatorType.Add;
+                case TokenType.Minus:
+                    return OperatorType.Subtract;
+                case TokenType.Multiply:
+                    return OperatorType.Multiply;
+                case TokenType.Divide:
+                    return OperatorType.Divide;
+                case TokenType.Modulo:
+                    return OperatorType.Modulo;
+                case TokenType.Equality:
+                    return OperatorType.Equality;
+                case TokenType.Inequality:
+                    return OperatorType.Inequality;
+                case TokenType.LessThan:
+                    return OperatorType.LessThan;
+                case TokenType.GreaterThan:
+                    return OperatorType.GreaterThan;
+                case TokenType.LessThanOrEqual:
+                    return OperatorType.LessThanOrEqual;
+                case TokenType.GreaterThanOrEqual:
+                    return OperatorType.GreaterThanOrEqual;
             }
             throw new EvaluatorException("Unexpected punctuator.");
         }
@@ -48,28 +53,5 @@ namespace ExpressionEngine.Internal
                 return StringOf(Type);
             }
         }
-
-        //public static readonly PunctuatorToken LeftParenthesis = new PunctuatorToken("(");
-        //public static readonly PunctuatorToken RightParenthesis = new PunctuatorToken(")");
-        //public static readonly PunctuatorToken Comma = new PunctuatorToken(",");
-        //public static readonly PunctuatorToken Plus = new PunctuatorToken("+");
-        //public static readonly PunctuatorToken Minus = new PunctuatorToken("-");
-        //public static readonly PunctuatorToken Multiply = new PunctuatorToken("*");
-        //public static readonly PunctuatorToken Divide = new PunctuatorToken("/");
-        //public static readonly PunctuatorToken Modulo = new PunctuatorToken("%");
-        //public static readonly PunctuatorToken Exponent = new PunctuatorToken("^");
-
-        //private static readonly Dictionary<string, PunctuatorToken> Lookup = new Dictionary<string, PunctuatorToken>
-        //    {
-        //        {"(", LeftParenthesis},
-        //        {")", RightParenthesis},
-        //        {",", Comma},
-        //        {"+", Plus},
-        //        {"-", Minus},
-        //        {"*", Multiply},
-        //        {"/", Divide},
-        //        {"%", Modulo},
-        //        {"^", Exponent}
-        //    };
     }
 }

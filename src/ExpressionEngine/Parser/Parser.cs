@@ -93,7 +93,7 @@ namespace ExpressionEngine.Internal
                         Operator = ((PunctuatorToken)_current).ToOperatorType(),
                         Left = expr
                     };
-                Expect(MiddleGroupAdditiveExponent);
+                Expect(MiddleGroupAdditiveRelational);
                 binaryAddSub.Right = ParseMultiplicativeBinary();
                 expr = binaryAddSub;
             }
@@ -102,7 +102,7 @@ namespace ExpressionEngine.Internal
 
         private Expression ParseMultiplicativeBinary()
         {
-            Expression expr = ParseExponentBinary();
+            Expression expr = ParseRelationalBinary();
             while (!_scanner.IsEof() && (_current.Type == TokenType.Multiply ||
                 _current.Type == TokenType.Divide || _current.Type == TokenType.Modulo))
             {
@@ -112,23 +112,25 @@ namespace ExpressionEngine.Internal
                         Left = expr
                     };
                 Expect(MiddleGroupMultiplicative);
-                binaryMulDiv.Right = ParseExponentBinary();
+                binaryMulDiv.Right = ParseRelationalBinary();
                 expr = binaryMulDiv;
             }
             return expr;
         }
 
-        private Expression ParseExponentBinary()
+        private Expression ParseRelationalBinary()
         {
             Expression expr = ParseIdentifier();
-            while (!_scanner.IsEof() && _current.Type == TokenType.Exponent)
+            while (!_scanner.IsEof() && (_current.Type == TokenType.Equality || _current.Type == TokenType.Inequality ||
+                _current.Type == TokenType.LessThan || _current.Type == TokenType.GreaterThan ||
+                _current.Type == TokenType.LessThanOrEqual || _current.Type == TokenType.GreaterThanOrEqual))
             {
                 var binaryExp = new BinaryExpression
                     {
-                        Operator = OperatorType.Exponent,
+                        Operator = ((PunctuatorToken) _current).ToOperatorType(),
                         Left = expr
                     };
-                Expect(MiddleGroupAdditiveExponent);
+                Expect(MiddleGroupAdditiveRelational);
                 binaryExp.Right = ParseIdentifier();
                 expr = binaryExp;
             }
@@ -211,7 +213,7 @@ namespace ExpressionEngine.Internal
 
             if (_current.Type == TokenType.Literal)
             {
-                unary.Value = new LiteralExpression(((LiteralToken)_current).ToPrimitiveType());
+                unary.Value = new LiteralExpression(((LiteralToken)_current).Value);
                 if (_scanner.PeekToken() != null && _scanner.PeekToken().Type == TokenType.Literal)
                 {
                     throw new EvaluatorException(_scanner.Column, "Expected expression.");
@@ -304,11 +306,11 @@ namespace ExpressionEngine.Internal
         }
 
         #region Token Groups
-        private static readonly TokenType[] InitialGroup = { TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.Exponent }; // + ident
-        private static readonly TokenType[] InitialGroupWithComma = { TokenType.Literal, TokenType.Comma, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.Exponent }; // + ident
-        private static readonly TokenType[] MiddleGroupAdditiveExponent = { TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.RightParenthesis }; // + ident
+        private static readonly TokenType[] InitialGroup = { TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.Equality, TokenType.Inequality, TokenType.LessThan, TokenType.GreaterThan, TokenType.LessThanOrEqual, TokenType.GreaterThanOrEqual }; // + ident
+        private static readonly TokenType[] InitialGroupWithComma = { TokenType.Literal, TokenType.Comma, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.Equality, TokenType.Inequality, TokenType.LessThan, TokenType.GreaterThan, TokenType.LessThanOrEqual, TokenType.GreaterThanOrEqual }; // + ident
+        private static readonly TokenType[] MiddleGroupAdditiveRelational = { TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis, TokenType.RightParenthesis }; // + ident
         private static readonly TokenType[] MiddleGroupMultiplicative = { TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.LeftParenthesis }; // + ident
-        private static readonly TokenType[] MiddleGroupIdentifier = { TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.Multiply, TokenType.Divide, TokenType.Exponent, TokenType.RightParenthesis, TokenType.Comma };
+        private static readonly TokenType[] MiddleGroupIdentifier = { TokenType.Literal, TokenType.Plus, TokenType.Minus, TokenType.Multiply, TokenType.Divide, TokenType.Equality, TokenType.Inequality, TokenType.LessThan, TokenType.GreaterThan, TokenType.LessThanOrEqual, TokenType.GreaterThanOrEqual, TokenType.RightParenthesis, TokenType.Comma };
         private static readonly TokenType[] MiddleGroupUnary = { TokenType.Literal, TokenType.LeftParenthesis }; // + ident
         #endregion
 

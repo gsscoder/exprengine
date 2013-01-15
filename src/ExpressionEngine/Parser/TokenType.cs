@@ -16,7 +16,13 @@ namespace ExpressionEngine.Internal
         Multiply,
         Divide,
         Modulo,
-        Exponent,
+        //Exponent,,
+        Equality,
+        Inequality,
+        LessThan,
+        GreaterThan,
+        LessThanOrEqual,
+        GreaterThanOrEqual,
         // Others
         Literal,
         Identifier

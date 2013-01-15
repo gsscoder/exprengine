@@ -56,7 +56,7 @@ namespace ExpressionEngine.Internal
                 case OperatorType.UnaryPlus:
                     break;
                 case OperatorType.UnaryMinus:
-                    _result = new Number(_result.ToNumber() * -1D);
+                    _result = TypeConverter.ToNumber(_result) * -1D;
                     break;
                 default:
                     throw new EvaluatorException("Invalid unary operator type.");
@@ -70,21 +70,21 @@ namespace ExpressionEngine.Internal
             callExpression.Arguments.ForEach(arg =>
             {
                 arg.Accept(this);
-                argsList.Add(_result.ToObject());
+                argsList.Add(_result);
             });
             var args = argsList.ToArray();
-            _result = new Number((double) ((Function) GlobalScope[name]).Delegate(args)); //Execute(args));
+            _result = TypeConverter.ToNumber(((Function) GlobalScope[name]).Delegate(args)); 
         }
 
         public override void Visit(BinaryExpression expression)
         {
-            Func<Instance> left = () =>
+            Func<object> left = () =>
             {
                 expression.Left.Accept(this);
                 var leftValue = _result;
                 return leftValue;
             };
-            Func<Instance> right = () =>
+            Func<object> right = () =>
             {
                 expression.Right.Accept(this);
                 var rightValue = _result;
@@ -93,22 +93,40 @@ namespace ExpressionEngine.Internal
             switch (expression.Operator)
             {
                 case OperatorType.Add:
-                    _result = new Number(left().ToNumber() + right().ToNumber());
+                    _result = TypeConverter.ToNumber(left()) + TypeConverter.ToNumber(right());
                     break;
                 case OperatorType.Subtract:
-                    _result = new Number(left().ToNumber() - right().ToNumber());
+                    _result = TypeConverter.ToNumber(left()) - TypeConverter.ToNumber(right());
                     break;
                 case OperatorType.Multiply:
-                    _result = new Number(left().ToNumber() * right().ToNumber());
+                    _result = TypeConverter.ToNumber(left()) * TypeConverter.ToNumber(right());
                     break;
                 case OperatorType.Divide:
-                    _result = new Number(left().ToNumber() / right().ToNumber());
+                    _result = TypeConverter.ToNumber(left()) / TypeConverter.ToNumber(right());
                     break;
                 case OperatorType.Modulo:
-                    _result = new Number(left().ToNumber() % right().ToNumber());
+                    _result = TypeConverter.ToNumber(left()) % TypeConverter.ToNumber(right());
                     break;
-                case OperatorType.Exponent:
-                    _result = new Number(Math.Pow(left().ToNumber(), right().ToNumber()));
+                //case OperatorType.Exponent:
+                //    _result = new Number(Math.Pow(left().ToNumber(), right().ToNumber()));
+                //    break;
+                case OperatorType.Equality:
+                    _result = TypeConverter.ToNumber(left()) == TypeConverter.ToNumber(right());
+                    break;
+                case OperatorType.Inequality:
+                    _result = TypeConverter.ToNumber(left()) != TypeConverter.ToNumber(right());
+                    break;
+                case OperatorType.GreaterThan:
+                    _result = TypeConverter.ToNumber(left()) > TypeConverter.ToNumber(right());
+                    break;
+                case OperatorType.LessThan:
+                    _result = TypeConverter.ToNumber(left()) < TypeConverter.ToNumber(right());
+                    break;
+                case OperatorType.GreaterThanOrEqual:
+                    _result = TypeConverter.ToNumber(left()) >= TypeConverter.ToNumber(right());
+                    break;
+                case OperatorType.LessThanOrEqual:
+                    _result = TypeConverter.ToNumber(left()) <= TypeConverter.ToNumber(right());
                     break;
                 default:
                     throw new EvaluatorException("Invalid binary operator type.");
@@ -118,16 +136,15 @@ namespace ExpressionEngine.Internal
         public override void Visit(VariableExpression expression)
         {
             var name = expression.Name;
-            var inst = GlobalScope[name] as Instance;
-            if (inst == null)
+            if (GlobalScope[name] == null)
             {
                 throw new EvaluatorException(string.Format(CultureInfo.InvariantCulture, "Undefined variable: '{0}'.", name));
             }
-            _result = inst;
+            _result = TypeConverter.ToNumber(GlobalScope[name]);
         }
+ 
+        public override object Result { get { return _result; } }
 
-        public override Instance Result { get { return _result; } }
-
-        private Instance _result;
+        private object _result;
     }
 }

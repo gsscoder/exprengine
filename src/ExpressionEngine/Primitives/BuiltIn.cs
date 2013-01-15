@@ -152,6 +152,15 @@ namespace ExpressionEngine.Primitives
                 throw new EvaluatorException("tanh requires one argument");
             };
 
+        public Func<object[], object> Pow = arguments =>
+            {
+                if (arguments.Length == 2)
+                {
+                    return (double) Math.Pow((double) arguments[0], (double) arguments[1]);
+                }
+                throw new EvaluatorException("pow requires one argument");
+            };
+
         private static readonly BuiltIn Singleton = new BuiltIn();
     }
 }
