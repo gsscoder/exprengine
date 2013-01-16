@@ -127,22 +127,40 @@ namespace ExpressionEngine.Internal
                             if (seenDot) { throw new EvaluatorException(_text.Column, "Bad numeric literal."); }
                             seenDot = true;
                         }
+                        else if (c == 'e' || c == 'E') {
+                            _buffer.Append(c);
+                            _text.NextChar();
+                            c = _text.PeekChar();
+                            if (c == '+' || c == '-' || IsDigit(c)) {
+                                _buffer.Append(c);
+                                _text.NextChar();
+                                while (true) {
+                                    c = _text.PeekChar();
+                                    if (!IsDigit(c) || c == '\0') {
+                                        break;
+                                    }
+                                    _buffer.Append(c);
+                                    _text.NextChar();
+                                }
+                                return new LiteralToken(ParseNumber(_buffer, seenDot, true));
+                            }
+                            else {
+                                throw new EvaluatorException(_text.Line, "Invalid character after numeric literal exponent.");
+                            }
+                        }
                         else if (!IsDigit(c) || c == '\0') {
                             break;
                         }
                         _buffer.Append(c);
                         _text.NextChar();
                     }
-                    if (seenDot) {
-                        return new LiteralToken(double.Parse(_buffer.ToString(), NumberStyles.AllowDecimalPoint, NumberFormatInfo));
-                    }
-                    return new LiteralToken(double.Parse(_buffer.ToString(), NumberStyles.None));
+                    return new LiteralToken(ParseNumber(_buffer, seenDot, false));
                 case '.':
                     if (IsDigit(_text.PeekChar()))
                     {
                         goto case '9';
                     }
-                    throw new EvaluatorException(_text.Column, "Bad numeric literal.");
+                    throw new EvaluatorException(_text.Column, "Invalid numeric literal.");
                 // Line terminators
                 case '\xD':
                 case '\xA':
@@ -242,6 +260,24 @@ namespace ExpressionEngine.Internal
         private static bool IsIdentifierChar(char ch)
         {
             return char.IsLetterOrDigit(ch) || (ch == '_');
+        }
+
+        private static double ParseNumber(StringBuilder buf, bool seenDot, bool seenExp)
+        {
+            var styles = NumberStyles.Number;
+            if (seenDot)
+            {
+                styles = NumberStyles.AllowDecimalPoint;
+                if (seenExp)
+                {
+                    styles |= NumberStyles.AllowExponent;
+                }
+            }
+            else
+            {
+                styles = seenExp ? NumberStyles.AllowExponent : NumberStyles.None;
+            }
+            return double.Parse(buf.ToString(), styles, NumberFormatInfo);
         }
 
         ~Lexer()

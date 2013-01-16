@@ -1,9 +1,10 @@
-Expression Engine Library 1.0.5.9 Beta.
+Expression Engine Library 1.0.5.11 Beta.
 ===
 This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and uses an AST-evaluation algorithm. You can use built-in or add your functions and variables to global scope. It was written primarily for fun and and as programming exercise; anyway if you anyone find it useful, please send feature requests or issues; but please take note that __this is still a work in progress__.
 
 News:
 ---
+  - Added support for exponent in numeric literal ```([E|e][+|-][DIGIT])```.
   - Parser class aligned to new grammar.
   - BNF grammar changed (see [Evaluator.grm](https://github.com/gsscoder/exprengine/blob/master/doc/Evaluator.grm)).
   - Operator '^' (exponent) removed. Will be used as bitwise operator.

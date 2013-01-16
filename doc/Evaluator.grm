@@ -1,11 +1,11 @@
 "Name"     = 'Expression Engine Evaluator'
 "Author"   = 'Giacomo Stelluti Scala'
-"Version"  = '1.0.5.9'
+"Version"  = '1.0.5.11'
 "About"    = 'Expression evaluator for .NET'
 
 "Start Symbol" = <Expression>
 
-Literal = 'true' | 'false' | {Digit}+ | {Digit}*'.'{Digit}+
+Literal = 'true' | 'false' | {Digit}+ | {Digit}*'.'{Digit}+([Ee][+-]?{Digit}+)?
                 
 <Expression>   ::= <Additive Exp> '<'  <Additive Exp>
                |   <Additive Exp> '>'  <Additive Exp>

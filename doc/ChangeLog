@@ -1,3 +1,8 @@
+2013-01-16      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * Added support for exponent in numeric literal ([E|e][+|-][DIGIT]).
+  * Version incremented to 1.0.5.11 beta
+
 2013-01-15      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * Parser class aligned to new grammar.

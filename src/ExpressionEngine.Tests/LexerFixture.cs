@@ -379,6 +379,60 @@ namespace ExpressionEngine.Tests
             ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.01D);
         }
 
+        [UnitTest.Test]
+        public void LiteralWithExponent()
+        {
+            var scanner = new Lexer(Text.OfString("1 + 10E2 + 3"));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1D);
+            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1000D);
+            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(3D);
+        }
+
+        [UnitTest.Test]
+        public void LiteralWithExponentUsingPlusSign()
+        {
+            var scanner = new Lexer(Text.OfString("1 + 10E+2"));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1D);
+            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1000D);
+        }
+
+        [UnitTest.Test]
+        public void LiteralWithLowerCaseExponent()
+        {
+            var scanner = new Lexer(Text.OfString("10e2 + 4"));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1000D);
+            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(4D);
+        }
+
+        [UnitTest.Test]
+        public void LiteralWithLowerCaseExponentUsingPlusSign()
+        {
+            var scanner = new Lexer(Text.OfString("1 + 10e+2 + 4"));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1D);
+            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1000D);
+            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(4D);
+        }
+
+        [UnitTest.Test]
+        public void LiteralsWithNegativeExponent()
+        {
+            var scanner = new Lexer(Text.OfString("10E-11 + 10e-11"));
+
+            ((LiteralToken) scanner.NextToken()).Value.Should().Equal(0.0000000001D);
+            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.0000000001D);
+        }
+
         #region Expected Exceptions
         [UnitTest.Test]
         [UnitTest.ExpectedException(typeof(EvaluatorException), ExpectedMessage = "Line terminator is not allowed.")]

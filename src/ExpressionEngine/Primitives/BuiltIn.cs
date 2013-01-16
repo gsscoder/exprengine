@@ -45,9 +45,9 @@ namespace ExpressionEngine.Primitives
                 switch (arguments.Length)
                 {
                     case 1:
-                        return (double) Math.Log((double) arguments[0]);
+                        return Math.Log(TypeConverter.ToNumber(arguments[0]));
                     case 2:
-                        return (double) Math.Log((double) arguments[0], (double) arguments[1]);
+                        return Math.Log(TypeConverter.ToNumber(arguments[0]), TypeConverter.ToNumber(arguments[1]));
                     default:
                         throw new EvaluatorException("log requires one or two arguments");
                 }
@@ -57,7 +57,7 @@ namespace ExpressionEngine.Primitives
             {
                 if (arguments.Length == 1)
                 {
-                    return (double) Math.Abs((double) arguments[0]);
+                    return Math.Abs(TypeConverter.ToNumber(arguments[0]));
                 }
                 throw new EvaluatorException("abs requires one argument");
             };
@@ -66,7 +66,7 @@ namespace ExpressionEngine.Primitives
             {
                 if (arguments.Length == 1)
                 {
-                    return (double) Math.Asin((double) arguments[0]);
+                    return Math.Asin(TypeConverter.ToNumber(arguments[0]));
                 }
                 throw new EvaluatorException("asin requires one argument");
             };
@@ -75,7 +75,7 @@ namespace ExpressionEngine.Primitives
             {
                 if (arguments.Length == 1)
                 {
-                    return (double) Math.Sin((double) arguments[0]);
+                    return Math.Sin(TypeConverter.ToNumber(arguments[0]));
                 }
                 throw new EvaluatorException("sin requires one argument");
             };
@@ -84,7 +84,7 @@ namespace ExpressionEngine.Primitives
             {
                 if (arguments.Length == 1)
                 {
-                    return (double) Math.Sinh((double) arguments[0]);
+                    return Math.Sinh(TypeConverter.ToNumber(arguments[0]));
                 }
                 throw new EvaluatorException("sinh requires one argument");
             };
@@ -93,7 +93,7 @@ namespace ExpressionEngine.Primitives
             {
                 if (arguments.Length == 1)
                 {
-                    return (double) Math.Acos((double) arguments[0]);
+                    return Math.Acos(TypeConverter.ToNumber(arguments[0]));
                 }
                 throw new EvaluatorException("acos requires one argument");
             };
@@ -102,7 +102,7 @@ namespace ExpressionEngine.Primitives
             {
                 if (arguments.Length == 1)
                 {
-                    return (double) Math.Cos((double) arguments[0]);
+                    return Math.Cos(TypeConverter.ToNumber(arguments[0]));
                 }
                 throw new EvaluatorException("cos requires one argument");
             };
@@ -111,7 +111,7 @@ namespace ExpressionEngine.Primitives
             {
                 if (arguments.Length == 1)
                 {
-                    return (double) Math.Cosh((double) arguments[0]);
+                    return Math.Cosh(TypeConverter.ToNumber(arguments[0]));
                 }
                 throw new EvaluatorException("cosh requires one argument");
             };
@@ -120,7 +120,7 @@ namespace ExpressionEngine.Primitives
             {
                 if (arguments.Length == 1)
                 {
-                    return (double) Math.Sqrt((double) arguments[0]);
+                    return Math.Sqrt(TypeConverter.ToNumber(arguments[0]));
                 }
                 throw new EvaluatorException("sqrt requires one argument");
             };
@@ -129,7 +129,7 @@ namespace ExpressionEngine.Primitives
             {
                 if (arguments.Length == 1)
                 {
-                    return (double) Math.Atan((double) arguments[0]);
+                    return Math.Atan(TypeConverter.ToNumber(arguments[0]));
                 }
                 throw new EvaluatorException("atan requires one argument");
             };
@@ -138,7 +138,7 @@ namespace ExpressionEngine.Primitives
             {
                 if (arguments.Length == 1)
                 {
-                    return (double) Math.Tan((double) arguments[0]);
+                    return Math.Tan(TypeConverter.ToNumber(arguments[0]));
                 }
                 throw new EvaluatorException("tan requires one argument");
             };
@@ -147,7 +147,7 @@ namespace ExpressionEngine.Primitives
             {
                 if (arguments.Length == 1)
                 {
-                    return (double) Math.Tanh((double) arguments[0]);
+                    return Math.Tanh(TypeConverter.ToNumber(arguments[0]));
                 }
                 throw new EvaluatorException("tanh requires one argument");
             };
@@ -156,7 +156,7 @@ namespace ExpressionEngine.Primitives
             {
                 if (arguments.Length == 2)
                 {
-                    return (double) Math.Pow((double) arguments[0], (double) arguments[1]);
+                    return Math.Pow(TypeConverter.ToNumber(arguments[0]), (double) arguments[1]);
                 }
                 throw new EvaluatorException("pow requires one argument");
             };
