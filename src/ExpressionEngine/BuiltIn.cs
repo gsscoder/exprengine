@@ -30,15 +30,33 @@
 using System;
 #endregion
 
-namespace ExpressionEngine.Primitives
+namespace ExpressionEngine
 {
-    class BuiltIn
+    sealed class BuiltIn
     {
         private BuiltIn() { }
 
         static BuiltIn() {}
 
         public static BuiltIn Instance { get { return Singleton; } }
+
+        public static void IntializeScope(Scope scope)
+        {
+            scope["log"] = new Function("log", BuiltIn.Instance.Log);
+            scope["asin"] = new Function("asin", BuiltIn.Instance.Asin);
+            scope["sin"] = new Function("sin", BuiltIn.Instance.Sin);
+            scope["sinh"] = new Function("sinh", BuiltIn.Instance.Sinh);
+            scope["acos"] = new Function("acos", BuiltIn.Instance.Acos);
+            scope["cos"] = new Function("cos", BuiltIn.Instance.Cos);
+            scope["cosh"] = new Function("cosh", BuiltIn.Instance.Cosh);
+            scope["sqrt"] = new Function("sqrt", BuiltIn.Instance.Sqrt);
+            scope["atan"] = new Function("atan", BuiltIn.Instance.Atan);
+            scope["tan"] = new Function("tan", BuiltIn.Instance.Tan);
+            scope["tanh"] = new Function("tanh", BuiltIn.Instance.Tanh);
+            scope["pow"] = new Function("pow", BuiltIn.Instance.Pow);
+            scope["e"] = Math.E;
+            scope["pi"] = Math.PI;
+        }
 
         public Func<object[], object> Log = arguments =>
             {

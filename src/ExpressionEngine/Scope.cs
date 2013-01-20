@@ -30,7 +30,7 @@
 using System.Collections.Generic;
 #endregion
 
-namespace ExpressionEngine.Primitives
+namespace ExpressionEngine
 {
     class Scope
     {

@@ -29,7 +29,7 @@
 #region Using Directives
 using System;
 using System.Linq;
-using ExpressionEngine.Internal.Model;
+using ExpressionEngine.Internal.Ast;
 #endregion
 
 namespace ExpressionEngine.Internal
@@ -52,9 +52,16 @@ namespace ExpressionEngine.Internal
 
         private void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_disposed)
             {
-                _scanner.Dispose();
+                return;
+            }
+            if (disposing)
+            {
+                if (_scanner != null)
+                {
+                    _scanner.Dispose();
+                }
                 _disposed = true;
             }
         }

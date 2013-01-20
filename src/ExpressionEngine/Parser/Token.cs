@@ -143,7 +143,7 @@ namespace ExpressionEngine.Internal
 
         public override string ToString()
         {
-            return string.Format("{0} [{1}]", this.Text, this.GetType().Name);
+            return "{0} [{1}]".FormatInvariant(Text, GetType().Name);
         }
 
         private readonly string _text;

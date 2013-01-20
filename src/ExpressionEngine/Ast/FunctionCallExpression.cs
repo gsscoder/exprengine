@@ -1,6 +1,6 @@
 #region License
 //
-// Expression Engine Library: LiteralExpression.cs
+// Expression Engine Library: FunctionCallExpression.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -27,17 +27,21 @@
 //
 #endregion
 #region Using Directives
-using ExpressionEngine.Primitives;
+using System.Collections.Generic;
+
 #endregion
 
-namespace ExpressionEngine.Internal.Model
+namespace ExpressionEngine.Internal.Ast
 {
-    class VariableExpression : NameExpression
+    sealed class FunctionCallExpression : NameExpression
     {
-        public VariableExpression(string name)
+        public FunctionCallExpression(string name)
         {
             Name = name;
+            Arguments = new List<Expression>();
         }
+
+        public List<Expression> Arguments { get; private set; }
 
         public override PrimitiveType ResultType
         {

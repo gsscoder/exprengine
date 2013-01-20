@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 //
-// Expression Engine Library: Instance.cs
+// Expression Engine Library: PrimitiveType.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -26,48 +26,15 @@
 // THE SOFTWARE.
 //
 #endregion
-#region Using Directives
-using System;
-#endregion
 
-namespace ExpressionEngine.Primitives
+namespace ExpressionEngine
 {
-    [Serializable]
-    abstract class Instance : IComparable<Instance>
+    // This enum will be useful when (ASAP) we will support more data types,
+    // first of all bool for comparisons
+    enum PrimitiveType : byte
     {
-        public static Instance[] Empty = new Instance[0];
-
-        //public const string TypeReal = "real";
-        //public const string TypeInteger = "int";
-
-        public abstract object Value { get; }
-
-        //public abstract string Type { get; }
-        public abstract PrimitiveType PrimitiveType  { get; }
-
-        public virtual double ToNumber()
-        {
-            return 0D;
-        }
-
-        //public virtual long ToInteger()
-        //{
-        //    return (long) ToNumber();
-        //}
-
-        public virtual object ToObject()
-        {
-            return Value;
-        }
-
-        public override int GetHashCode()
-        {
-            return Value != null ? Value.GetHashCode() : base.GetHashCode();
-        }
-
-        public int CompareTo(Instance other)
-        {
-            return ToString().CompareTo(other.ToString());
-        }
+        Boolean,     // map to System.Boolean
+        Number      // map to System.Double
+        //String      // map to System.String
     }
 }

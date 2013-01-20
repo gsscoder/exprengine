@@ -1,6 +1,6 @@
 #region License
 //
-// Expression Engine Library: UnaryExpression.cs
+// Expression Engine Library: Expression.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -27,23 +27,19 @@
 //
 #endregion
 #region Using Directives
-using ExpressionEngine.Primitives;
+
 #endregion
 
-namespace ExpressionEngine.Internal.Model
+namespace ExpressionEngine.Internal.Ast
 {
-    sealed class UnaryExpression : OperatorExpression
+    abstract class Expression
     {
-        public Expression Value { get; set; }
-
-        public override PrimitiveType ResultType
+        protected Expression()
         {
-            get { return Value.ResultType; }
         }
 
-        public override void Accept(Visitor visitor)
-        {
-            visitor.Visit(this);
-        }
+        public abstract PrimitiveType ResultType { get; }
+
+        public abstract void Accept(Visitor visitor);
     }
 }

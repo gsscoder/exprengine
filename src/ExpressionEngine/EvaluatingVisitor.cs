@@ -30,8 +30,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using ExpressionEngine.Primitives;
-using ExpressionEngine.Internal.Model;
+
+using ExpressionEngine.Internal.Ast;
 #endregion
 
 namespace ExpressionEngine.Internal

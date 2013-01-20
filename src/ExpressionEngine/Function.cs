@@ -30,7 +30,7 @@
 using System;
 #endregion
 
-namespace ExpressionEngine.Primitives
+namespace ExpressionEngine
 {
     class Function
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ExpressionEngine.Primitives
+namespace ExpressionEngine
 {
     public static class TypeConverter
     {
@@ -30,7 +30,7 @@ namespace ExpressionEngine.Primitives
             {
                 return (double) value;
             }
-            throw new EvaluatorException(string.Format("Can't convert object of type '{0}' to number.", value.GetType()));
+            throw new EvaluatorException("Can't convert object of type '{0}' to number.".FormatInvariant(value.GetType()));
         }
 
         public static bool ToBoolean(object value)
@@ -43,9 +43,7 @@ namespace ExpressionEngine.Primitives
             {
                 return ((double) value) != 0 && double.IsNaN((double) value) == false;
             }
-            throw new EvaluatorException(string.Format("Can't convert object of type '{0}' to boolean.", value.GetType()));
+            throw new EvaluatorException("Can't convert object of type '{0}' to boolean.".FormatInvariant(value.GetType()));
         }
-
-        //public static object 
     }
 }

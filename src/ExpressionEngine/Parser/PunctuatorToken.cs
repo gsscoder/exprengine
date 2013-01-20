@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ExpressionEngine.Internal.Model;
+using ExpressionEngine.Internal.Ast;
 
 namespace ExpressionEngine.Internal
 {

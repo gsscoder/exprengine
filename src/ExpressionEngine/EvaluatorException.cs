@@ -34,36 +34,40 @@ using System.Runtime.Serialization;
 namespace ExpressionEngine
 {
     /// <summary>
-    /// The exception that is thrown when an expression can't be evaluated by <see cref="ExpressionEngine.ExpressionEvaluator"/>.
+    /// The exception that is thrown when an expression can't be evaluated by <see cref="ExpressionEngine.Context"/>.
     /// </summary>
     [Serializable]
-    public sealed class EvaluatorException : Exception
+    public class EvaluatorException : Exception
     {
-        internal EvaluatorException(string message)
+        public EvaluatorException()
+        {
+        }
+
+        public EvaluatorException(string message)
             : base(message)
         {
             ColumnNumber = -1;
         }
 
-        internal EvaluatorException(string message, Exception innerException)
+        public EvaluatorException(string message, Exception innerException)
             : base(message, innerException)
         {
             ColumnNumber = -1;
         }
 
-        internal EvaluatorException(int columnNumber, string message)
+        public EvaluatorException(int columnNumber, string message)
             : base(message)
         {
             ColumnNumber = columnNumber;
         }
 
-        internal EvaluatorException(int columnNumber, string message, Exception innerException)
+        public EvaluatorException(int columnNumber, string message, Exception innerException)
             : base(message, innerException)
         {
             ColumnNumber = columnNumber;
         }
 
-        private EvaluatorException(SerializationInfo info, StreamingContext context)
+        protected EvaluatorException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
             ColumnNumber = -1;

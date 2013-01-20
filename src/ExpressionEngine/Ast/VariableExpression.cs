@@ -1,6 +1,6 @@
 #region License
 //
-// Expression Engine Library: OperatorType.cs
+// Expression Engine Library: LiteralExpression.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -26,26 +26,27 @@
 // THE SOFTWARE.
 //
 #endregion
+#region Using Directives
 
-namespace ExpressionEngine.Internal.Model
+#endregion
+
+namespace ExpressionEngine.Internal.Ast
 {
-    enum OperatorType : byte
+    class VariableExpression : NameExpression
     {
-        UnaryPlus,
-        UnaryMinus,
+        public VariableExpression(string name)
+        {
+            Name = name;
+        }
 
-        //Exponent,
-        Multiply,
-        Divide,
-        Modulo,
-        Add,
-        Subtract,
+        public override PrimitiveType ResultType
+        {
+            get { return PrimitiveType.Number; }
+        }
 
-        Equality,
-        Inequality,
-        LessThan,
-        GreaterThan,
-        LessThanOrEqual,
-        GreaterThanOrEqual,
+        public override void Accept(Visitor visitor)
+        {
+            visitor.Visit(this);
+        }
     }
 }

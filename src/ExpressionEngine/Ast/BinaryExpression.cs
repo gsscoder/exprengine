@@ -1,6 +1,6 @@
 #region License
 //
-// Expression Engine Library: LiteralExpression.cs
+// Expression Engine Library: EvaluatorException.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -27,25 +27,40 @@
 //
 #endregion
 #region Using Directives
-using ExpressionEngine.Primitives;
+using System;
+
 #endregion
 
-namespace ExpressionEngine.Internal.Model
+namespace ExpressionEngine.Internal.Ast
 {
-    sealed class LiteralExpression : Expression
+    sealed class BinaryExpression : OperatorExpression
     {
-        private LiteralExpression() {}
+        public Expression Left { get; set; }
 
-        public LiteralExpression(object value)
-        {
-            Value = value;
-        }
-
-        public object Value { get; private set; }
+        public Expression Right { get; set; }
 
         public override PrimitiveType ResultType
         {
-            get { return TypeConverter.ToPrimitiveType(Value.GetType()); }
+            get
+            {
+                switch (Operator)
+                {
+                    case OperatorType.Add:
+                    case OperatorType.Subtract:
+                    case OperatorType.Multiply:
+                    case OperatorType.Divide:
+                    case OperatorType.Modulo:
+                        return PrimitiveType.Number;
+                    case OperatorType.Equality:
+                    case OperatorType.Inequality:
+                    case OperatorType.LessThan:
+                    case OperatorType.GreaterThan:
+                    case OperatorType.LessThanOrEqual:
+                    case OperatorType.GreaterThanOrEqual:
+                        return PrimitiveType.Boolean;
+                }
+                throw new InvalidOperationException();
+            }
         }
 
         public override void Accept(Visitor visitor)

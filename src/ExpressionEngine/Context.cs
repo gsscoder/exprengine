@@ -1,6 +1,6 @@
 ﻿#region License
 //
-// Expression Engine Library: ExpressionEvaluator.cs
+// Expression Engine Library: Context.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -29,7 +29,6 @@
 #region Using Directives
 using System;
 using ExpressionEngine.Internal;
-using ExpressionEngine.Primitives;
 #endregion
 
 namespace ExpressionEngine
@@ -37,15 +36,15 @@ namespace ExpressionEngine
     /// <summary>
     /// Provides methods for expressions evaluation.
     /// </summary>
-    public sealed class ExpressionEvaluator
+    public sealed class Context
     {
         /// <summary>
-        /// Creates an instance of <see cref="ExpressionEngine.ExpressionEvaluator"/>.
+        /// Creates an instance of <see cref="ExpressionEngine.Context"/>.
         /// </summary>
-        public ExpressionEvaluator()
+        public Context()
         {
             _global = new Scope();
-            InitBuiltIn(_global);
+            BuiltIn.IntializeScope(_global);
         }
 
         /// <summary>
@@ -73,38 +72,12 @@ namespace ExpressionEngine
         }
 
         /// <summary>
-        /// Evalutates an expression supplied as a <see cref="System.String"/> without persistence of context.
-        /// </summary>
-        /// <param name="expression">A <see cref="System.String"/> expression to evaluate.</param>
-        /// <returns>An <see cref="System.Object"/> that represents the result of evaluation.</returns>
-        public static object EvaluateNoContext(string expression)
-        {
-            var tree = SyntaxTree.ParseString(expression);
-            var global = new Scope();
-            InitBuiltIn(global);
-            var visitor = Visitor.Create(global);
-            tree.Root.Accept(visitor);
-            return visitor.Result;
-        }
-
-        /// <summary>
-        /// Evalutates an expression supplied as a <see cref="System.String"/> without persistence of context.
-        /// </summary>
-        /// <typeparam name="T">The type specified for result.</typeparam>
-        /// <param name="expression">A <see cref="System.String"/> expression to evaluate.</param>
-        /// <returns>A <typeparamref name="T"/> that represents the result of evaluation.</returns>
-        public static T EvaluateNoContextAs<T>(string expression)
-        {
-            return (T) EvaluateNoContext(expression);
-        }
-
-        /// <summary>
         /// Define a function in context of global scope.
         /// </summary>
         /// <param name="name">The name of the function.</param>
         /// <param name="function">The lamda expression of the function.</param>
-        /// <returns>An <see cref="ExpressionEngine.ExpressionEvaluator"/> instance with modified scope.</returns>
-        public ExpressionEvaluator SetFunction(string name, Func<object[], object> function)
+        /// <returns>An <see cref="ExpressionEngine.Context"/> instance with modified scope.</returns>
+        public Context SetFunction(string name, Func<object[], object> function)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name", "Can't define a function with null or empty name.");
             if (function == null) throw new ArgumentNullException("name", "Can't define a function with null lamda.");
@@ -118,31 +91,13 @@ namespace ExpressionEngine
         /// </summary>
         /// <param name="name">The name of the variable.</param>
         /// <param name="variable">The value of the variable.</param>
-        /// <returns>An <see cref="ExpressionEngine.ExpressionEvaluator"/> instance with modified scope.</returns>
-        public ExpressionEvaluator SetVariable(string name, double variable)
+        /// <returns>An <see cref="ExpressionEngine.Context"/> instance with modified scope.</returns>
+        public Context SetVariable(string name, double variable)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name", "Can't define a variable with null or empty name.");
 
             _global[name] = variable;
             return this;
-        }
-
-        private static void InitBuiltIn(Scope scope)
-        {
-            scope["log"] = new Function("log", BuiltIn.Instance.Log);
-            scope["asin"] = new Function("asin",  BuiltIn.Instance.Asin);
-            scope["sin"] = new Function("sin",  BuiltIn.Instance.Sin);
-            scope["sinh"] = new Function("sinh",  BuiltIn.Instance.Sinh);
-            scope["acos"] = new Function("acos", BuiltIn.Instance.Acos);
-            scope["cos"] = new Function("cos",  BuiltIn.Instance.Cos);
-            scope["cosh"] = new Function("cosh",  BuiltIn.Instance.Cosh);
-            scope["sqrt"] = new Function("sqrt",  BuiltIn.Instance.Sqrt);
-            scope["atan"] = new Function("atan",  BuiltIn.Instance.Atan);
-            scope["tan"] = new Function("tan",  BuiltIn.Instance.Tan);
-            scope["tanh"] = new Function("tanh",  BuiltIn.Instance.Tanh);
-            scope["pow"] = new Function("pow", BuiltIn.Instance.Pow);
-            scope["e"] = Math.E;
-            scope["pi"] = Math.PI;
         }
 
         private readonly Scope _global;

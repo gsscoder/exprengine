@@ -45,7 +45,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EvaluatorEngineFixture.cs">
+    <Compile Include="ContextFixture.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DefineNamesFixture.cs" />

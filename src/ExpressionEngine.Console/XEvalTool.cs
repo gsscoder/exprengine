@@ -192,7 +192,7 @@ namespace ExpressionEngine
         private readonly Options _options = new Options();
         private readonly HeadingInfo _heading = new HeadingInfo(ThisAssembly.Name,
             ThisAssembly.InformationalVersion + " " + ThisAssembly.ReleaseType);
-        private readonly ExpressionEvaluator _evaluator = new ExpressionEvaluator();
+        private readonly Context _evaluator = new Context();
         #region Exit Code Constants
         private const int Success = 0;
         private const int Failure = 1;

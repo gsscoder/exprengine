@@ -27,8 +27,8 @@
 //
 #endregion
 #region Using Directives
-using ExpressionEngine.Internal.Model;
-using ExpressionEngine.Primitives;
+using ExpressionEngine.Internal.Ast;
+
 #endregion
 
 namespace ExpressionEngine.Internal

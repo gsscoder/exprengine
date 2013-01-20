@@ -1,6 +1,6 @@
 #region License
 //
-// Expression Engine Library: PrimitiveType.cs
+// Expression Engine Library: NameExpression.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -27,14 +27,10 @@
 //
 #endregion
 
-namespace ExpressionEngine.Primitives
+namespace ExpressionEngine.Internal.Ast
 {
-    // This enum will be useful when (ASAP) we will support more data types,
-    // first of all bool for comparisons
-    enum PrimitiveType : byte
+    abstract class NameExpression : Expression
     {
-        Boolean,     // map to System.Boolean
-        Number      // map to System.Double
-        //String      // map to System.String
+        public string Name { get; protected set; }
     }
 }

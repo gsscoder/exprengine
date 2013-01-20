@@ -237,9 +237,16 @@ namespace ExpressionEngine.Internal
 
         private void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_disposed)
             {
-                _text.Dispose();
+                return;
+            }
+            if (disposing)
+            {
+                if (_text != null)
+                {
+                    _text.Dispose();
+                }
                 _disposed = true;
             }
         }

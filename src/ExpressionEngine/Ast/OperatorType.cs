@@ -1,6 +1,6 @@
 #region License
 //
-// Expression Engine Library: FunctionCallExpression.cs
+// Expression Engine Library: OperatorType.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -26,31 +26,26 @@
 // THE SOFTWARE.
 //
 #endregion
-#region Using Directives
-using System.Collections.Generic;
-using ExpressionEngine.Primitives;
-#endregion
 
-namespace ExpressionEngine.Internal.Model
+namespace ExpressionEngine.Internal.Ast
 {
-    sealed class FunctionCallExpression : NameExpression
+    enum OperatorType : byte
     {
-        public FunctionCallExpression(string name)
-        {
-            Name = name;
-            Arguments = new List<Expression>();
-        }
+        UnaryPlus,
+        UnaryMinus,
 
-        public List<Expression> Arguments { get; private set; }
+        //Exponent,
+        Multiply,
+        Divide,
+        Modulo,
+        Add,
+        Subtract,
 
-        public override PrimitiveType ResultType
-        {
-            get { return PrimitiveType.Number; }
-        }
-
-        public override void Accept(Visitor visitor)
-        {
-            visitor.Visit(this);
-        }
+        Equality,
+        Inequality,
+        LessThan,
+        GreaterThan,
+        LessThanOrEqual,
+        GreaterThanOrEqual,
     }
 }

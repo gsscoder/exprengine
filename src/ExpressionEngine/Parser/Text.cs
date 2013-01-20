@@ -37,7 +37,7 @@ namespace ExpressionEngine.Internal
     /// <summary>
     /// Decouples underlying <see cref="System.IO.TextReader"/> from <see cref="ExpressionEngine.Internal.Lexer"/>.
     /// </summary>
-    sealed class Text
+    sealed class Text : IDisposable
     {
         public Text(TextReader reader)
         {
@@ -83,11 +83,19 @@ namespace ExpressionEngine.Internal
 
             GC.SuppressFinalize(this);
         }
+
         private void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_disposed)
             {
-                _reader.Dispose();
+                return;
+            }
+            if (disposing)
+            {
+                if (_reader != null)
+                {
+                    _reader.Dispose();
+                }
                 _disposed = true;
             }
         }

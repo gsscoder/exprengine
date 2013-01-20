@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 //
-// Expression Engine Library: Number.cs
+// Expression Engine Library: UnaryExpression.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -27,47 +27,23 @@
 //
 #endregion
 #region Using Directives
-using System.Globalization;
+
 #endregion
 
-namespace ExpressionEngine.Primitives
+namespace ExpressionEngine.Internal.Ast
 {
-    class Number : Instance
+    sealed class UnaryExpression : OperatorExpression
     {
-        public Number(double value)
+        public Expression Value { get; set; }
+
+        public override PrimitiveType ResultType
         {
-            _value = value;
+            get { return Value.ResultType; }
         }
 
-        public override object Value
+        public override void Accept(Visitor visitor)
         {
-            get { return _value; }
+            visitor.Visit(this);
         }
-
-        //public override string Type
-        //{
-        //    get { return Instance.TypeReal; }
-        //}
-        public override PrimitiveType PrimitiveType
-        {
-            get { return PrimitiveType.Number; }
-        }
-
-        public override double ToNumber()
-        {
-            return _value;
-        }
-
-        public override object ToObject()
-        {
-            return _value;
-        }
-
-        public override string ToString()
-        {
-            return _value.ToString(CultureInfo.InvariantCulture);
-        }
-
-        private readonly double _value;
     }
 }

@@ -27,7 +27,7 @@
 //
 #endregion
 
-namespace ExpressionEngine.Internal.Model
+namespace ExpressionEngine.Internal.Ast
 {
     abstract class OperatorExpression : Expression
     {

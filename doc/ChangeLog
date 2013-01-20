@@ -1,5 +1,11 @@
 2013-01-16      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
+  * Refactoring, ExpressionEvaluator splitted in Context (as the name, evaluation
+      with context) and Evaluator (static helper, contextless evaluation).
+  * Version incremented to 1.0.5.15 beta
+
+2013-01-16      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
   * Added support for exponent in numeric literal ([E|e][+|-][DIGIT]).
   * Version incremented to 1.0.5.11 beta
 
