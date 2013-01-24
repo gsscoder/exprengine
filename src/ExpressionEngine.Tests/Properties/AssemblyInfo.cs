@@ -32,15 +32,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 #endregion
 
-[assembly: AssemblyTitle(_ThisAssembly.Title)]
-[assembly: AssemblyDescription(_ThisAssembly.Title)]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Expresion Engine Library")]
-[assembly: AssemblyCopyright(_ThisAssembly.Copyright)]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion(_ThisAssembly.Version)]
-[assembly: AssemblyInformationalVersion(_ThisAssembly.InformationalVersion)]
+[assembly: AssemblyTitle("ExpressionEngine.Tests.dll")]
 
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]

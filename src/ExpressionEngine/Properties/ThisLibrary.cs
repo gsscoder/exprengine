@@ -5,8 +5,8 @@ namespace ExpressionEngine
     {
         public const string Name = "ExpressionEngine";
         public const string ProductName = "Expression Engine Library";
-        public const string Version = "1.0.5.15";
-        public const string ReleaseType = "beta";
+        public const string Version = "0.6.0.1";
+        public const string ReleaseType = "alfa";
     }
     #pragma warning restore 1591
 }

@@ -76,7 +76,6 @@ namespace ExpressionEngine.Internal
                 case '-': return new PunctuatorToken(TokenType.Minus);
                 case '*': return new PunctuatorToken(TokenType.Multiply);
                 case '/': return new PunctuatorToken(TokenType.Divide);
-                //case '^': return new PunctuatorToken(TokenType.Exponent);
                 case '%': return new PunctuatorToken(TokenType.Modulo);
                 case ',': return new PunctuatorToken(TokenType.Comma);
                 case '=':
@@ -107,6 +106,44 @@ namespace ExpressionEngine.Internal
                         return new PunctuatorToken(TokenType.GreaterThanOrEqual);
                     }
                     return new PunctuatorToken(TokenType.GreaterThan);
+                // String literals
+                case '"':
+                    _buffer.Length = 0;
+                    while (true) {
+                        c = _text.PeekChar();
+                        if (c == '"') { break; }
+                        if (c == '\0') { throw new EvaluatorException(_text.Column, "Unexpected end of input in string literal."); }
+                        if (c == '\\')
+                        {
+                            switch (c)
+                            {
+                                case '"': // double quote
+                                    _buffer.Append('\x22');
+                                    break;
+                                case 'n': // line feed
+                                    _buffer.Append('\x0A');
+                                    break;
+                                case 'r': // carriage return
+                                    _buffer.Append('\x0D');
+                                    break;
+                                case 't': // horizontal tab
+                                    _buffer.Append('\x09');
+                                    break;
+                                case '0':
+                                case '1':
+                                case '2':
+                                    _buffer.Append(ScanDecimalEscapeSequence(c));
+                                    break;
+                                default:
+                                    throw new EvaluatorException(_text.Column, "Invalid escape sequence.");
+                            }
+                        }
+                        else {
+                            _buffer.Append(c);
+                            _text.NextChar();
+                        }
+                    }
+                    return new LiteralToken(_buffer.ToString());
                 // Numeric literals
                 case '0':
                 case '1':
@@ -285,6 +322,26 @@ namespace ExpressionEngine.Internal
                 styles = seenExp ? NumberStyles.AllowExponent : NumberStyles.None;
             }
             return double.Parse(buf.ToString(), styles, NumberFormatInfo);
+        }
+
+        private char ScanDecimalEscapeSequence(char firstChar)
+        {
+            var escape = new StringBuilder(new string((char)firstChar, 1));
+            for (var i = 0; i < 2; i++)
+            {
+                int c = _text.PeekChar();
+                if (!(c >= '0' && c <= '9'))
+                {
+                    throw new EvaluatorException(_text.Line, "Invalid decimal escape sequence.");
+                }
+                escape.Append(c);
+            }
+            byte e;
+            if (byte.TryParse(escape.ToString(), out e))
+            {
+                return Encoding.ASCII.GetChars(new byte[] {e})[0];
+            }
+            throw new EvaluatorException(_text.Line, "Invalid decimal escape sequence.");
         }
 
         ~Lexer()

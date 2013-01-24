@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 //
-// Expression Engine Library: AssemblyInfo.cs
+// Expression Engine Library: CommonAssemblyInfo.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -26,13 +26,18 @@
 // THE SOFTWARE.
 //
 #endregion
+#region Using Directives
+using System;
+using System.Reflection;
+using System.Resources;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+#endregion
 
-class _ThisAssembly
-{
-    internal const string Name = "ExpressionEngine.Tests";
-    internal const string Title = Name + ".dll";
-    internal const string Copyright = "Copyright (C) 2012 Giacomo Stelluti Scala";
-	internal const string Version = ExpressionEngine.ThisLibrary.Version;
-	internal const string ReleaseType = ExpressionEngine.ThisLibrary.ReleaseType;
-    internal const string InformationalVersion = "1.0";
-}
+[assembly: AssemblyProduct("Expression Engine Library")]
+[assembly: AssemblyDescription("Expressions Evaluator for .NET")]
+[assembly: AssemblyCopyright("Copyright (C) 2012 - 2013 Giacomo Stelluti Scala")]
+[assembly: AssemblyVersion("0.6.0.1")] // alfa
+[assembly: AssemblyInformationalVersion("0.6")]
+[assembly: NeutralResourcesLanguage("en-US")]
+[assembly: AssemblyCulture("")]

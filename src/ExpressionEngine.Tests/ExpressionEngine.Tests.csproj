@@ -50,19 +50,21 @@
     </Compile>
     <Compile Include="DefineNamesFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\ThisAssembly.cs" />
     <Compile Include="LexerFixture.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="RelationalFixture.cs" />
     <Compile Include="TextFixture.cs" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExpressionEngine\ExpressionEngine.csproj">
-      <Project>{241a5dbc-bb66-4e65-beda-98b1db83d2eb}</Project>
+      <Project>{241A5DBC-BB66-4E65-BEDA-98B1DB83D2EB}</Project>
       <Name>ExpressionEngine</Name>
     </ProjectReference>
   </ItemGroup>

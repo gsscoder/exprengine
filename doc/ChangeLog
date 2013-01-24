@@ -1,3 +1,9 @@
+2013-01-24      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * First changes to lexer for handle string literals.
+  * ExpressionEngine.Console temporarily removed (not deleted) from source tree.
+  * Version policy changed, new version: 0.6.0.1 alfa (git tags delete).
+
 2013-01-16      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * Refactoring, ExpressionEvaluator splitted in Context (as the name, evaluation

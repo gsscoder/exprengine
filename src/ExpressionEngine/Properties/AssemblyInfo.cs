@@ -34,15 +34,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 #endregion
 
-[assembly: AssemblyTitle(ThisAssembly.Title)]
-[assembly: AssemblyProduct(ExpressionEngine.ThisLibrary.ProductName)]
-[assembly: AssemblyDescription(ThisAssembly.Title)]
-[assembly: AssemblyCopyright(ThisAssembly.Copyright)]
-[assembly: AssemblyVersion(ThisAssembly.Version)]
-[assembly: AssemblyInformationalVersion(ThisAssembly.InformationalVersion)]
-[assembly: NeutralResourcesLanguage("en-US")]
-[assembly: AssemblyCulture("")]
-[assembly: InternalsVisibleTo(ExpressionEngine.ThisLibrary.Name + ".Tests")]
+[assembly: AssemblyTitle("ExpressionEngine.dll")]
+[assembly: InternalsVisibleTo("ExpressionEngine.Tests")]
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
 #else

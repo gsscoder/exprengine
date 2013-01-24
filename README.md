@@ -1,9 +1,11 @@
-Expression Engine Library 1.0.5.15 Beta.
+Expression Engine Library 0.6.0.1 alfa.
 ===
 This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and uses an AST-evaluation algorithm. You can use built-in or add your functions and variables to global scope. It was written primarily for fun and and as programming exercise; anyway if you anyone find it useful, please send feature requests or issues; but please take note that __this is still a work in progress__.
 
 News:
 ---
+  - Version policy changed.
+  - First changes to lexer for handle string literals.
   - Refactoring, ExpressionEvaluator splitted in ``Context`` (as the name, evaluation with context) and ``Evaluator`` (static helper, contextless evaluation).
   - Added support for exponent in numeric literal ``([E|e][+|-][DIGIT])``.
   - Parser class aligned to new grammar.
