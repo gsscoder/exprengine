@@ -1,6 +1,6 @@
 ﻿#region License
 //
-// Expression Engine Library: MathExpressionBase.cs
+// Expression Engine Library: ScannerFixture.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -28,9 +28,8 @@
 #endregion
 #region Using Directives
 using System;
-using System.IO;
-using UnitTest = NUnit.Framework;
-using Should.Fluent;
+using UnitTest = NUnit.Framework; // avoid name conflict with local Text type
+using FluentAssertions;
 using ExpressionEngine.Internal;
 #endregion
 
@@ -44,24 +43,24 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("((10 + 1 - (3 - .234)) * 300)  /  10.1"));
 
-            scanner.NextToken().Type.Should().Equal(TokenType.LeftParenthesis);
-            scanner.NextToken().Type.Should().Equal(TokenType.LeftParenthesis);
-            ((LiteralToken) scanner.NextToken()).Value.Should().Equal(10D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Minus);
-            scanner.NextToken().Type.Should().Equal(TokenType.LeftParenthesis);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(3D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Minus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.234D);
-            scanner.NextToken().Type.Should().Equal(TokenType.RightParenthesis);
-            scanner.NextToken().Type.Should().Equal(TokenType.RightParenthesis);
-            scanner.NextToken().Type.Should().Equal(TokenType.Multiply);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(300D);
-            scanner.NextToken().Type.Should().Equal(TokenType.RightParenthesis);
-            scanner.NextToken().Type.Should().Equal(TokenType.Divide);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10.1D);
-            scanner.NextToken().Should().Be.Null();
+            scanner.NextToken().Type.Should().Be(TokenType.LeftParenthesis);
+            scanner.NextToken().Type.Should().Be(TokenType.LeftParenthesis);
+            ((LiteralToken) scanner.NextToken()).Value.Should().Be(10D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(1D);
+            scanner.NextToken().Type.Should().Be(TokenType.Minus);
+            scanner.NextToken().Type.Should().Be(TokenType.LeftParenthesis);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(3D);
+            scanner.NextToken().Type.Should().Be(TokenType.Minus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(.234D);
+            scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
+            scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
+            scanner.NextToken().Type.Should().Be(TokenType.Multiply);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(300D);
+            scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
+            scanner.NextToken().Type.Should().Be(TokenType.Divide);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(10.1D);
+            scanner.NextToken().Should().BeNull();
         }
 
         [UnitTest.Test]
@@ -69,17 +68,17 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("1 + 3"));
 
-            ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(1D);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1D);
+            ((LiteralToken)scanner.PeekToken()).Value.Should().Be(1D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(1D);
 
-            scanner.PeekToken().Type.Should().Equal(TokenType.Plus);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
+            scanner.PeekToken().Type.Should().Be(TokenType.Plus);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
 
-            ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(3D);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(3D);
+            ((LiteralToken)scanner.PeekToken()).Value.Should().Be(3D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(3D);
 
-            scanner.PeekToken().Should().Be.Null();
-            scanner.NextToken().Should().Be.Null();
+            scanner.PeekToken().Should().BeNull();
+            scanner.NextToken().Should().BeNull();
         }
 
         [UnitTest.Test]
@@ -87,17 +86,17 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("10 % 2"));
 
-            ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(10D);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10D);
+            ((LiteralToken)scanner.PeekToken()).Value.Should().Be(10D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(10D);
 
-            scanner.PeekToken().Type.Should().Equal(TokenType.Modulo);
-            scanner.NextToken().Type.Should().Equal(TokenType.Modulo);
+            scanner.PeekToken().Type.Should().Be(TokenType.Modulo);
+            scanner.NextToken().Type.Should().Be(TokenType.Modulo);
 
-            ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(2D);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(2D);
+            ((LiteralToken)scanner.PeekToken()).Value.Should().Be(2D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(2D);
 
-            scanner.PeekToken().Should().Be.Null();
-            scanner.NextToken().Should().Be.Null();
+            scanner.PeekToken().Should().BeNull();
+            scanner.NextToken().Should().BeNull();
         }
 
         [UnitTest.Test]
@@ -105,11 +104,11 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("123"));
 
-            ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(123D);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(123D);
+            ((LiteralToken)scanner.PeekToken()).Value.Should().Be(123D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(123D);
 
-            scanner.PeekToken().Should().Be.Null();
-            scanner.NextToken().Should().Be.Null();
+            scanner.PeekToken().Should().BeNull();
+            scanner.NextToken().Should().BeNull();
         }
 
         [UnitTest.Test]
@@ -117,11 +116,11 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString(".123"));
 
-            ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(.123D);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.123D);
+            ((LiteralToken)scanner.PeekToken()).Value.Should().Be(.123D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(.123D);
 
-            scanner.PeekToken().Should().Be.Null();
-            scanner.NextToken().Should().Be.Null();
+            scanner.PeekToken().Should().BeNull();
+            scanner.NextToken().Should().BeNull();
         }
 
         [UnitTest.Test]
@@ -129,14 +128,14 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("+123"));
 
-            scanner.PeekToken().Type.Should().Equal(TokenType.Plus);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
+            scanner.PeekToken().Type.Should().Be(TokenType.Plus);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
 
-            ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(123D);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(123D);
+            ((LiteralToken)scanner.PeekToken()).Value.Should().Be(123D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(123D);
 
-            scanner.PeekToken().Should().Be.Null();
-            scanner.NextToken().Should().Be.Null();
+            scanner.PeekToken().Should().BeNull();
+            scanner.NextToken().Should().BeNull();
         }
 
         [UnitTest.Test]
@@ -144,14 +143,14 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("+.123"));
 
-            scanner.PeekToken().Type.Should().Equal(TokenType.Plus);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
+            scanner.PeekToken().Type.Should().Be(TokenType.Plus);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
 
-            ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(.123D);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.123D);
+            ((LiteralToken)scanner.PeekToken()).Value.Should().Be(.123D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(.123D);
 
-            scanner.PeekToken().Should().Be.Null();
-            scanner.NextToken().Should().Be.Null();
+            scanner.PeekToken().Should().BeNull();
+            scanner.NextToken().Should().BeNull();
         }
 
         [UnitTest.Test]
@@ -159,11 +158,11 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("-123"));
 
-            scanner.PeekToken().Type.Should().Equal(TokenType.Minus);
-            scanner.NextToken().Type.Should().Equal(TokenType.Minus);
+            scanner.PeekToken().Type.Should().Be(TokenType.Minus);
+            scanner.NextToken().Type.Should().Be(TokenType.Minus);
 
-            ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(123D);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(123D);
+            ((LiteralToken)scanner.PeekToken()).Value.Should().Be(123D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(123D);
         }
 
         [UnitTest.Test]
@@ -171,38 +170,38 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("-.123"));
 
-            scanner.PeekToken().Type.Should().Equal(TokenType.Minus);
-            scanner.NextToken().Type.Should().Equal(TokenType.Minus);
+            scanner.PeekToken().Type.Should().Be(TokenType.Minus);
+            scanner.NextToken().Type.Should().Be(TokenType.Minus);
 
-            ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(.123D);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.123D);
+            ((LiteralToken)scanner.PeekToken()).Value.Should().Be(.123D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(.123D);
         }
 
         //[UnitTest.Test]
         //public void NextTokenIncrementsPosition()
         //{
         //    var scanner = new Lexer(Text.OfString(".3 / 9.99"));
-        //    scanner.Position.Should().Equal(0);
+        //    scanner.Position.Should().Be(0);
 
-        //    ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(.3D);
-        //    scanner.Position.Should().Equal(0);
-        //    ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.3D);
-        //    scanner.Position.Should().Equal(1);
+        //    ((LiteralToken)scanner.PeekToken()).Value.Should().Be(.3D);
+        //    scanner.Position.Should().Be(0);
+        //    ((LiteralToken)scanner.NextToken()).Value.Should().Be(.3D);
+        //    scanner.Position.Should().Be(1);
 
-        //    scanner.PeekToken().Type.Should().Equal(TokenType.Divide);
-        //    scanner.Position.Should().Equal(1);
-        //    scanner.NextToken().Type.Should().Equal(TokenType.Divide);
-        //    scanner.Position.Should().Equal(2);
+        //    scanner.PeekToken().Type.Should().Be(TokenType.Divide);
+        //    scanner.Position.Should().Be(1);
+        //    scanner.NextToken().Type.Should().Be(TokenType.Divide);
+        //    scanner.Position.Should().Be(2);
 
-        //    ((LiteralToken)scanner.PeekToken()).Value.Should().Equal(9.99D);
-        //    scanner.Position.Should().Equal(2);
-        //    ((LiteralToken)scanner.NextToken()).Value.Should().Equal(9.99D);
-        //    scanner.Position.Should().Equal(3);
+        //    ((LiteralToken)scanner.PeekToken()).Value.Should().Be(9.99D);
+        //    scanner.Position.Should().Be(2);
+        //    ((LiteralToken)scanner.NextToken()).Value.Should().Be(9.99D);
+        //    scanner.Position.Should().Be(3);
 
-        //    scanner.PeekToken().Should().Be.Null();
-        //    scanner.Position.Should().Equal(3);
-        //    scanner.NextToken().Should().Be.Null();
-        //    scanner.Position.Should().Equal(-1);
+        //    scanner.PeekToken().Should().BeNull();
+        //    scanner.Position.Should().Be(3);
+        //    scanner.NextToken().Should().BeNull();
+        //    scanner.Position.Should().Be(-1);
         //}
 
         [UnitTest.Test]
@@ -210,20 +209,20 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString(".2 / +9.99 * (-.123 + -2)"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.2D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Divide);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(9.99D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Multiply);
-            scanner.NextToken().Type.Should().Equal(TokenType.LeftParenthesis);
-            scanner.NextToken().Type.Should().Equal(TokenType.Minus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.123D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            scanner.NextToken().Type.Should().Equal(TokenType.Minus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(2D);
-            scanner.NextToken().Type.Should().Equal(TokenType.RightParenthesis);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(.2D);
+            scanner.NextToken().Type.Should().Be(TokenType.Divide);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(9.99D);
+            scanner.NextToken().Type.Should().Be(TokenType.Multiply);
+            scanner.NextToken().Type.Should().Be(TokenType.LeftParenthesis);
+            scanner.NextToken().Type.Should().Be(TokenType.Minus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(.123D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            scanner.NextToken().Type.Should().Be(TokenType.Minus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(2D);
+            scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
 
-            scanner.NextToken().Should().Be.Null();
+            scanner.NextToken().Should().BeNull();
         }
 
         [UnitTest.Test]
@@ -231,26 +230,26 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("-.23 + +.99 * ((-.123 + -2.1)--333)"));
 
-            scanner.NextToken().Type.Should().Equal(TokenType.Minus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.23D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.99D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Multiply);
-            scanner.NextToken().Type.Should().Equal(TokenType.LeftParenthesis);
-            scanner.NextToken().Type.Should().Equal(TokenType.LeftParenthesis);
-            scanner.NextToken().Type.Should().Equal(TokenType.Minus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(.123D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            scanner.NextToken().Type.Should().Equal(TokenType.Minus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(2.1D);
-            scanner.NextToken().Type.Should().Equal(TokenType.RightParenthesis);
-            scanner.NextToken().Type.Should().Equal(TokenType.Minus); ;
-            scanner.NextToken().Type.Should().Equal(TokenType.Minus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(333D);
-            scanner.NextToken().Type.Should().Equal(TokenType.RightParenthesis);
+            scanner.NextToken().Type.Should().Be(TokenType.Minus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(.23D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(.99D);
+            scanner.NextToken().Type.Should().Be(TokenType.Multiply);
+            scanner.NextToken().Type.Should().Be(TokenType.LeftParenthesis);
+            scanner.NextToken().Type.Should().Be(TokenType.LeftParenthesis);
+            scanner.NextToken().Type.Should().Be(TokenType.Minus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(.123D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            scanner.NextToken().Type.Should().Be(TokenType.Minus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(2.1D);
+            scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
+            scanner.NextToken().Type.Should().Be(TokenType.Minus); ;
+            scanner.NextToken().Type.Should().Be(TokenType.Minus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(333D);
+            scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
 
-            scanner.NextToken().Should().Be.Null();
+            scanner.NextToken().Should().BeNull();
         }
 
         [UnitTest.Test]
@@ -258,16 +257,16 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("3 + pow(10, 2)"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(3D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            ((IdentifierToken)scanner.NextToken()).Text.Should().Equal("pow");
-            scanner.NextToken().Type.Should().Equal(TokenType.LeftParenthesis);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Comma);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(2D);
-            scanner.NextToken().Type.Should().Equal(TokenType.RightParenthesis);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(3D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((IdentifierToken)scanner.NextToken()).Text.Should().Be("pow");
+            scanner.NextToken().Type.Should().Be(TokenType.LeftParenthesis);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(10D);
+            scanner.NextToken().Type.Should().Be(TokenType.Comma);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(2D);
+            scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
 
-            scanner.NextToken().Should().Be.Null();
+            scanner.NextToken().Should().BeNull();
         }
 
         //[UnitTest.Test]
@@ -275,11 +274,11 @@ namespace ExpressionEngine.Tests
         //{
         //    var scanner = new Lexer(Text.OfString("10^2"));
 
-        //    ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10D);
-        //    scanner.NextToken().Type.Should().Equal(TokenType.Exponent);
-        //    ((LiteralToken)scanner.NextToken()).Value.Should().Equal(2D);
+        //    ((LiteralToken)scanner.NextToken()).Value.Should().Be(10D);
+        //    scanner.NextToken().Type.Should().Be(TokenType.Exponent);
+        //    ((LiteralToken)scanner.NextToken()).Value.Should().Be(2D);
 
-        //    scanner.NextToken().Should().Be.Null();
+        //    scanner.NextToken().Should().BeNull();
         //}
 
         [UnitTest.Test]
@@ -287,7 +286,7 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("var_name"));
 
-            ((IdentifierToken)scanner.NextToken()).Text.Should().Equal("var_name");
+            ((IdentifierToken)scanner.NextToken()).Text.Should().Be("var_name");
         }
 
         [UnitTest.Test]
@@ -295,9 +294,9 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("var1 == 10.3"));
 
-            ((IdentifierToken)scanner.NextToken()).Text.Should().Equal("var1");
-            scanner.NextToken().Type.Should().Equal(TokenType.Equality);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10.3D);
+            ((IdentifierToken)scanner.NextToken()).Text.Should().Be("var1");
+            scanner.NextToken().Type.Should().Be(TokenType.Equality);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(10.3D);
         }
 
         [UnitTest.Test]
@@ -305,9 +304,9 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString(".3 != 0.003003"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.3D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Inequality);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.003003D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.3D);
+            scanner.NextToken().Type.Should().Be(TokenType.Inequality);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.003003D);
         }
 
         [UnitTest.Test]
@@ -315,13 +314,13 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("10 < (10 * 2.2)"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10D);
-            scanner.NextToken().Type.Should().Equal(TokenType.LessThan);
-            scanner.NextToken().Type.Should().Equal(TokenType.LeftParenthesis);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Multiply);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(2.2D);
-            scanner.NextToken().Type.Should().Equal(TokenType.RightParenthesis);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(10D);
+            scanner.NextToken().Type.Should().Be(TokenType.LessThan);
+            scanner.NextToken().Type.Should().Be(TokenType.LeftParenthesis);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(10D);
+            scanner.NextToken().Type.Should().Be(TokenType.Multiply);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(2.2D);
+            scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
         }
 
         [UnitTest.Test]
@@ -329,9 +328,9 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString(".3 <= .9"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.3D);
-            scanner.NextToken().Type.Should().Equal(TokenType.LessThanOrEqual);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.9D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.3D);
+            scanner.NextToken().Type.Should().Be(TokenType.LessThanOrEqual);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.9D);
         }
 
         [UnitTest.Test]
@@ -339,13 +338,13 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("10 > (10 * 2.2)"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10D);
-            scanner.NextToken().Type.Should().Equal(TokenType.GreaterThan);
-            scanner.NextToken().Type.Should().Equal(TokenType.LeftParenthesis);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(10D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Multiply);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(2.2D);
-            scanner.NextToken().Type.Should().Equal(TokenType.RightParenthesis);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(10D);
+            scanner.NextToken().Type.Should().Be(TokenType.GreaterThan);
+            scanner.NextToken().Type.Should().Be(TokenType.LeftParenthesis);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(10D);
+            scanner.NextToken().Type.Should().Be(TokenType.Multiply);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(2.2D);
+            scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
         }
 
         [UnitTest.Test]
@@ -353,10 +352,10 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("0.1 >= +5.9"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.1D);
-            scanner.NextToken().Type.Should().Equal(TokenType.GreaterThanOrEqual);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(5.9D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.1D);
+            scanner.NextToken().Type.Should().Be(TokenType.GreaterThanOrEqual);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(5.9D);
         }
 
         [UnitTest.Test]
@@ -364,9 +363,9 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("true == 1"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(true);
-            scanner.NextToken().Type.Should().Equal(TokenType.Equality);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(true);
+            scanner.NextToken().Type.Should().Be(TokenType.Equality);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(1D);
         }
 
         [UnitTest.Test]
@@ -374,9 +373,9 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("false != .01"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(false);
-            scanner.NextToken().Type.Should().Equal(TokenType.Inequality);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.01D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(false);
+            scanner.NextToken().Type.Should().Be(TokenType.Inequality);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.01D);
         }
 
         [UnitTest.Test]
@@ -384,11 +383,11 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("1 + 10E2 + 3"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1000D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(3D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(1D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(1000D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(3D);
         }
 
         [UnitTest.Test]
@@ -396,9 +395,9 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("1 + 10E+2"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1000D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(1D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(1000D);
         }
 
         [UnitTest.Test]
@@ -406,9 +405,9 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("10e2 + 4"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1000D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(4D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(1000D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(4D);
         }
 
         [UnitTest.Test]
@@ -416,11 +415,11 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("1 + 10e+2 + 4"));
 
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(1000D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(4D);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(1D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(1000D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(4D);
         }
 
         [UnitTest.Test]
@@ -428,9 +427,57 @@ namespace ExpressionEngine.Tests
         {
             var scanner = new Lexer(Text.OfString("10E-11 + 10e-11"));
 
-            ((LiteralToken) scanner.NextToken()).Value.Should().Equal(0.0000000001D);
-            scanner.NextToken().Type.Should().Equal(TokenType.Plus);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Equal(0.0000000001D);
+            ((LiteralToken) scanner.NextToken()).Value.Should().Be(0.0000000001D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.0000000001D);
+        }
+
+        [UnitTest.Test]
+        public void StringLiteral()
+        {
+            var scanner = new Lexer(Text.OfString("\"hello, csharp\""));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be("hello, csharp");
+        }
+
+        [UnitTest.Test]
+        public void StringLiteral_2()
+        {
+            var scanner = new Lexer(Text.OfString(".3 + \"hello, fsharp\" + 0.999"));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.3D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be("hello, fsharp");
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.999D);
+        }
+
+        [UnitTest.Test]
+        public void StringLiteralWithEscapeCharacters()
+        {
+            var scanner = new Lexer(Text.OfString(@"0 + ""\t \n \r"" + 0"));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(0D);
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be("\t \n \r");
+            scanner.NextToken().Type.Should().Be(TokenType.Plus);
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be(0D);
+        }
+
+        [UnitTest.Test]
+        public void StringLiteralWithDecimalEscape()
+        {
+            var scanner = new Lexer(Text.OfString(@" ""\048\048\055"" "));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be("007");
+        }
+
+        [UnitTest.Test]
+        public void StringLiteralWithDoubleQuoteEscapeCharacter()
+        {
+            var scanner = new Lexer(Text.OfString(@" ""a\""bc"" "));
+
+            ((LiteralToken)scanner.NextToken()).Value.Should().Be("a\"bc");
         }
 
         #region Expected Exceptions

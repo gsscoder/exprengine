@@ -29,7 +29,7 @@
 #region Using Directives
 using System;
 using NUnit.Framework;
-using Should.Fluent;
+using FluentAssertions;
 #endregion
 
 namespace ExpressionEngine.Tests
@@ -58,7 +58,7 @@ namespace ExpressionEngine.Tests
         //        {
         //            {"calc_force", (object[] args) => ((double) args[0] * (double) args[1]) / Math.Pow((double) args[2], 2)}
         //        };
-        //    Expression.Create("G * calc_force(earth_mass, lunar_mass, perigee_dist)", vars, funcs).Value.Should().Equal(2.3018745174107073E+31D);
+        //    Expression.Create("G * calc_force(earth_mass, lunar_mass, perigee_dist)", vars, funcs).Value.Should().Be(2.3018745174107073E+31D);
         //}
         [Test]
         public void UserDefinedNames()
@@ -70,7 +70,7 @@ namespace ExpressionEngine.Tests
                 .SetVariable("perigee_dist", 356700000D) // moon-earth distance at perigee in m
                 .SetFunction("calc_force", args => (
                     TypeConverter.ToNumber(args[0]) * TypeConverter.ToNumber(args[1]) / Math.Pow(TypeConverter.ToNumber(args[2]), 2)))
-                .EvaluateAs<double>("G * calc_force(earth_mass, lunar_mass, perigee_dist)").Should().Equal(2.3018745174107073E+31D);
+                .EvaluateAs<double>("G * calc_force(earth_mass, lunar_mass, perigee_dist)").Should().Be(2.3018745174107073E+31D);
         }
 
         //[Test]
@@ -91,7 +91,7 @@ namespace ExpressionEngine.Tests
         //    mutable.Should().Not.Be.OfType<Expression>();
         //    var synchronized = Expression.Synchronized(mutable);
         //    synchronized.DefineVariable("c", 299792458D);
-        //    synchronized.Value.Should().Equal(-299792455.5D);
+        //    synchronized.Value.Should().Be(-299792455.5D);
         //}
     }
 }

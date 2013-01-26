@@ -35,7 +35,12 @@ using System.Runtime.InteropServices;
 #endregion
 
 [assembly: AssemblyTitle("ExpressionEngine.dll")]
-[assembly: InternalsVisibleTo("ExpressionEngine.Tests")]
+[assembly: InternalsVisibleTo("ExpressionEngine.Tests, PublicKey=" +
+    "00240000048000009400000006020000002400005253413100040000010001005764b0974d476c" +
+    "de860ae093bdb369f6e65d4219b96afa9109bffc4ffab51763fe72991b4c9bb767a57f92f5671c" +
+    "273b33aab992509cac930419f07b7dffa11cf18233cba079da2454fefa98293d779229aa3cf155" +
+    "0e5ffbac7220e8e77a562eeaa58633a810bb1b47d7a06c0d120d818b013b5e4df30413d167c1e3" +
+    "94ccd6bb")]
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
 #else

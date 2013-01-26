@@ -1,6 +1,6 @@
 ﻿using System;
 using UnitTest = NUnit.Framework;
-using Should.Fluent;
+using FluentAssertions;
 using ExpressionEngine.Internal;
 
 namespace ExpressionEngine.Tests
@@ -12,14 +12,14 @@ namespace ExpressionEngine.Tests
         public void AfterInitializationIndexIsLessThanZero()
         {
             var text = Text.OfString("simple text");
-            text.Column.Should().Equal(-1);
-            text.Line.Should().Equal(-1);
+            text.Column.Should().Be(-1);
+            text.Line.Should().Be(-1);
             text.PeekChar();
-            text.Column.Should().Equal(-1);
-            text.Line.Should().Equal(-1);
-            text.NextChar().Should().Equal('s');
-            text.Column.Should().Equal(0);
-            text.Line.Should().Equal(0);
+            text.Column.Should().Be(-1);
+            text.Line.Should().Be(-1);
+            text.NextChar().Should().Be('s');
+            text.Column.Should().Be(0);
+            text.Line.Should().Be(0);
         }
 
         [UnitTest.Test]
@@ -31,11 +31,11 @@ namespace ExpressionEngine.Tests
             {
                 last = text.NextChar();
             }
-            text.Column.Should().Equal(11);
-            text.Line.Should().Equal(0);
-            last.Should().Equal('!');
-            text.PeekChar().Should().Equal('\0');
-            text.NextChar().Should().Equal('\0');
+            text.Column.Should().Be(11);
+            text.Line.Should().Be(0);
+            last.Should().Be('!');
+            text.PeekChar().Should().Be('\0');
+            text.NextChar().Should().Be('\0');
         }
 
         [UnitTest.Test]
@@ -43,12 +43,12 @@ namespace ExpressionEngine.Tests
         {
             var text = Text.OfString("simple\ntext");
             text.NextChar();
-            (text.Line == 0).Should().Be.True();
+            (text.Line == 0).Should().BeTrue();
             while (text.PeekChar() != '\0')
             {
                 text.NextChar();
             }
-            (text.Line == 1).Should().Be.True();
+            (text.Line == 1).Should().BeTrue();
         }
     }
 }

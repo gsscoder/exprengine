@@ -1,6 +1,6 @@
 #region License
 //
-// Expression Engine Library: ExpressionEvaluatorFixture.cs
+// Expression Engine Library: ContextFixture.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -30,7 +30,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Should.Fluent;
+using FluentAssertions;
 #endregion
 
 namespace ExpressionEngine.Tests
@@ -75,223 +75,223 @@ namespace ExpressionEngine.Tests
         [Test]
         public void PlainAddition()
         {
-            new Context().Evaluate("1 + 2").Should().Equal(3D);
+            new Context().Evaluate("1 + 2").Should().Be(3D);
         }
 
         [Test]
         public void PlainAddition_2()
         {
-            new Context().Evaluate("1 + 2 + 3").Should().Equal(6D);
+            new Context().Evaluate("1 + 2 + 3").Should().Be(6D);
         }
 
         [Test]
         public void PlainAddition_3()
         {
-            new Context().Evaluate("1 + 2 + 3 + 4").Should().Equal(10D);
+            new Context().Evaluate("1 + 2 + 3 + 4").Should().Be(10D);
         }
 
         [Test]
         public void PlainSubtraction()
         {
-            new Context().Evaluate("3 - 4").Should().Equal(-1D);
+            new Context().Evaluate("3 - 4").Should().Be(-1D);
         }
 
         [Test]
         public void PlainMultiplication()
         {
-            new Context().Evaluate("3 * 9").Should().Equal(27D);
+            new Context().Evaluate("3 * 9").Should().Be(27D);
         }
 
         [Test]
         public void PlainDivision()
         {
-            new Context().Evaluate("16 / 4").Should().Equal(4D);
+            new Context().Evaluate("16 / 4").Should().Be(4D);
         }
 
         [Test]
         public void PlainModulo()
         {
-            new Context().Evaluate("10 % 4").Should().Equal(2D);
+            new Context().Evaluate("10 % 4").Should().Be(2D);
         }
 
         [Test]
         public void SmallExpr()
         {
-            new Context().Evaluate("1 + 2 * 3 / 1").Should().Equal(7D);
+            new Context().Evaluate("1 + 2 * 3 / 1").Should().Be(7D);
         }
 
         [Test]
         public void SmallExprWithDecimal()
         {
-            new Context().Evaluate(".90 - 3 * 4 + 11.123").Should().Equal(0.022999999999999687D);
+            new Context().Evaluate(".90 - 3 * 4 + 11.123").Should().Be(0.022999999999999687D);
         }
 
         [Test]
         public void SmallExprWithModulo()
         {
-            new Context().Evaluate("+0.90 - 3 * 4 + 11 - (123 % 23)").Should().Equal(-8.1D);
+            new Context().Evaluate("+0.90 - 3 * 4 + 11 - (123 % 23)").Should().Be(-8.1D);
         }
 
         [Test]
         public void SmallExprWithSignes()
         {
-            new Context().Evaluate("-3 + -1").Should().Equal(-4D);
+            new Context().Evaluate("-3 + -1").Should().Be(-4D);
         }
 
         [Test]
         public void SmallExprWithFunction()
         {
-            new Context().Evaluate("sqrt(10) - 1").Should().Equal(2.1622776601683795D);
+            new Context().Evaluate("sqrt(10) - 1").Should().Be(2.1622776601683795D);
         }
 
         [Test]
         public void SmallExprWithFunction_2()
         {
-            new Context().Evaluate("sqrt(10000) / 2").Should().Equal(50D);
+            new Context().Evaluate("sqrt(10000) / 2").Should().Be(50D);
         }
 
         [Test]
         public void SmallExprWithFunction_3()
         {
-            new Context().Evaluate("sqrt(1000) % 3").Should().Equal(1.6227766016837926D);
+            new Context().Evaluate("sqrt(1000) % 3").Should().Be(1.6227766016837926D);
         }
 
         [Test]
         public void SmallExprWithFunction_4()
         {
-            new Context().Evaluate("cos(999) % .3").Should().Equal(0.099649852980826459D);
+            new Context().Evaluate("cos(999) % .3").Should().Be(0.099649852980826459D);
         }
 
         [Test]
         public void SmallExprWithFunction_Unary()
         {
-            new Context().Evaluate("-sqrt(100)").Should().Equal(-10D);
+            new Context().Evaluate("-sqrt(100)").Should().Be(-10D);
         }
 
         [Test]
         public void Expr()
         {
-            new Context().Evaluate("3 * 0.31 / 19 + 10 - .7").Should().Equal(9.3489473684210527D);
+            new Context().Evaluate("3 * 0.31 / 19 + 10 - .7").Should().Be(9.3489473684210527D);
         }
 
         [Test]
         public void ExprWithBrackets()
         {
-            new Context().Evaluate("1 + (2 - 1)").Should().Equal(2D);
+            new Context().Evaluate("1 + (2 - 1)").Should().Be(2D);
         }
 
         [Test]
         public void ExprWithBrackets_2()
         {
-            new Context().Evaluate("3 * 0.31 / ((19 + 10) - .7)").Should().Equal(0.032862190812720848D);
+            new Context().Evaluate("3 * 0.31 / ((19 + 10) - .7)").Should().Be(0.032862190812720848D);
         }
 
         [Test]
         public void ExprWithBrackets_3()
         {
-            new Context().Evaluate("3 * 0.31 / 19 + 10 - (1.7 % 2)").Should().Equal(8.3489473684210527D);
+            new Context().Evaluate("3 * 0.31 / 19 + 10 - (1.7 % 2)").Should().Be(8.3489473684210527D);
         }
 
         [Test]
         public void ExprWithBrackets_Functions()
         {
-            new Context().Evaluate("3 * 0.31 / ((19 + sqrt(1000.5 / 10)) - pow(.7, 2)) + 3").Should().Equal(3.0326172734832215D);
+            new Context().Evaluate("3 * 0.31 / ((19 + sqrt(1000.5 / 10)) - pow(.7, 2)) + 3").Should().Be(3.0326172734832215D);
         }
 
         [Test]
         public void UnaryBrackets()
         {
-            new Context().Evaluate("-(1 + 2)").Should().Equal(-3D);
+            new Context().Evaluate("-(1 + 2)").Should().Be(-3D);
         }
 
         [Test]
         public void Function()
         {
-            new Context().Evaluate("pow(2, cos(90))").Should().Equal(0.73302097391658683D);
+            new Context().Evaluate("pow(2, cos(90))").Should().Be(0.73302097391658683D);
         }
 
         [Test]
         public void Function_2()
         {
-            new Context().Evaluate("pow(2, -atan(-33))").Should().Equal(2.9089582019337388);
+            new Context().Evaluate("pow(2, -atan(-33))").Should().Be(2.9089582019337388);
         }
 
         [Test]
         public void NestedFunctions()
         {
-            new Context().Evaluate("log(log(10, 3))").Should().Equal(0.73998461763125689D);
+            new Context().Evaluate("log(log(10, 3))").Should().Be(0.73998461763125689D);
         }
 
         [Test]
         public void NestedFunctions_2()
         {
-            new Context().Evaluate("cos(-log(100))").Should().Equal(-0.10701348355876977D);
+            new Context().Evaluate("cos(-log(100))").Should().Be(-0.10701348355876977D);
         }
 
         [Test]
         public void NestedFunctions_3()
         {
-            new Context().Evaluate("sin(10.3) * cos(sqrt(sin(301 - sqrt(10))))").Should().Equal(-0.55707344143373561D);
+            new Context().Evaluate("sin(10.3) * cos(sqrt(sin(301 - sqrt(10))))").Should().Be(-0.55707344143373561D);
         }
 
         [Test]
         public void FunctionsWithNestedExpr()
         {
-            new Context().Evaluate("sqrt(sqrt(10 * 3) - sqrt(1 + 3))").Should().Equal(1.8647320384043551D);
+            new Context().Evaluate("sqrt(sqrt(10 * 3) - sqrt(1 + 3))").Should().Be(1.8647320384043551D);
         }
 
         [Test]
         public void FunctionsWithNestedExpr_2()
         {
-            new Context().Evaluate("pow((10 * 3), -(1 + log(10 * 10)))").Should().Equal(0.0000000052539263674376282D);
+            new Context().Evaluate("pow((10 * 3), -(1 + log(10 * 10)))").Should().Be(0.0000000052539263674376282D);
         }
 
         [Test]
         public void NegativePositiveDecimalBracket()
         {
-            new Context().Evaluate(".2 / +9.99 * (-.123 + -2)").Should().Equal(-0.042502502502502509D);
+            new Context().Evaluate(".2 / +9.99 * (-.123 + -2)").Should().Be(-0.042502502502502509D);
         }
 
         [Test]
         public void NegativePositiveDecimalBracket_2()
         {
-            new Context().Evaluate("-.23 + +.99 * ((-.123 + -2.1)--333)").Should().Equal(327.23922999999996D);
+            new Context().Evaluate("-.23 + +.99 * ((-.123 + -2.1)--333)").Should().Be(327.23922999999996D);
         }
 
         [Test]
         public void Exponent()
         {
-            new Context().Evaluate("pow(10, 2)").Should().Equal(100D);
+            new Context().Evaluate("pow(10, 2)").Should().Be(100D);
         }
 
         [Test]
         public void ExponentWithNestedExpr()
         {
-            new Context().Evaluate("pow((10 * 3), -(1 + 3))").Should().Equal(0.0000012345679012345679D);
+            new Context().Evaluate("pow((10 * 3), -(1 + 3))").Should().Be(0.0000012345679012345679D);
         }
 
         [Test]
         public void Variable()
         {
-            new Context().Evaluate("pi - 3").Should().Equal(0.14159265358979312D);
+            new Context().Evaluate("pi - 3").Should().Be(0.14159265358979312D);
         }
 
         [Test]
         public void Variable_2()
         {
-            new Context().Evaluate("(e + pi) - 5.8598744820488378").Should().Equal(0D);
+            new Context().Evaluate("(e + pi) - 5.8598744820488378").Should().Be(0D);
         }
 
         [Test]
         public void Variable_3()
         {
-            new Context().Evaluate("-e").Should().Equal(-2.7182818284590451D);
+            new Context().Evaluate("-e").Should().Be(-2.7182818284590451D);
         }
 
         [Test]
         public void Variable_Function()
         {
-            new Context().Evaluate("10 - (pi * atan(10)) - -e").Should().Equal(8.0965979343737935D);
+            new Context().Evaluate("10 - (pi * atan(10)) - -e").Should().Be(8.0965979343737935D);
         }
 
         //[Test]
@@ -303,7 +303,7 @@ namespace ExpressionEngine.Tests
         //    expr.IsValueCacheRetrieved.Should().Be.False();
         //    expr = null;
         //    var expr2 = Expression.Create(".123+.345"); // same as first, but with no spaces
-        //    expr2.IsValueCacheRetrieved.Should().Be.True();
+        //    expr2.IsValueCacheRetrieved.Should().BeTrue();
         //}
 
         #region Expected Exceptions

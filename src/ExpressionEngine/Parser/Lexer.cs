@@ -46,6 +46,7 @@ namespace ExpressionEngine.Internal
         {
             _text = text;
             _buffer = new StringBuilder(64);
+            _escapeBuffer = new StringBuilder(3);
             _next = LexToken();
         }
 
@@ -65,7 +66,7 @@ namespace ExpressionEngine.Internal
         {
             SkipWhiteSpace();
 
-            char c = _text.NextChar();
+            var c = _text.NextChar();
 
             switch (c)
             {
@@ -110,11 +111,14 @@ namespace ExpressionEngine.Internal
                 case '"':
                     _buffer.Length = 0;
                     while (true) {
-                        c = _text.PeekChar();
-                        if (c == '"') { break; }
+                        c = _text.NextChar();
+                        if (c == '"') {
+                            break;
+                        }
                         if (c == '\0') { throw new EvaluatorException(_text.Column, "Unexpected end of input in string literal."); }
                         if (c == '\\')
                         {
+                            c = _text.NextChar();
                             switch (c)
                             {
                                 case '"': // double quote
@@ -140,7 +144,6 @@ namespace ExpressionEngine.Internal
                         }
                         else {
                             _buffer.Append(c);
-                            _text.NextChar();
                         }
                     }
                     return new LiteralToken(_buffer.ToString());
@@ -155,7 +158,7 @@ namespace ExpressionEngine.Internal
                 case '7':
                 case '8':
                 case '9':
-                    bool seenDot = (c == '.');
+                    var seenDot = (c == '.');
                     _buffer.Length = 0;
                     _buffer.Append(c);
                     while (true) {
@@ -326,18 +329,20 @@ namespace ExpressionEngine.Internal
 
         private char ScanDecimalEscapeSequence(char firstChar)
         {
-            var escape = new StringBuilder(new string((char)firstChar, 1));
+            _escapeBuffer.Length = 0;
+            _escapeBuffer.Append(new string(firstChar, 1));
             for (var i = 0; i < 2; i++)
             {
-                int c = _text.PeekChar();
+                var c = _text.PeekChar();
                 if (!(c >= '0' && c <= '9'))
                 {
                     throw new EvaluatorException(_text.Line, "Invalid decimal escape sequence.");
                 }
-                escape.Append(c);
+                _escapeBuffer.Append(c);
+                _text.NextChar();
             }
             byte e;
-            if (byte.TryParse(escape.ToString(), out e))
+            if (byte.TryParse(_escapeBuffer.ToString(), out e))
             {
                 return Encoding.ASCII.GetChars(new byte[] {e})[0];
             }
@@ -353,6 +358,7 @@ namespace ExpressionEngine.Internal
         private bool _disposed;
         private Token _current;
         private Token _next;
+        private readonly StringBuilder _escapeBuffer;
         private readonly StringBuilder _buffer;
         private readonly Text _text;
     }

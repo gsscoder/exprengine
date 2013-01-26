@@ -57,7 +57,7 @@ namespace ExpressionEngine.Internal
 
         public char NextChar()
         {
-            int c = _reader.Read();
+            var c = _reader.Read();
             if (c == -1)
             {
                 return '\0';
@@ -73,7 +73,7 @@ namespace ExpressionEngine.Internal
 
         public char PeekChar()
         {
-            int c = _reader.Peek();
+            var c = _reader.Peek();
             return c != -1 ? (char) c : '\0';
         }
 
