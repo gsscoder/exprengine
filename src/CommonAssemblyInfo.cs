@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("Expression Engine Library")]
 [assembly: AssemblyDescription("Expressions Evaluator for .NET")]
 [assembly: AssemblyCopyright("Copyright (C) 2012 - 2013 Giacomo Stelluti Scala")]
-[assembly: AssemblyVersion("0.6.0.1")] // alfa
+[assembly: AssemblyVersion("0.6.0.3")] // alfa
 [assembly: AssemblyInformationalVersion("0.6")]
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: AssemblyCulture("")]

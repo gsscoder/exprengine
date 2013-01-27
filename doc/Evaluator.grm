@@ -1,6 +1,6 @@
 "Name"     = 'Expression Engine Evaluator'
 "Author"   = 'Giacomo Stelluti Scala'
-"Version"  = '1.0.5.11'
+"Version"  = '0.6.0.1'
 "About"    = 'Expression evaluator for .NET'
 
 "Start Symbol" = <Expression>

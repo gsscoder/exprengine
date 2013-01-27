@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -17,6 +18,10 @@ namespace ExpressionEngine
             {
                 return PrimitiveType.Number;
             }
+            if (type == typeof(string))
+            {
+                return PrimitiveType.String;
+            }
             throw new EvaluatorException("Type not yet supported.");
         }
 
@@ -29,6 +34,15 @@ namespace ExpressionEngine
             if (value is double)
             {
                 return (double) value;
+            }
+            if (value is string)
+            {
+                double converted;
+                if (double.TryParse((string) value, NumberStyles.Any, CultureInfo.CurrentCulture, out converted))
+                {
+                    return converted;
+                }
+                return double.NaN;
             }
             throw new EvaluatorException("Can't convert object of type '{0}' to number.".FormatInvariant(value.GetType()));
         }
@@ -43,7 +57,24 @@ namespace ExpressionEngine
             {
                 return ((double) value) != 0 && double.IsNaN((double) value) == false;
             }
+            if (value is string)
+            {
+                bool converted;
+                if (bool.TryParse((string) value, out converted))
+                {
+                    return converted;
+                }
+            }
             throw new EvaluatorException("Can't convert object of type '{0}' to boolean.".FormatInvariant(value.GetType()));
+        }
+
+        public static string ToString(object value)
+        {
+            if (value is string)
+            {
+                return (string) value;
+            }
+            return Convert.ToString(value, CultureInfo.CurrentCulture);
         }
     }
 }

@@ -206,6 +206,13 @@ namespace ExpressionEngine.Internal
                 throw new EvaluatorException(_scanner.Column, "Expected unary operator, literal or open bracket.");    
             }
 
+            if (_current.Type == TokenType.Literal)
+            {
+                var literal = ParseLiteral();
+                Consume();
+                return literal;
+            }
+
             var unary = new UnaryExpression();
             if (_current.Type == TokenType.Minus)
             {
@@ -220,11 +227,11 @@ namespace ExpressionEngine.Internal
 
             if (_current.Type == TokenType.Literal)
             {
-                unary.Value = new LiteralExpression(((LiteralToken)_current).Value);
-                if (_scanner.PeekToken() != null && _scanner.PeekToken().Type == TokenType.Literal)
-                {
-                    throw new EvaluatorException(_scanner.Column, "Expected expression.");
-                }
+                unary.Value = ParseLiteral();
+                //if (_scanner.PeekToken() != null && _scanner.PeekToken().Type == TokenType.Literal)
+                //{
+                //    throw new EvaluatorException(_scanner.Column, "Expected expression.");
+                //}
             }
             else if (_current.Type == TokenType.LeftParenthesis)
             {
@@ -240,6 +247,16 @@ namespace ExpressionEngine.Internal
             }
             Consume();
             return unary;
+        }
+
+        private LiteralExpression ParseLiteral()
+        {
+            var literal = new LiteralExpression(((LiteralToken)_current).Value);
+            if (_scanner.PeekToken() != null && _scanner.PeekToken().Type == TokenType.Literal)
+            {
+                throw new EvaluatorException(_scanner.Column, "Expected expression.");
+            }
+            return literal;
         }
 
         #region Token Stream Controllers

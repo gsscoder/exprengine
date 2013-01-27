@@ -34,7 +34,7 @@ namespace ExpressionEngine
     enum PrimitiveType : byte
     {
         Boolean,     // map to System.Boolean
-        Number      // map to System.Double
-        //String      // map to System.String
+        Number,      // map to System.Double
+        String       // map to System.String
     }
 }

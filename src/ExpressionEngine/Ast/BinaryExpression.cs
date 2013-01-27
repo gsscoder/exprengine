@@ -46,6 +46,11 @@ namespace ExpressionEngine.Internal.Ast
                 switch (Operator)
                 {
                     case OperatorType.Add:
+                        if (Left.ResultType == PrimitiveType.String || Right.ResultType == PrimitiveType.String)
+                        {
+                            return PrimitiveType.String;
+                        }
+                        return PrimitiveType.Number;
                     case OperatorType.Subtract:
                     case OperatorType.Multiply:
                     case OperatorType.Divide:

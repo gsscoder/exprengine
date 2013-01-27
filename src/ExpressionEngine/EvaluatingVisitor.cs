@@ -54,9 +54,18 @@ namespace ExpressionEngine.Internal
             switch (expression.Operator)
             {
                 case OperatorType.UnaryPlus:
+                    if (expression.ResultType == PrimitiveType.String)
+                    {
+                        throw new EvaluatorException("Operator '+' cannot be applied to operand of type 'string'.");
+                    }
+                    _result = 0D + TypeConverter.ToNumber(_result);
                     break;
                 case OperatorType.UnaryMinus:
-                    _result = TypeConverter.ToNumber(_result) * -1D;
+                    if (expression.ResultType == PrimitiveType.String)
+                    {
+                        throw new EvaluatorException("Operator '-' cannot be applied to operand of type 'string'.");
+                    }
+                    _result = 0D - TypeConverter.ToNumber(_result);
                     break;
                 default:
                     throw new EvaluatorException("Invalid unary operator type.");
@@ -93,7 +102,15 @@ namespace ExpressionEngine.Internal
             switch (expression.Operator)
             {
                 case OperatorType.Add:
-                    _result = TypeConverter.ToNumber(left()) + TypeConverter.ToNumber(right());
+                    if (expression.Left.ResultType == PrimitiveType.String ||
+                        expression.Right.ResultType == PrimitiveType.String)
+                    {
+                        _result = TypeConverter.ToString(left()) + TypeConverter.ToString(right());
+                    }
+                    else
+                    {
+                        _result = TypeConverter.ToNumber(left()) + TypeConverter.ToNumber(right());
+                    }
                     break;
                 case OperatorType.Subtract:
                     _result = TypeConverter.ToNumber(left()) - TypeConverter.ToNumber(right());
@@ -107,9 +124,6 @@ namespace ExpressionEngine.Internal
                 case OperatorType.Modulo:
                     _result = TypeConverter.ToNumber(left()) % TypeConverter.ToNumber(right());
                     break;
-                //case OperatorType.Exponent:
-                //    _result = new Number(Math.Pow(left().ToNumber(), right().ToNumber()));
-                //    break;
                 case OperatorType.Equality:
                     _result = TypeConverter.ToNumber(left()) == TypeConverter.ToNumber(right());
                     break;

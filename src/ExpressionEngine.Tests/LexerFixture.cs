@@ -1,6 +1,6 @@
 ﻿#region License
 //
-// Expression Engine Library: ScannerFixture.cs
+// Expression Engine Library: LexerFixture.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -28,21 +28,22 @@
 #endregion
 #region Using Directives
 using System;
-using UnitTest = NUnit.Framework; // avoid name conflict with local Text type
-using FluentAssertions;
 using ExpressionEngine.Internal;
+using Xunit;
+using FluentAssertions;
 #endregion
 
 namespace ExpressionEngine.Tests
 {
-    [UnitTest.TestFixture]
-    public class ScannerFixture
+    public class LexerFixture
     {
-        [UnitTest.Test]
-        public void Expr()
+        [Fact]
+        public void Should_lex_expression_with_nested_parentheses()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("((10 + 1 - (3 - .234)) * 300)  /  10.1"));
 
+            // Then
             scanner.NextToken().Type.Should().Be(TokenType.LeftParenthesis);
             scanner.NextToken().Type.Should().Be(TokenType.LeftParenthesis);
             ((LiteralToken) scanner.NextToken()).Value.Should().Be(10D);
@@ -63,152 +64,124 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Should().BeNull();
         }
 
-        [UnitTest.Test]
-        public void SmallExprUsingPeek()
+        [Fact]
+        public void Should_not_move_forward_when_using_peek()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("1 + 3"));
 
+            // Then
             ((LiteralToken)scanner.PeekToken()).Value.Should().Be(1D);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(1D);
 
+            // Then
             scanner.PeekToken().Type.Should().Be(TokenType.Plus);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
 
+            // Then
             ((LiteralToken)scanner.PeekToken()).Value.Should().Be(3D);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(3D);
 
+            // Then
             scanner.PeekToken().Should().BeNull();
             scanner.NextToken().Should().BeNull();
         }
 
-        [UnitTest.Test]
-        public void SmallExprWithModulo()
+        [Fact]
+        public void Should_lex_expression_with_modulo()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("10 % 2"));
-
             ((LiteralToken)scanner.PeekToken()).Value.Should().Be(10D);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(10D);
 
+            // Then
             scanner.PeekToken().Type.Should().Be(TokenType.Modulo);
             scanner.NextToken().Type.Should().Be(TokenType.Modulo);
-
-            ((LiteralToken)scanner.PeekToken()).Value.Should().Be(2D);
-            ((LiteralToken)scanner.NextToken()).Value.Should().Be(2D);
-
-            scanner.PeekToken().Should().BeNull();
-            scanner.NextToken().Should().BeNull();
         }
 
-        [UnitTest.Test]
-        public void SingleNumberExpr()
+        [Fact]
+        public void Should_lex_expression_formed_by_a_single_number()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("123"));
 
+            // Then
             ((LiteralToken)scanner.PeekToken()).Value.Should().Be(123D);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(123D);
-
-            scanner.PeekToken().Should().BeNull();
-            scanner.NextToken().Should().BeNull();
         }
 
-        [UnitTest.Test]
-        public void SingleDecimalNumberExpr()
+        [Fact]
+        public void Should_lex_expression_formed_by_a_single_decimal_number_with_zero_omitted()
         {
+            // Give when
             var scanner = new Lexer(Text.OfString(".123"));
 
+            // Then
             ((LiteralToken)scanner.PeekToken()).Value.Should().Be(.123D);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(.123D);
-
-            scanner.PeekToken().Should().BeNull();
-            scanner.NextToken().Should().BeNull();
         }
 
-        [UnitTest.Test]
-        public void SinglePositiveNumberExpr()
+        [Fact]
+        public void Should_lex_expression_formed_by_a_single_positive_number_with_plus_sign_explicit()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("+123"));
 
+            // Then
             scanner.PeekToken().Type.Should().Be(TokenType.Plus);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
-
             ((LiteralToken)scanner.PeekToken()).Value.Should().Be(123D);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(123D);
 
-            scanner.PeekToken().Should().BeNull();
-            scanner.NextToken().Should().BeNull();
         }
 
-        [UnitTest.Test]
-        public void SinglePositiveDecimalNumberExpr()
+        [Fact]
+        public void Should_lex_expression_formed_by_a_single_positive_decimal_number_with_zero_omitted_and_plus_sign_explicit()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("+.123"));
 
+            // Than
             scanner.PeekToken().Type.Should().Be(TokenType.Plus);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
-
             ((LiteralToken)scanner.PeekToken()).Value.Should().Be(.123D);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(.123D);
-
-            scanner.PeekToken().Should().BeNull();
-            scanner.NextToken().Should().BeNull();
         }
 
-        [UnitTest.Test]
-        public void SingleNegativeNumberExpr()
+        [Fact]
+        public void Should_lex_expression_formed_by_a_single_negative_number()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("-123"));
 
+            // Than
             scanner.PeekToken().Type.Should().Be(TokenType.Minus);
             scanner.NextToken().Type.Should().Be(TokenType.Minus);
-
             ((LiteralToken)scanner.PeekToken()).Value.Should().Be(123D);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(123D);
         }
 
-        [UnitTest.Test]
-        public void SingleNegativeDecimalNumberExpr()
+        [Fact]
+        public void Should_lex_expression_formed_by_a_single_negative__decimal_number_with_zero_omitted()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("-.123"));
 
+            // Than
             scanner.PeekToken().Type.Should().Be(TokenType.Minus);
             scanner.NextToken().Type.Should().Be(TokenType.Minus);
-
             ((LiteralToken)scanner.PeekToken()).Value.Should().Be(.123D);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(.123D);
         }
 
-        //[UnitTest.Test]
-        //public void NextTokenIncrementsPosition()
-        //{
-        //    var scanner = new Lexer(Text.OfString(".3 / 9.99"));
-        //    scanner.Position.Should().Be(0);
-
-        //    ((LiteralToken)scanner.PeekToken()).Value.Should().Be(.3D);
-        //    scanner.Position.Should().Be(0);
-        //    ((LiteralToken)scanner.NextToken()).Value.Should().Be(.3D);
-        //    scanner.Position.Should().Be(1);
-
-        //    scanner.PeekToken().Type.Should().Be(TokenType.Divide);
-        //    scanner.Position.Should().Be(1);
-        //    scanner.NextToken().Type.Should().Be(TokenType.Divide);
-        //    scanner.Position.Should().Be(2);
-
-        //    ((LiteralToken)scanner.PeekToken()).Value.Should().Be(9.99D);
-        //    scanner.Position.Should().Be(2);
-        //    ((LiteralToken)scanner.NextToken()).Value.Should().Be(9.99D);
-        //    scanner.Position.Should().Be(3);
-
-        //    scanner.PeekToken().Should().BeNull();
-        //    scanner.Position.Should().Be(3);
-        //    scanner.NextToken().Should().BeNull();
-        //    scanner.Position.Should().Be(-1);
-        //}
-
-        [UnitTest.Test]
-        public void NegativePositiveDecimalBracket()
+        [Fact]
+        public void Should_lex_expression_formed_by_negative_and_positive_decimal_number_with_zero_omitted_and_explicit_sign()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString(".2 / +9.99 * (-.123 + -2)"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(.2D);
             scanner.NextToken().Type.Should().Be(TokenType.Divide);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
@@ -221,15 +194,15 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Type.Should().Be(TokenType.Minus);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(2D);
             scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
-
-            scanner.NextToken().Should().BeNull();
         }
 
-        [UnitTest.Test]
-        public void NegativePositiveDecimalBracket_2()
+        [Fact]
+        public void Should_lex_expression_with_sum_near_unary_operators()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("-.23 + +.99 * ((-.123 + -2.1)--333)"));
 
+            // Than
             scanner.NextToken().Type.Should().Be(TokenType.Minus);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(.23D);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
@@ -248,15 +221,15 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Type.Should().Be(TokenType.Minus);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(333D);
             scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
-
-            scanner.NextToken().Should().BeNull();
         }
 
-        [UnitTest.Test]
-        public void SmallExprWithFunction()
+        [Fact]
+        public void Should_lex_expression_with_function()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("3 + pow(10, 2)"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(3D);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
             ((IdentifierToken)scanner.NextToken()).Text.Should().Be("pow");
@@ -265,55 +238,49 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Type.Should().Be(TokenType.Comma);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(2D);
             scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
-
-            scanner.NextToken().Should().BeNull();
         }
 
-        //[UnitTest.Test]
-        //public void Caret()
-        //{
-        //    var scanner = new Lexer(Text.OfString("10^2"));
-
-        //    ((LiteralToken)scanner.NextToken()).Value.Should().Be(10D);
-        //    scanner.NextToken().Type.Should().Be(TokenType.Exponent);
-        //    ((LiteralToken)scanner.NextToken()).Value.Should().Be(2D);
-
-        //    scanner.NextToken().Should().BeNull();
-        //}
-
-        [UnitTest.Test]
-        public void Underscore()
+        [Fact]
+        public void Should_lex_identifier_with_underscore()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("var_name"));
 
+            // Than
             ((IdentifierToken)scanner.NextToken()).Text.Should().Be("var_name");
         }
 
-        [UnitTest.Test]
-        public void Equality()
+        [Fact]
+        public void Should_lex_equality_operator()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("var1 == 10.3"));
 
+            // Than
             ((IdentifierToken)scanner.NextToken()).Text.Should().Be("var1");
             scanner.NextToken().Type.Should().Be(TokenType.Equality);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(10.3D);
         }
 
-        [UnitTest.Test]
-        public void Inequality()
+        [Fact]
+        public void Should_lex_inequality_operator()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString(".3 != 0.003003"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.3D);
             scanner.NextToken().Type.Should().Be(TokenType.Inequality);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.003003D);
         }
 
-        [UnitTest.Test]
-        public void LessThan()
+        [Fact]
+        public void Should_lex_less_than_operator()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("10 < (10 * 2.2)"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(10D);
             scanner.NextToken().Type.Should().Be(TokenType.LessThan);
             scanner.NextToken().Type.Should().Be(TokenType.LeftParenthesis);
@@ -323,21 +290,25 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
         }
 
-        [UnitTest.Test]
-        public void LessThanOrEqual()
+        [Fact]
+        public void Should_lex_less_than_or_equal_operator()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString(".3 <= .9"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.3D);
             scanner.NextToken().Type.Should().Be(TokenType.LessThanOrEqual);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.9D);
         }
 
-        [UnitTest.Test]
-        public void GreaterThan()
+        [Fact]
+        public void Should_lex_greater_than_operator()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("10 > (10 * 2.2)"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(10D);
             scanner.NextToken().Type.Should().Be(TokenType.GreaterThan);
             scanner.NextToken().Type.Should().Be(TokenType.LeftParenthesis);
@@ -347,42 +318,50 @@ namespace ExpressionEngine.Tests
             scanner.NextToken().Type.Should().Be(TokenType.RightParenthesis);
         }
 
-        [UnitTest.Test]
-        public void GreaterThanOrEqual()
+        [Fact]
+        public void Should_lex_greater_than_or_equal_operator()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("0.1 >= +5.9"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.1D);
             scanner.NextToken().Type.Should().Be(TokenType.GreaterThanOrEqual);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(5.9D);
         }
 
-        [UnitTest.Test]
-        public void True()
+        [Fact]
+        public void Should_lex_true_literal()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("true == 1"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(true);
             scanner.NextToken().Type.Should().Be(TokenType.Equality);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(1D);
         }
 
-        [UnitTest.Test]
-        public void False()
+        [Fact]
+        public void Should_lex_false_literal()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("false != .01"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(false);
             scanner.NextToken().Type.Should().Be(TokenType.Inequality);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.01D);
         }
 
-        [UnitTest.Test]
-        public void LiteralWithExponent()
+        [Fact]
+        public void Should_lex_number_with_exponent()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("1 + 10E2 + 3"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(1D);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(1000D);
@@ -390,31 +369,37 @@ namespace ExpressionEngine.Tests
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(3D);
         }
 
-        [UnitTest.Test]
-        public void LiteralWithExponentUsingPlusSign()
+        [Fact]
+        public void Should_lex_number_with_exponent_and_plus_sign()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("1 + 10E+2"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(1D);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(1000D);
         }
 
-        [UnitTest.Test]
-        public void LiteralWithLowerCaseExponent()
+        [Fact]
+        public void Should_lex_number_with_lower_case_exponent()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("10e2 + 4"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(1000D);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(4D);
         }
 
-        [UnitTest.Test]
-        public void LiteralWithLowerCaseExponentUsingPlusSign()
+        [Fact]
+        public void Should_lex_number_with_lower_case_exponent_and_plus_sign()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("1 + 10e+2 + 4"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(1D);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(1000D);
@@ -422,29 +407,35 @@ namespace ExpressionEngine.Tests
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(4D);
         }
 
-        [UnitTest.Test]
-        public void LiteralsWithNegativeExponent()
+        [Fact]
+        public void Should_lex_number_with_lower_case_exponent_and_minus_sign()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("10E-11 + 10e-11"));
 
+            // Than
             ((LiteralToken) scanner.NextToken()).Value.Should().Be(0.0000000001D);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.0000000001D);
         }
 
-        [UnitTest.Test]
-        public void StringLiteral()
+        [Fact]
+        public void Should_lex_string_literal()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString("\"hello, csharp\""));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be("hello, csharp");
         }
 
-        [UnitTest.Test]
-        public void StringLiteral_2()
+        [Fact]
+        public void Should_lex_expression_containing_string_literal()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString(".3 + \"hello, fsharp\" + 0.999"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.3D);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be("hello, fsharp");
@@ -452,11 +443,13 @@ namespace ExpressionEngine.Tests
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(0.999D);
         }
 
-        [UnitTest.Test]
-        public void StringLiteralWithEscapeCharacters()
+        [Fact]
+        public void Should_lex_string_literal_with_escape_characters()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString(@"0 + ""\t \n \r"" + 0"));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(0D);
             scanner.NextToken().Type.Should().Be(TokenType.Plus);
             ((LiteralToken)scanner.NextToken()).Value.Should().Be("\t \n \r");
@@ -464,29 +457,35 @@ namespace ExpressionEngine.Tests
             ((LiteralToken)scanner.NextToken()).Value.Should().Be(0D);
         }
 
-        [UnitTest.Test]
-        public void StringLiteralWithDecimalEscape()
+        [Fact]
+        public void Should_lex_string_literal_with_decimal_escape()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString(@" ""\048\048\055"" "));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be("007");
         }
 
-        [UnitTest.Test]
-        public void StringLiteralWithDoubleQuoteEscapeCharacter()
+        [Fact]
+        public void Should_lex_string_literal_with_double_quote_escape_character()
         {
+            // Given when
             var scanner = new Lexer(Text.OfString(@" ""a\""bc"" "));
 
+            // Than
             ((LiteralToken)scanner.NextToken()).Value.Should().Be("a\"bc");
         }
 
-        #region Expected Exceptions
-        [UnitTest.Test]
-        [UnitTest.ExpectedException(typeof(EvaluatorException), ExpectedMessage = "Line terminator is not allowed.")]
-        public void LineEndingThrowsException()
+        [Fact]
+        public void Should_not_allow_line_ending_in_expression()
         {
-            new Lexer(Text.OfString(string.Concat(new string(' ', 10), Environment.NewLine)));
+            // Given when
+            var text = Text.OfString(string.Concat(new string(' ', 10), Environment.NewLine));
+
+            // Than
+            Assert.Throws<EvaluatorException>(
+                () => new Lexer(text));
         }
-        #endregion
     }
 }
