@@ -9,6 +9,7 @@ src/ExpressionEngine.Console/obj
 *~
 *.pidb
 *.test-cache
+*.user
 src/ExpressionEngine/test-results/*
 src/ExpressionEngine.Tests/test-results/*
 *.DS_Store

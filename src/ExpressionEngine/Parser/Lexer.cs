@@ -35,16 +35,16 @@ using System.Text;
 namespace ExpressionEngine.Internal
 {
     /// <summary>
-    /// Reads characters from <see cref="ExpressionEngine.Internal.Text"/> and returns instances
+    /// Reads characters from <see cref="Tokenizer"/> and returns instances
     /// of <see cref="ExpressionEngine.Internal.Token"/> derived types.
     /// </summary>
     sealed class Lexer : IDisposable
     {
         private Lexer() {}
 
-        public Lexer(Text text)
+        public Lexer(Tokenizer tokenizer)
         {
-            _text = text;
+            _tokenizer = tokenizer;
             _buffer = new StringBuilder(64);
             _escapeBuffer = new StringBuilder(3);
             _next = LexToken();
@@ -66,7 +66,7 @@ namespace ExpressionEngine.Internal
         {
             SkipWhiteSpace();
 
-            var c = _text.NextChar();
+            var c = _tokenizer.NextChar();
 
             switch (c)
             {
@@ -80,30 +80,30 @@ namespace ExpressionEngine.Internal
                 case '%': return new PunctuatorToken(TokenType.Modulo);
                 case ',': return new PunctuatorToken(TokenType.Comma);
                 case '=':
-                    if (_text.PeekChar() == '=')
+                    if (_tokenizer.PeekChar() == '=')
                     {
-                        _text.NextChar();
+                        _tokenizer.NextChar();
                         return new PunctuatorToken(TokenType.Equality);
                     }
-                    throw new EvaluatorException(_text.Line, "Unexpected token '='.");
+                    throw new EvaluatorException(_tokenizer.Line, "Unexpected token '='.");
                 case '!':
-                    if (_text.PeekChar() == '=')
+                    if (_tokenizer.PeekChar() == '=')
                     {
-                        _text.NextChar();
+                        _tokenizer.NextChar();
                         return new PunctuatorToken(TokenType.Inequality);
                     }
-                    throw new EvaluatorException(_text.Line, "Unexpected token '!'.");
+                    throw new EvaluatorException(_tokenizer.Line, "Unexpected token '!'.");
                 case '<':
-                    if (_text.PeekChar() == '=')
+                    if (_tokenizer.PeekChar() == '=')
                     {
-                        _text.NextChar();
+                        _tokenizer.NextChar();
                         return new PunctuatorToken(TokenType.LessThanOrEqual);
                     }
                     return new PunctuatorToken(TokenType.LessThan);
                 case '>':
-                    if (_text.PeekChar() == '=')
+                    if (_tokenizer.PeekChar() == '=')
                     {
-                        _text.NextChar();
+                        _tokenizer.NextChar();
                         return new PunctuatorToken(TokenType.GreaterThanOrEqual);
                     }
                     return new PunctuatorToken(TokenType.GreaterThan);
@@ -111,16 +111,19 @@ namespace ExpressionEngine.Internal
                 case '"':
                     _buffer.Length = 0;
                     while (true) {
-                        c = _text.NextChar();
+                        c = _tokenizer.NextChar();
                         if (c == '"') {
                             break;
                         }
-                        if (c == '\0') { throw new EvaluatorException(_text.Column, "Unexpected end of input in string literal."); }
+                        if (c == '\0') { throw new EvaluatorException(_tokenizer.Column, "Unexpected end of input in string literal."); }
                         if (c == '\\')
                         {
-                            c = _text.NextChar();
+                            c = _tokenizer.NextChar();
                             switch (c)
                             {
+                                case '\\': // back slash
+                                    _buffer.Append('\x5C');
+                                    break;
                                 case '"': // double quote
                                     _buffer.Append('\x22');
                                     break;
@@ -139,7 +142,7 @@ namespace ExpressionEngine.Internal
                                     _buffer.Append(ScanDecimalEscapeSequence(c));
                                     break;
                                 default:
-                                    throw new EvaluatorException(_text.Column, "Invalid escape sequence.");
+                                    throw new EvaluatorException(_tokenizer.Column, "Invalid escape sequence.");
                             }
                         }
                         else {
@@ -162,51 +165,51 @@ namespace ExpressionEngine.Internal
                     _buffer.Length = 0;
                     _buffer.Append(c);
                     while (true) {
-                        c = _text.PeekChar();
+                        c = _tokenizer.PeekChar();
                         if (c == '.') {
-                            if (seenDot) { throw new EvaluatorException(_text.Column, "Bad numeric literal."); }
+                            if (seenDot) { throw new EvaluatorException(_tokenizer.Column, "Bad numeric literal."); }
                             seenDot = true;
                         }
                         else if (c == 'e' || c == 'E') {
                             _buffer.Append(c);
-                            _text.NextChar();
-                            c = _text.PeekChar();
+                            _tokenizer.NextChar();
+                            c = _tokenizer.PeekChar();
                             if (c == '+' || c == '-' || IsDigit(c)) {
                                 _buffer.Append(c);
-                                _text.NextChar();
+                                _tokenizer.NextChar();
                                 while (true) {
-                                    c = _text.PeekChar();
+                                    c = _tokenizer.PeekChar();
                                     if (!IsDigit(c) || c == '\0') {
                                         break;
                                     }
                                     _buffer.Append(c);
-                                    _text.NextChar();
+                                    _tokenizer.NextChar();
                                 }
                                 return new LiteralToken(ParseNumber(_buffer, seenDot, true));
                             }
                             else {
-                                throw new EvaluatorException(_text.Line, "Invalid character after numeric literal exponent.");
+                                throw new EvaluatorException(_tokenizer.Line, "Invalid character after numeric literal exponent.");
                             }
                         }
                         else if (!IsDigit(c) || c == '\0') {
                             break;
                         }
                         _buffer.Append(c);
-                        _text.NextChar();
+                        _tokenizer.NextChar();
                     }
                     return new LiteralToken(ParseNumber(_buffer, seenDot, false));
                 case '.':
-                    if (IsDigit(_text.PeekChar()))
+                    if (IsDigit(_tokenizer.PeekChar()))
                     {
                         goto case '9';
                     }
-                    throw new EvaluatorException(_text.Column, "Invalid numeric literal.");
+                    throw new EvaluatorException(_tokenizer.Column, "Invalid numeric literal.");
                 // Line terminators
                 case '\xD':
                 case '\xA':
                 case '\x2028':
                 case '\x2029':
-                    throw new EvaluatorException(_text.Column, "Line terminator is not allowed.");
+                    throw new EvaluatorException(_tokenizer.Column, "Line terminator is not allowed.");
                 // EOF
                 case '\0':
                     return null;
@@ -216,12 +219,12 @@ namespace ExpressionEngine.Internal
                         _buffer.Length = 0;
                         _buffer.Append(c);
                         while (true) {
-                            c = _text.PeekChar();
+                            c = _tokenizer.PeekChar();
                             if (!IsIdentifierChar(c) || c == '\0') {
                                 break;
                             }
                             _buffer.Append(c);
-                            _text.NextChar();
+                            _tokenizer.NextChar();
                         }
                         var buf = _buffer.ToString();
                         if (string.CompareOrdinal(buf, "true") == 0)
@@ -234,7 +237,7 @@ namespace ExpressionEngine.Internal
                         }
                         return new IdentifierToken(buf);
                     }
-                    throw new EvaluatorException(_text.Column, string.Format(CultureInfo.InvariantCulture, "Unexpected character '{0}'.", c));
+                    throw new EvaluatorException(_tokenizer.Column, string.Format(CultureInfo.InvariantCulture, "Unexpected character '{0}'.", c));
             }
         }
 
@@ -273,7 +276,7 @@ namespace ExpressionEngine.Internal
             GC.SuppressFinalize(this);
         }
 
-        public int Column { get { return _text.Column; } }
+        public int Column { get { return _tokenizer.Column; } }
 
         private void Dispose(bool disposing)
         {
@@ -283,9 +286,9 @@ namespace ExpressionEngine.Internal
             }
             if (disposing)
             {
-                if (_text != null)
+                if (_tokenizer != null)
                 {
-                    _text.Dispose();
+                    _tokenizer.Dispose();
                 }
                 _disposed = true;
             }
@@ -293,9 +296,9 @@ namespace ExpressionEngine.Internal
 
         private void SkipWhiteSpace()
         {
-            while (IsWhiteSpace(_text.PeekChar()))
+            while (IsWhiteSpace(_tokenizer.PeekChar()))
             {
-                _text.NextChar();
+                _tokenizer.NextChar();
             }
         }
 
@@ -333,20 +336,20 @@ namespace ExpressionEngine.Internal
             _escapeBuffer.Append(new string(firstChar, 1));
             for (var i = 0; i < 2; i++)
             {
-                var c = _text.PeekChar();
+                var c = _tokenizer.PeekChar();
                 if (!(c >= '0' && c <= '9'))
                 {
-                    throw new EvaluatorException(_text.Line, "Invalid decimal escape sequence.");
+                    throw new EvaluatorException(_tokenizer.Line, "Invalid decimal escape sequence.");
                 }
                 _escapeBuffer.Append(c);
-                _text.NextChar();
+                _tokenizer.NextChar();
             }
             byte e;
             if (byte.TryParse(_escapeBuffer.ToString(), out e))
             {
                 return Encoding.ASCII.GetChars(new byte[] {e})[0];
             }
-            throw new EvaluatorException(_text.Line, "Invalid decimal escape sequence.");
+            throw new EvaluatorException(_tokenizer.Line, "Invalid decimal escape sequence.");
         }
 
         ~Lexer()
@@ -360,6 +363,6 @@ namespace ExpressionEngine.Internal
         private Token _next;
         private readonly StringBuilder _escapeBuffer;
         private readonly StringBuilder _buffer;
-        private readonly Text _text;
+        private readonly Tokenizer _tokenizer;
     }
 }

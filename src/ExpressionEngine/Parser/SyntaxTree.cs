@@ -49,7 +49,7 @@ namespace ExpressionEngine.Internal
         /// </summary>
         public static SyntaxTree ParseString(string value)
         {
-            using (var scanner = new Lexer(Text.OfString(value)))
+            using (var scanner = new Lexer(Tokenizer.OfString(value)))
             {
                 return new Parser(scanner).Parse();
             }

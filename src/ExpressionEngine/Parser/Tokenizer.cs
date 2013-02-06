@@ -34,21 +34,18 @@ using System.IO;
 
 namespace ExpressionEngine.Internal
 {
-    /// <summary>
-    /// Decouples underlying <see cref="System.IO.TextReader"/> from <see cref="ExpressionEngine.Internal.Lexer"/>.
-    /// </summary>
-    sealed class Text : IDisposable
+    sealed class Tokenizer : IDisposable
     {
-        public Text(TextReader reader)
+        public Tokenizer(TextReader reader)
         {
             _reader = reader;
             _column = -1;
             _line = -1;
         }
 
-        public static Text OfString(string value)
+        public static Tokenizer OfString(string value)
         {
-            return new Text(new StringReader(value));
+            return new Tokenizer(new StringReader(value));
         }
 
         public int Column { get { return _column; } }
@@ -100,7 +97,7 @@ namespace ExpressionEngine.Internal
             }
         }
 
-        ~Text()
+        ~Tokenizer()
         {
             Dispose(false);
         }

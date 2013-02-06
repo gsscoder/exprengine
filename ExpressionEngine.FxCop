@@ -40,17 +40,21 @@
   <Settings />
  </Rules>
  <FxCopReport Version="10.0">
+  <Namespaces>
+   <Namespace Name="ExpressionEngine">
+    <Messages>
+     <Message TypeName="AvoidNamespacesWithFewTypes" Category="Microsoft.Design" CheckId="CA1020" Created="2013-01-28 10:29:04Z">
+      <Issue>
+       <Item>ExpressionEngine</Item>
+      </Issue>
+     </Message>
+    </Messages>
+   </Namespace>
+  </Namespaces>
   <Targets>
    <Target Name="$(ProjectDir)/src/ExpressionEngine/bin/Debug/ExpressionEngine.dll">
     <Modules>
      <Module Name="expressionengine.dll">
-      <Messages>
-       <Message TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210" Created="2013-01-20 18:53:35Z">
-        <Issue Name="NoStrongName">
-         <Item>'ExpressionEngine.dll'</Item>
-        </Issue>
-       </Message>
-      </Messages>
       <Namespaces>
        <Namespace Name="ExpressionEngine">
         <Types>
@@ -58,10 +62,15 @@
           <Members>
            <Member Name="#.cctor()">
             <Messages>
-             <Message TypeName="InitializeReferenceTypeStaticFieldsInline" Category="Microsoft.Performance" CheckId="CA1810" Created="2013-01-20 19:33:26Z">
+             <Message TypeName="InitializeReferenceTypeStaticFieldsInline" Category="Microsoft.Performance" CheckId="CA1810" Status="Excluded" Created="2013-01-20 19:33:26Z">
               <Issue>
                <Item>'BuiltIn'</Item>
               </Issue>
+              <Notes>
+               <User Name="vmuser">
+                <Note Id="0" />
+               </User>
+              </Notes>
              </Message>
             </Messages>
            </Member>
@@ -115,6 +124,46 @@
               <Issue>
                <Item>'EvaluatorException.EvaluatorException(string, Exception)'</Item>
                <Item>&#xD;&#xA;&#xD;&#xA;EvaluatorException..ctor(String, Exception)&#xD;&#xA;EvaluatorException.set_ColumnNumber(Int32):Void&#xD;&#xA;Exception.get_Data():IDictionary</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="TypeConverter">
+          <Members>
+           <Member Name="#ToBoolean(System.Object)">
+            <Messages>
+             <Message TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800" Created="2013-01-28 10:29:04Z">
+              <Issue Name="Parameter">
+               <Item>'value'</Item>
+               <Item>'string'</Item>
+               <Item>'TypeConverter.ToBoolean(object)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToNumber(System.Object)">
+            <Messages>
+             <Message TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800" Created="2013-01-28 10:29:04Z">
+              <Issue Name="Parameter">
+               <Item>'value'</Item>
+               <Item>'string'</Item>
+               <Item>'TypeConverter.ToNumber(object)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString(System.Object)">
+            <Messages>
+             <Message TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800" Created="2013-01-28 10:29:04Z">
+              <Issue Name="Parameter">
+               <Item>'value'</Item>
+               <Item>'string'</Item>
+               <Item>'TypeConverter.ToString(object)'</Item>
+               <Item>castclass</Item>
               </Issue>
              </Message>
             </Messages>
@@ -200,12 +249,20 @@
     </Modules>
    </Target>
   </Targets>
+  <Notes>
+   <User Name="vmuser">
+    <Note Id="0" Modified="2013-01-28 10:32:23Z">Singleton, by design.</Note>
+   </User>
+  </Notes>
   <Rules>
-   <Rule TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210">
-    <Resolution Name="NoStrongName">Sign {0} with a strong name key.</Resolution>
+   <Rule TypeName="AvoidNamespacesWithFewTypes" Category="Microsoft.Design" CheckId="CA1020">
+    <Resolution Name="Default">Consider merging the types defined in '{0}' with another namespace.</Resolution>
    </Rule>
    <Rule TypeName="DoNotCallOverridableMethodsInConstructors" Category="Microsoft.Usage" CheckId="CA2214">
     <Resolution Name="Default">{0} contains a call chain that results in a call to a virtual method defined by the class. Review the following call stack for unintended consequences: {1}</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800">
+    <Resolution Name="Parameter">{0}, a parameter, is cast to type {1} multiple times in method {2}. Cache the result of the 'as' operator or direct cast in order to eliminate the redundant {3} instruction.</Resolution>
    </Rule>
    <Rule TypeName="InitializeReferenceTypeStaticFieldsInline" Category="Microsoft.Performance" CheckId="CA1810">
     <Resolution Name="Default">Initialize all static fields in {0} when those fields are declared and remove the explicit static constructor.</Resolution>

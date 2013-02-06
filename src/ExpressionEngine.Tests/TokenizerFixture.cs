@@ -34,13 +34,13 @@ using FluentAssertions;
 
 namespace ExpressionEngine.Tests
 {
-    public class TextFixture
+    public class TokenizerFixture
     {
         [Fact]
         public void After_initialization_index_is_less_than_zero()
         {
             // Given when
-            var text = Text.OfString("simple text");
+            var text = Tokenizer.OfString("simple text");
 
             // Then
             text.Column.Should().Be(-1);
@@ -51,7 +51,7 @@ namespace ExpressionEngine.Tests
         public void Reading_past_end_gets_null_char()
         {
             // Given
-            var text = Text.OfString("simple text!");
+            var text = Tokenizer.OfString("simple text!");
 
             // When
             for (var i = 0; i < 12; i++)
@@ -68,7 +68,7 @@ namespace ExpressionEngine.Tests
         public void Line_end_increments_lines()
         {
             // Given
-            var text = Text.OfString("simple\ntext");
+            var text = Tokenizer.OfString("simple\ntext");
 
             // When
             text.NextChar();

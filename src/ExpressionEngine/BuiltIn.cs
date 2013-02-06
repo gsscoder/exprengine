@@ -28,14 +28,17 @@
 #endregion
 #region Using Directives
 using System;
+using System.Diagnostics.CodeAnalysis;
+
 #endregion
 
 namespace ExpressionEngine
 {
     sealed class BuiltIn
     {
-        private BuiltIn() { }
+        private BuiltIn() {}
 
+        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Singleton, by design.")]
         static BuiltIn() {}
 
         public static BuiltIn Instance { get { return Singleton; } }

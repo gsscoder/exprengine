@@ -1,20 +1,20 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionEngine", "src\ExpressionEngine\ExpressionEngine.csproj", "{241A5DBC-BB66-4E65-BEDA-98B1DB83D2EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionEngine.Tests", "src\ExpressionEngine.Tests\ExpressionEngine.Tests.csproj", "{36D20B53-4601-424E-917E-4465B5865B53}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{D988490D-DC0A-4982-A98F-1C8B024A538A}"
-	ProjectSection(SolutionItems) = preProject
-		ExpressionEngine.FxCop = ExpressionEngine.FxCop
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6B32C37F-A361-4EBC-BB7C-BFEB61C99D7B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Welcome", ".Welcome", "{D988490D-DC0A-4982-A98F-1C8B024A538A}"
 	ProjectSection(SolutionItems) = preProject
 		doc\ChangeLog = doc\ChangeLog
 		doc\LICENSE = doc\LICENSE
 		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Develop", "Develop", "{6B32C37F-A361-4EBC-BB7C-BFEB61C99D7B}"
+	ProjectSection(SolutionItems) = preProject
+		ExpressionEngine.FxCop = ExpressionEngine.FxCop
 	EndProjectSection
 EndProject
 Global
@@ -50,13 +50,13 @@ Global
 		{36D20B53-4601-424E-917E-4465B5865B53}.Release|x86.ActiveCfg = Release|Any CPU
 		{36D20B53-4601-424E-917E-4465B5865B53}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6B32C37F-A361-4EBC-BB7C-BFEB61C99D7B} = {D988490D-DC0A-4982-A98F-1C8B024A538A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = src\ExpressionEngine\ExpressionEngine.csproj
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

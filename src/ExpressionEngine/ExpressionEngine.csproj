@@ -46,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="EvaluatingVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -53,7 +56,7 @@
     <Compile Include="Parser\TokenType.cs" />
     <Compile Include="PrimitiveType.cs" />
     <Compile Include="Context.cs" />
-    <Compile Include="Parser\Text.cs">
+    <Compile Include="Parser\Tokenizer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BuiltIn.cs" />
@@ -82,9 +85,6 @@
     <Compile Include="Parser\Token.cs" />
     <Compile Include="EvaluatorException.cs" />
     <Compile Include="Visitor.cs" />
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ExpressionEngine.snk" />

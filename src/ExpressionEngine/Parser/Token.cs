@@ -48,7 +48,7 @@ namespace ExpressionEngine.Internal
 
         //public static string StringOf(Token token)
         //{
-        //    return token == null ? "end of input" : string.Format("'{0}'", token.Text);
+        //    return token == null ? "end of input" : string.Format("'{0}'", token.Tokenizer);
         //}
 
         public static string StringOf(Token[] tokens)
@@ -108,8 +108,6 @@ namespace ExpressionEngine.Internal
                     return "/";
                 case TokenType.Modulo:
                     return "%";
-                //case TokenType.Exponent:
-                //    return "^";
                 case TokenType.Equality:
                     return "==";
                 case TokenType.Inequality:

@@ -1,10 +1,18 @@
+2013-02-05      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * Class Text refactored as Tokenizer.
+
+2013-01-28      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * Fixed '\\' escape character as defined in specification (http://goo.gl/DAvCS).
+
 2013-01-27      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * All tests migrated to Xunit (http://xunit.codeplex.com/). Conventions changed:
       one fixture per unit, descriptive methods separated by '_'.
   * Refactored parsing of literal in Parser::ParseLiteral to avoid unnecessary unary expressions.
   * String literals fully implemented.
-	
+
 2013-01-26      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * String literal correctly handled by the lexer.
