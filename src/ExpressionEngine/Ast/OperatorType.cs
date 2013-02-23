@@ -47,5 +47,7 @@ namespace ExpressionEngine.Internal.Ast
         GreaterThan,
         LessThanOrEqual,
         GreaterThanOrEqual,
+
+        MemberAccess
     }
 }

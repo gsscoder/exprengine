@@ -1,3 +1,10 @@
+2013-02-22      Giacomo Stelluti Scala  <gsscoder@gmail.com>
+
+  * Console REPL temporarly excluded from project.
+  * Used same key from main assembly also in test assembly.
+  * Evaluator renamed to Evaluate (method Evalate -> It, Evaluate<T> -> As<T>)
+      to enable host-friendly syntax.
+
 2013-02-05      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * Class Text refactored as Tokenizer.

@@ -29,12 +29,11 @@
 
 namespace ExpressionEngine
 {
-    // This enum will be useful when (ASAP) we will support more data types,
-    // first of all bool for comparisons
     enum PrimitiveType : byte
     {
         Boolean,     // map to System.Boolean
         Number,      // map to System.Double
-        String       // map to System.String
+        String,      // map to System.String
+        Object       // map to System.Object
     }
 }

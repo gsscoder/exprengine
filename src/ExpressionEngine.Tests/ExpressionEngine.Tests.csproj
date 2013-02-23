@@ -33,7 +33,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>ExpressionEngine.Tests.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>ExpressionEngine.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FluentAssertions">
@@ -55,12 +55,13 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ContextFixture.cs" />
+    <Compile Include="Fakes\FakeObject.cs" />
     <Compile Include="LexerFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenizerFixture.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ExpressionEngine.Tests.snk" />
+    <None Include="ExpressionEngine.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

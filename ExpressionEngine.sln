@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionEngine", "src\ExpressionEngine\ExpressionEngine.csproj", "{241A5DBC-BB66-4E65-BEDA-98B1DB83D2EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionEngine.Tests", "src\ExpressionEngine.Tests\ExpressionEngine.Tests.csproj", "{36D20B53-4601-424E-917E-4465B5865B53}"

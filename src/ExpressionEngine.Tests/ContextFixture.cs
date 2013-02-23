@@ -28,6 +28,7 @@
 #endregion
 #region Using Directives
 using System;
+using ExpressionEngine.Tests.Fakes;
 using Xunit;
 using FluentAssertions;
 #endregion
@@ -300,8 +301,8 @@ namespace ExpressionEngine.Tests
             // Given
             var context = new Context()
                 .SetVariable("G", 6.67428D)
-                .SetVariable("earth_mass", Evaluator.Evaluate<double>("5.97219 * pow(10,24)")) // 5.97219E+24 kg
-                .SetVariable("lunar_mass", Evaluator.Evaluate<double>("7.34767309 * pow(10,22)")) // 7.34767309E+22 kg
+                .SetVariable("earth_mass", Evaluate.As<double>("5.97219 * pow(10,24)")) // 5.97219E+24 kg
+                .SetVariable("lunar_mass", Evaluate.As<double>("7.34767309 * pow(10,22)")) // 7.34767309E+22 kg
                 .SetVariable("perigee_dist", 356700000D) // moon-earth distance at perigee in m
                 .SetFunction("calc_force", args => (
                     TypeConverter.ToNumber(args[0]) * TypeConverter.ToNumber(args[1]) / Math.Pow(TypeConverter.ToNumber(args[2]), 2)));
@@ -460,5 +461,21 @@ namespace ExpressionEngine.Tests
             // Than
             result.Should().Be("1234 hello, 4567! 8910");
         }
+
+        //[Fact]
+        //public void Should_access_string_field_from_registred_object()
+        //{
+        //    // Given
+        //    var expression = "my_fake.FakeStringField";
+        //    var fake = new FakeObject {FakeStringField = "exactly this"};
+        //    var context = new Context();
+
+        //    // When
+        //    context.SetObject("my_fake", fake);
+        //    var result = context.EvaluateAs<string>(expression);
+
+        //    // Than
+        //    result.Should().Be("exactly this");
+        //}
     }
 }

@@ -1,7 +1,7 @@
 src/ExpressionEngine/bin/*
 src/ExpressionEngine/obj
-src/ExpressionEngine.Tests/bin/*
-src/ExpressionEngine.Tests/obj
+src/ExpressionEngine.Tests
+src/ExpressionEngine.Tests
 src/ExpressionEngine.Console/bin/*
 src/ExpressionEngine.Console/obj
 *.suo

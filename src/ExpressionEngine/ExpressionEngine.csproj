@@ -52,7 +52,7 @@
     <Compile Include="EvaluatingVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Evaluator.cs" />
+    <Compile Include="Evaluate.cs" />
     <Compile Include="Parser\TokenType.cs" />
     <Compile Include="PrimitiveType.cs" />
     <Compile Include="Context.cs" />

@@ -52,6 +52,8 @@ namespace ExpressionEngine.Internal
 
         public abstract void Visit(VariableExpression expression);
 
+        //public abstract void Visit(MemberAcessExpression memberAcessExpression);
+
         protected Scope GlobalScope { get; private set; }
 
         public abstract object Result { get; }

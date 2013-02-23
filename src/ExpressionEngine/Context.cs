@@ -79,7 +79,7 @@ namespace ExpressionEngine
         /// <returns>An <see cref="ExpressionEngine.Context"/> instance with modified scope.</returns>
         public Context SetFunction(string name, Func<object[], object> function)
         {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name", "Can't define a function with null or empty name.");
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Can't define a function with null or empty name.", "name");
             if (function == null) throw new ArgumentNullException("name", "Can't define a function with null lamda.");
 
             _global[name] = new Function(name, function);
@@ -94,9 +94,17 @@ namespace ExpressionEngine
         /// <returns>An <see cref="ExpressionEngine.Context"/> instance with modified scope.</returns>
         public Context SetVariable(string name, double variable)
         {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name", "Can't define a variable with null or empty name.");
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Can't define a variable with null or empty name.", "name");
 
             _global[name] = variable;
+            return this;
+        }
+
+        public Context SetObject(string name, object obj)
+        {
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Can't define an object with null or empty name.", "name");
+
+            _global[name] = obj;
             return this;
         }
 
