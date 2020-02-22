@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1097CDC9-B86
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionEngine", "src\ExpressionEngine\ExpressionEngine.csproj", "{1C071F9A-C390-4AB2-ACFF-D440BC26366E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionEngine.REPL", "src\ExpressionEngine.REPL\ExpressionEngine.CLI.csproj", "{4C6EAE6A-3B05-48C6-AA60-2467CFADD990}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionEngine.REPL", "src\ExpressionEngine.REPL\ExpressionEngine.REPL.csproj", "{4C6EAE6A-3B05-48C6-AA60-2467CFADD990}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{77200F71-CB52-4DC5-887B-796FD89654B5}"
 EndProject
