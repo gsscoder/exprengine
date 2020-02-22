@@ -12,7 +12,7 @@ Documentation is available in the project [Wiki](https://github.com/gsscoder/exp
 - .NET Framework 4.0, 4.5, 4.6.1
 
 ## At a glance:
----
+
 ```csharp
 var contex = new Context()
   .SetVariable("G", 6.67428D)
@@ -22,4 +22,30 @@ var contex = new Context()
   .SetFunction("calc_force", (object[] args) => ((double) args[0] * (double) args[1]) / Math.Pow((double) args[2], 2));
 var result = contex.EvaluateAs<double>("G * calc_force(earth_mass, lunar_mass, perigee_dist)"); // 2.3018745174107073E+31
 bool isGCorrect = contex.EvaluateAs<bool>("G == 6.67428");
+```
+
+## REPL
+
+```sh
+$ dotnet build -c release
+...
+$ ./artifacts/ExpressionEngine.REPL/Release/netcoreapp3.1/xeval --help
+xeval 1.0.0
+Copyright © Giacomo Stelluti Scala, 2012-2020
+This is free software. You may redistribute copies of it under the terms of
+the MIT License <http://www.opensource.org/licenses/mit-license.php>.
+Usage: xeval [EXPRESSION]
+       xeval --interactive
+       xeval -f [FILENAME]
+       cmdx | xeval
+
+  -f, --filename       Input text file to be evaluated.
+
+  -i, --interactive    Run in interactive mode.
+
+  -q, --quiet          Print only the evaluation results.
+
+  -v, --version        Print version information and exit.
+
+  --help               Display this help screen.
 ```
