@@ -454,19 +454,16 @@ public class ContextSpecs
         outcome.Should().Be("a string");
     }
 
-    //[Fact]
-    //public void Should_access_string_field_from_registred_object()
-    //{
-    //    // Given
-    //    var expression = "my_fake.FakeStringField";
-    //    var fake = new FakeObject {FakeStringField = "exactly this"};
-    //    var context = new Context();
+    [Fact]
+    public void Should_evaluate_a_user_defined_function_without_parameters_when_nested()
+    {
+        var expression = "outer(noparams(), 1)";
+        var sut = new Context();
+        sut.SetFunction("outer", x => string.Concat(x[0], x[1]));
+        sut.SetFunction("noparams", () => "a string");
 
-    //    // When
-    //    context.SetObject("my_fake", fake);
-    //    var result = context.EvaluateAs<string>(expression);
+        var outcome = sut.EvaluateAs<string>(expression);
 
-    //    // Than
-    //    result.Should().Be("exactly this");
-    //}
+        outcome.Should().Be("a string1");
+    }
 }
