@@ -1,6 +1,7 @@
 2020-02-22      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
   * Compiles for .NET Core.
+  * Added support for parameterless functions. 
 
 2013-02-22      Giacomo Stelluti Scala  <gsscoder@gmail.com>
 
