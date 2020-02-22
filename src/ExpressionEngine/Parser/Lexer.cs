@@ -9,7 +9,7 @@ using ExpressionEngine;
 /// </summary>
 sealed class Lexer : IDisposable
 {
-    private Lexer() {}
+    Lexer() {}
 
     public Lexer(Tokenizer tokenizer)
     {
@@ -26,19 +26,15 @@ sealed class Lexer : IDisposable
         return _current;
     }
 
-    public Token PeekToken()
-    {
-        return _next;
-    }      
+    public Token PeekToken() => _next;
 
-    private Token LexToken()
+    Token LexToken()
     {
         SkipWhiteSpace();
 
         var c = _tokenizer.NextChar();
 
-        switch (c)
-        {
+        switch (c) {
             // Punctuators
             case '(': return new PunctuatorToken(TokenType.LeftParenthesis);
             case ')': return new PunctuatorToken(TokenType.RightParenthesis);
@@ -49,29 +45,25 @@ sealed class Lexer : IDisposable
             case '%': return new PunctuatorToken(TokenType.Modulo);
             case ',': return new PunctuatorToken(TokenType.Comma);
             case '=':
-                if (_tokenizer.PeekChar() == '=')
-                {
+                if (_tokenizer.PeekChar() == '=') {
                     _tokenizer.NextChar();
                     return new PunctuatorToken(TokenType.Equality);
                 }
                 throw new EvaluatorException(_tokenizer.Line, "Unexpected token '='.");
             case '!':
-                if (_tokenizer.PeekChar() == '=')
-                {
+                if (_tokenizer.PeekChar() == '=') {
                     _tokenizer.NextChar();
                     return new PunctuatorToken(TokenType.Inequality);
                 }
                 throw new EvaluatorException(_tokenizer.Line, "Unexpected token '!'.");
             case '<':
-                if (_tokenizer.PeekChar() == '=')
-                {
+                if (_tokenizer.PeekChar() == '=') {
                     _tokenizer.NextChar();
                     return new PunctuatorToken(TokenType.LessThanOrEqual);
                 }
                 return new PunctuatorToken(TokenType.LessThan);
             case '>':
-                if (_tokenizer.PeekChar() == '=')
-                {
+                if (_tokenizer.PeekChar() == '=') {
                     _tokenizer.NextChar();
                     return new PunctuatorToken(TokenType.GreaterThanOrEqual);
                 }
@@ -85,11 +77,9 @@ sealed class Lexer : IDisposable
                         break;
                     }
                     if (c == '\0') { throw new EvaluatorException(_tokenizer.Column, "Unexpected end of input in string literal."); }
-                    if (c == '\\')
-                    {
+                    if (c == '\\') {
                         c = _tokenizer.NextChar();
-                        switch (c)
-                        {
+                        switch (c) {
                             case '\\': // back slash
                                 _buffer.Append('\x5C');
                                 break;
@@ -168,8 +158,7 @@ sealed class Lexer : IDisposable
                 }
                 return new LiteralToken(ParseNumber(_buffer, seenDot, false));
             case '.':
-                if (IsDigit(_tokenizer.PeekChar()))
-                {
+                if (IsDigit(_tokenizer.PeekChar())) {
                     goto case '9';
                 }
                 throw new EvaluatorException(_tokenizer.Column, "Invalid numeric literal.");
@@ -196,12 +185,10 @@ sealed class Lexer : IDisposable
                         _tokenizer.NextChar();
                     }
                     var buf = _buffer.ToString();
-                    if (string.CompareOrdinal(buf, "true") == 0)
-                    {
+                    if (string.CompareOrdinal(buf, "true") == 0) {
                         return new LiteralToken(true);
                     }
-                    if (string.CompareOrdinal(buf, "false") == 0)
-                    {
+                    if (string.CompareOrdinal(buf, "false") == 0) {
                         return new LiteralToken(false);
                     }
                     return new IdentifierToken(buf);
@@ -212,8 +199,7 @@ sealed class Lexer : IDisposable
 
     public static bool IsWhiteSpace(char c)
     {
-        switch (c)
-        {
+        switch (c) {
             //// Line separators
             //case '\xD':
             //case '\xA':
@@ -233,10 +219,7 @@ sealed class Lexer : IDisposable
         }
     }
 
-    public bool IsEof()
-    {
-        return _next == null;
-    }
+    public bool IsEof() => _next == null;
 
     public void Dispose()
     {
@@ -247,14 +230,12 @@ sealed class Lexer : IDisposable
 
     public int Column { get { return _tokenizer.Column; } }
 
-    private void Dispose(bool disposing)
+    void Dispose(bool disposing)
     {
-        if (_disposed)
-        {
+        if (_disposed) {
             return;
         }
-        if (disposing)
-        {
+        if (disposing) {
             if (_tokenizer != null)
             {
                 _tokenizer.Dispose();
@@ -263,25 +244,24 @@ sealed class Lexer : IDisposable
         }
     }
 
-    private void SkipWhiteSpace()
+    void SkipWhiteSpace()
     {
-        while (IsWhiteSpace(_tokenizer.PeekChar()))
-        {
+        while (IsWhiteSpace(_tokenizer.PeekChar())) {
             _tokenizer.NextChar();
         }
     }
 
-    private static bool IsDigit(char ch)
+    static bool IsDigit(char ch)
     {
         return (ch >= '0') && (ch <= '9');
     }
 
-    private static bool IsIdentifierChar(char ch)
+    static bool IsIdentifierChar(char ch)
     {
         return char.IsLetterOrDigit(ch) || (ch == '_');
     }
 
-    private static double ParseNumber(StringBuilder buf, bool seenDot, bool seenExp)
+    static double ParseNumber(StringBuilder buf, bool seenDot, bool seenExp)
     {
         var styles = NumberStyles.Number;
         if (seenDot)
@@ -299,7 +279,7 @@ sealed class Lexer : IDisposable
         return double.Parse(buf.ToString(), styles, NumberFormatInfo);
     }
 
-    private char ScanDecimalEscapeSequence(char firstChar)
+    char ScanDecimalEscapeSequence(char firstChar)
     {
         _escapeBuffer.Length = 0;
         _escapeBuffer.Append(new string(firstChar, 1));
@@ -326,11 +306,11 @@ sealed class Lexer : IDisposable
         Dispose(false);
     }
 
-    private static readonly NumberFormatInfo NumberFormatInfo = CultureInfo.InvariantCulture.NumberFormat;
-    private bool _disposed;
-    private Token _current;
-    private Token _next;
-    private readonly StringBuilder _escapeBuffer;
-    private readonly StringBuilder _buffer;
-    private readonly Tokenizer _tokenizer;
+    static readonly NumberFormatInfo NumberFormatInfo = CultureInfo.InvariantCulture.NumberFormat;
+    bool _disposed;
+    Token _current;
+    Token _next;
+    readonly StringBuilder _escapeBuffer;
+    readonly StringBuilder _buffer;
+    readonly Tokenizer _tokenizer;
 }
