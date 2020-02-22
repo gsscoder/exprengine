@@ -430,6 +430,18 @@ public class ContextSpecs
         result.Should().Be("1234 hello, 4567! 8910");
     }
 
+    [Fact]
+    public void Should_evaluate_a_user_defined_function_that_returns_boolean()
+    {
+        var expression = "eq(0, 1)";
+        var sut = new Context();
+        sut.SetFunction("eq", x => x[0].Equals(x[1]));
+
+        var outcome = sut.EvaluateAs<bool>(expression);
+
+        outcome.Should().BeFalse();
+    }
+
     //[Fact]
     //public void Should_access_string_field_from_registred_object()
     //{
