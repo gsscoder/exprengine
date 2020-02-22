@@ -55,6 +55,15 @@ namespace ExpressionEngine
             return this;
         }
 
+        public Context SetFunction(string name, Func<object> function)
+        {
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Can't define a function with null or empty name.", "name");
+            if (function == null) throw new ArgumentNullException("name", "Can't define a function with null lamda.");
+
+            _global[name] = new Function(name, _ => function(), paramsLess: true);
+            return this;
+        }
+
         /// <summary>
         /// Define a variable in context of global scope.
         /// </summary>

@@ -1,49 +1,17 @@
 ﻿using System;
 
-class Function
+sealed class Function
 {
-    private Function() {}
-
-    public Function(string name, Func<object[], object> func)
+    public Function(string name, Func<object[], object> func, bool paramsLess = false)
     {
         Name = name;
         Delegate = func;
+        ParametersLess = paramsLess;
     }
 
     public string Name { get; private set; }
 
-    //private static bool CheckSignature(Delegate func)
-    //{
-    //    if (!IsNumericType(func.Method.ReturnType))
-    //    {
-    //        return false;
-    //    }
-    //    var @params = func.Method.GetParameters();
-    //    if (@params.Length > 0)
-    //    {
-    //        foreach (var p in @params)
-    //        {
-    //            if (!IsNumericType(p.ParameterType))
-    //            {
-    //                return false;
-    //            }
-    //        }
-    //    }
-    //    return true;
-    //}
-
-    //private static bool IsNumericType(Type type)
-    //{
-    //    if (type.IsArray)
-    //    {
-    //        return type == typeof(byte[]) || type == typeof(short[]) || type == typeof(ushort[]) || type == typeof(int[]) ||
-    //            type == typeof(uint[]) || type == typeof(long[]) || type == typeof(ulong[]) || type == typeof(float[]) ||
-    //            type == typeof(double[]);
-    //    }
-    //    return type == typeof(byte) || type == typeof(short) || type == typeof(ushort) || type == typeof(int) ||
-    //        type == typeof(uint) || type == typeof(long) || type == typeof(ulong) || type == typeof(float) ||
-    //        type == typeof(double);
-    //}
-
     public Func<object[], object> Delegate { get; private set; }
+
+    public bool ParametersLess { get; private set; }
 }

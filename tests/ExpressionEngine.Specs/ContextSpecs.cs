@@ -442,6 +442,18 @@ public class ContextSpecs
         outcome.Should().BeFalse();
     }
 
+    [Fact]
+    public void Should_evaluate_a_user_defined_function_without_parameters()
+    {
+        var expression = "noparams()";
+        var sut = new Context();
+        sut.SetFunction("noparams", () => "a string");
+
+        var outcome = sut.EvaluateAs<string>(expression);
+
+        outcome.Should().Be("a string");
+    }
+
     //[Fact]
     //public void Should_access_string_field_from_registred_object()
     //{
