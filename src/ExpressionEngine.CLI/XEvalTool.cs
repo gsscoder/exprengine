@@ -64,7 +64,7 @@ namespace ExpressionEngine
             }
             if (!_options.Validate())
             {
-                Console.Error.WriteLine("Try '{0} --help' for more information.", ThisAssembly.Name);
+                Console.Error.WriteLine("Try '{0} --help' for more information.", Constants.ProgramName);
                 Environment.Exit(Failure);
             }
             var expression = _options.Expression;
@@ -165,8 +165,8 @@ namespace ExpressionEngine
         private void PrintHeading()
         {
             Console.WriteLine(_heading.ToString());
-            Console.WriteLine(ThisAssembly.Copyright);
-            Console.WriteLine("Embeds {0}, Version {1} {2}.", ThisLibrary.ProductName, ThisLibrary.Version, ThisLibrary.ReleaseType);
+            Console.WriteLine(Constants.ProgramCopyright);
+            Console.WriteLine($"Embeds {Constants.ProductName}, Version {typeof(Context).AssemblyVersion()}.");
         }
 
         private string FormatException(string expression, EvaluatorException e)
@@ -190,8 +190,8 @@ namespace ExpressionEngine
         }
 
         private readonly Options _options = new Options();
-        private readonly HeadingInfo _heading = new HeadingInfo(ThisAssembly.Name,
-            ThisAssembly.InformationalVersion + " " + ThisAssembly.ReleaseType);
+        private readonly HeadingInfo _heading = new HeadingInfo(Constants.ProgramName,
+            typeof(Context).AssemblyVersion());
         private readonly Context _evaluator = new Context();
         #region Exit Code Constants
         private const int Success = 0;

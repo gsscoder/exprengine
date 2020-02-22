@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <Title>.NET expression evaluator engine</Title>
+    <Description>.NET expression evaluator engine</Description>
+    <Version>0.7.0-beta</Version>
+    <Authors>gsscoder</Authors>
+    <Copyright>Copyright © Giacomo Stelluti Scala, 2012-2020</Copyright>
+    <PackageProjectUrl>https://github.com/gsscoder/exprengine</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/gsscoder/exprengine</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>expression;evaluator;engine;api;library</PackageTags>  
   </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>ExpressionEngine.Specs</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
