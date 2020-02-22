@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ExpressionEngine\ExpressionEngine.csproj" />
+  </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>

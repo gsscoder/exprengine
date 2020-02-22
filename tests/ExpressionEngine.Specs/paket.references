@@ -1,0 +1,5 @@
+FluentAssertions
+xunit
+Microsoft.NET.Test.Sdk
+xunit.runner.visualstudio
+coverlet.collector

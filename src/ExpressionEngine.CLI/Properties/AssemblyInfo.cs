@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 //
-// Expression Engine Library: Visitor.cs
+// Expression Engine Library: AssemblyInfo.cs
 //
 // Author:
 //   Giacomo Stelluti Scala (gsscoder@gmail.com)
@@ -27,38 +27,24 @@
 //
 #endregion
 #region Using Directives
-using ExpressionEngine.Internal.Ast;
-
+using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Resources;
+using CommandLine.Text;
 #endregion
 
-namespace ExpressionEngine.Internal
-{
-    abstract class Visitor
-    {
-        private Visitor() {}
-
-        protected Visitor(Scope globalScope)
-        {
-            GlobalScope = globalScope;
-        }
-
-        public abstract void Visit(LiteralExpression expression);
-
-        public abstract void Visit(UnaryExpression expression);
-
-        public abstract void Visit(FunctionCallExpression callExpression);
-
-        public abstract void Visit(BinaryExpression expression);
-
-        public abstract void Visit(VariableExpression expression);
-
-        protected Scope GlobalScope { get; private set; }
-
-        public abstract object Result { get; }
-
-        public static Visitor Create(Scope global)
-        {
-            return new EvaluatingVisitor(global);
-        }
-    }
-}
+[assembly: NeutralResourcesLanguage("en-US")]
+[assembly: AssemblyCulture("")]
+[assembly: AssemblyLicense(
+    "This is free software. You may redistribute copies of it under the terms of",
+    "the MIT License <http://www.opensource.org/licenses/mit-license.php>.")]
+[assembly: AssemblyUsage(
+    "Usage: xeval [EXPRESSION]",
+    "       xeval --interactive",
+    "       xeval -f [FILENAME]",
+    "       cmdx | xeval")]
+[assembly: ComVisible(false)]
+[assembly: CLSCompliant(true)]
+//[assembly: AssemblyCompany("")]
+//[assembly: AssemblyTrademark("")]

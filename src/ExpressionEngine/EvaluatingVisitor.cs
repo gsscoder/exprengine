@@ -157,11 +157,6 @@ namespace ExpressionEngine.Internal
             _result = TypeConverter.ToNumber(GlobalScope[name]);
         }
 
-        //public override void Visit(MemberAcessExpression memberAcessExpression)
-        //{
-        //    throw new NotImplementedException();
-        //}
- 
         public override object Result { get { return _result; } }
 
         private object _result;
