@@ -12,7 +12,7 @@ sealed class FunctionCallExpression : NameExpression
 
     public override PrimitiveType ResultType
     {
-        get { return PrimitiveType.Number; }
+        get { return PrimitiveType.Object; }
     }
 
     public override void Accept(Visitor visitor)

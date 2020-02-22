@@ -49,7 +49,7 @@ sealed class EvaluatingVisitor : Visitor
             argsList.Add(_result);
         });
         var args = argsList.ToArray();
-        _result = TypeConverter.ToNumber(((Function) GlobalScope[name]).Delegate(args)); 
+        _result = ((Function)GlobalScope[name]).Delegate(args); 
     }
 
     public override void Visit(BinaryExpression expression)
