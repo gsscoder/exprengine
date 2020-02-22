@@ -1,6 +1,6 @@
 # Expression Engine
 
-This project is a simple mathematical expression parser written in C#. It's the refactoring of an old project and uses an AST-evaluation algorithm. You can use built-in or bind your functions and variables to global scope.
+This project is a simple mathematical expression parser written in C#. It's the refactoring of a previous project and uses an AST-evaluation algorithm. You can use built-in or bind your functions and variables to global scope.
 
 ## Documentation
 
