@@ -1,10 +1,7 @@
-﻿namespace ExpressionEngine.Internal
+﻿sealed class IdentifierToken : Token
 {
-    sealed class IdentifierToken : Token
+    public IdentifierToken(string text)
+        : base(text, TokenType.Identifier)
     {
-        public IdentifierToken(string text)
-            : base(text, TokenType.Identifier)
-        {
-        }
     }
 }
