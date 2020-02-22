@@ -6,6 +6,11 @@ This project is a simple mathematical expression parser written in C#. It's the 
 
 Documentation is available in the project [Wiki](https://github.com/gsscoder/exprengine/wiki).
 
+## Targets
+
+- .NET Standard 2.0
+- .NET Framework 4.0, 4.5, 4.6.1
+
 ## At a glance:
 ---
 ```csharp
