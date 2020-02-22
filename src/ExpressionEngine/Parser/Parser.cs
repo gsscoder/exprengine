@@ -142,14 +142,13 @@ sealed class Parser : IDisposable
 
         var expr = new FunctionCallExpression(_current.Text);
         Expect(TokenType.LeftParenthesis);
-        if (_scanner.PeekToken() != null &&
-            _scanner.PeekToken().Type == TokenType.RightParenthesis) {
-            Consume();
-            return expr;
-        }
         while (!_scanner.IsEof())
         {
             Consume();
+            if (_current.Type == TokenType.RightParenthesis) {
+                Consume();
+                break;
+            }
             expr.Arguments.Add(ParseExpression(true));
             if (_current == null)
             {
